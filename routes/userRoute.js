@@ -4,8 +4,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
+
 // Custom Modules
 const { UserModel } = require("../models/userModel");
+const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
+const { userEmailDuplicateVerification } = require("../duplicateVerification/email");
 
 
 
@@ -18,8 +21,10 @@ const saltRounds = 10;
 const secretKey = process.env.secretKey;
 
 
+
 // Creating Route Variable
 const userRoute = express.Router();
+
 
 
 // JSON Parsing
@@ -28,40 +33,91 @@ userRoute.use(express.json());
 
 
 // User Registration Route
-userRoute.post("/register", async (req, res) => {
+// userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateVerification, async (req, res) => {
+//     let { avatar, name, mobile, email, password } = req.body;
+//     if (name == "") {
+//         res.status(400).send({ "msg": "Please Provide Your Full Name" });
+//         return;
+//     } else if (mobile == "") {
+//         res.status(400).send({ "msg": "Please Provide Your Mobile Number" });
+//         return;
+//     } else if (email == "") {
+//         res.status(400).send({ "msg": "Please Provide Your Email" });
+//         return;
+//     } else if (password == "") {
+//         res.status(400).send({ "msg": "Please Provide Your Password" });
+//         return;
+//     }
+//     try {
+//         bcrypt.hash(password, saltRounds, async (err, hash) => {
+//             if (err) {
+//                 res.status(500).send({ "msg": "Error Found while Securing your Password", "err": err });
+//                 return;
+//             }
+
+//             const token = jwt.sign({ mobile }, secretKey);
+
+//             // Saving Data in Database
+//             let savingData = new UserModel({ avatar, name, mobile, email, "password": hash });
+//             await savingData.save();
+
+//             // Sending Response
+//             res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name });
+//         });
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While Registration" });
+//     }
+// });
+
+
+
+// Function to check if required fields exist and have non-empty values in the object
+const checkRequiredFields = (object, requiredFields) => {
+    const missingFields = [];
+    requiredFields.forEach((field) => {
+        if (!(field in object) || object[field] === "") {
+            missingFields.push(field);
+        }
+    });
+    return missingFields;
+};
+
+// User Registration Route
+userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateVerification, async (req, res) => {
     let { avatar, name, mobile, email, password } = req.body;
-    if (name == "") {
-        res.send({ "msg": "Please Provide Your Full Name" });
-        return;
-    } else if (mobile == "") {
-        res.send({ "msg": "Please Provide Your Mobile Number" });
-        return;
-    } else if (email == "") {
-        res.send({ "msg": "Please Provide Your Email" });
-        return;
-    } else if (password == "") {
-        res.send({ "msg": "Please Provide Your Password" });
+
+    // Define the required fields
+    const requiredFields = ["name", "mobile", "email", "password"];
+
+    // Check if required fields exist and have non-empty values in the request body
+    const missingFields = checkRequiredFields(req.body, requiredFields);
+    if (missingFields.length > 0) {
+        const errorMsg = `Please Provide the Following Fields with Non-Empty Values: ${missingFields.join(", ")}`;
+        res.status(400).send({ "msg": errorMsg });
         return;
     }
+
     try {
         bcrypt.hash(password, saltRounds, async (err, hash) => {
-            if (hash) {
-                const token = jwt.sign({ mobile }, secretKey);
-
-                // Saving Data in Database
-                let savingData = new UserModel({ avatar, name, mobile, email, "password": hash });
-                await savingData.save();
-
-                // Sending Response
-                res.send({ "msg": "Successfully Registered", "token": token, "name": name });
-            } else {
-                res.send({ "msg": "Error Found", "err": err });
+            if (err) {
+                res.status(500).send({ "msg": "Error Found while Securing your Password", "err": err });
+                return;
             }
+
+            const token = jwt.sign({ mobile }, secretKey);
+
+            // Saving Data in Database
+            let savingData = new UserModel({ avatar, name, mobile, email, "password": hash });
+            await savingData.save();
+
+            // Sending Response
+            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name });
         });
     } catch (error) {
-
+        res.status(500).send({ "msg": "Server Error While Registration" });
     }
 });
+
 
 
 
@@ -93,7 +149,7 @@ userRoute.post("/login", async (req, res) => {
             res.send({ "msg": "Wrong Credentials" });
         }
     } catch (error) {
-        res.send({ "msg": "Error Found", "err": error });
+        res.send({ "msg": "Server Error While Login" });
     }
 });
 
