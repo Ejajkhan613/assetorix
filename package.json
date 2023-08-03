@@ -4,7 +4,7 @@
   "description": "A real estate website build for simplicity.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "Ejajkhan613",
