@@ -124,9 +124,9 @@ userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateV
 
 // User Login Route
 userRoute.post("/login", async (req, res) => {
-    let { id, password } = req.body;
-    if (id == "") {
-        res.status(400).send({ "msg": "Please Provide Your Email/Mobile" });
+    let { mobile, password } = req.body;
+    if (mobile == "") {
+        res.status(400).send({ "msg": "Please Provide Your Mobile" });
         return;
     } else if (password == "") {
         res.status(400).send({ "msg": "Please Provide Your Password" });
@@ -135,7 +135,7 @@ userRoute.post("/login", async (req, res) => {
 
     try {
         // Matching input from Database
-        let finding = await UserModel.find({ $or: [{ "mobile": id }, { "email": id }] });
+        let finding = await UserModel.find({ mobile });
 
 
         if (finding.length == 1) {
