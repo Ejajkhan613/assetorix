@@ -141,7 +141,7 @@ userRoute.post("/login", async (req, res) => {
 
         if (finding.length == 1) {
 
-            bcrypt.compare(password, finding[0].password, function (err, result) {
+            bcrypt.compare(password, finding[0].password, async (err, result) => {
                 if (result) {
                     // Generating Token
                     const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
