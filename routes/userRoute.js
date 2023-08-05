@@ -85,10 +85,10 @@ userRoute.post("/otp", async (req, res) => {
 
 // User Registration Route
 userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateVerification, async (req, res) => {
-    let { avatar, name, mobile, email, password } = req.body;
+    let { avatar, name, mobile, password } = req.body;
 
     // Define the required fields
-    const requiredFields = ["name", "mobile", "email", "password"];
+    const requiredFields = ["name", "mobile", "password"];
 
     // Check if required fields exist and have non-empty values in the request body
     const missingFields = checkRequiredFields(req.body, requiredFields);
@@ -108,7 +108,7 @@ userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateV
             const token = jwt.sign({ mobile }, secretKey);
 
             // Saving Data in Database
-            let savingData = new UserModel({ avatar, name, mobile, email, "password": hash });
+            let savingData = new UserModel({ avatar, name, mobile, "password": hash });
             await savingData.save();
 
             // Sending Response
