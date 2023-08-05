@@ -128,7 +128,8 @@ userRoute.post("/login", async (req, res) => {
     if (mobile == "") {
         res.status(400).send({ "msg": "Please Provide Your Mobile" });
         return;
-    } else if (password == "") {
+    }
+    if (password == "") {
         res.status(400).send({ "msg": "Please Provide Your Password" });
         return;
     }
@@ -140,12 +141,17 @@ userRoute.post("/login", async (req, res) => {
 
         if (finding.length == 1) {
 
-            // Generating Token
-            const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
+            bcrypt.compare(password, finding[0].password, function (err, result) {
+                if (result) {
+                    // Generating Token
+                    const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
 
 
-            // Sending Response
-            res.status(201).send({ "msg": "Login Successful", "token": token, "name": finding[0].name });
+                    // Sending Response
+                    res.status(201).send({ "msg": "Login Successful", "token": token, "name": finding[0].name });
+                }
+            });
+
         } else {
             res.status(400).send({ "msg": "Wrong Credentials" });
         }
