@@ -5,13 +5,14 @@ const mongoose = require("mongoose");
 
 // Schema
 const userSchema = mongoose.Schema({
-    "avatar": String,
-    "name": String,
-    "mobile": String,
-    "email": String,
-    "password": String
-})
-
+    "avatar": { type: String },
+    "name": { type: String, required: true },
+    "email": { type: String, required: true, unique: true },
+    "mobile": { type: String, required: true, unique: true },
+    "password": { type: String, required: true },
+    "active": { type: Boolean, default: true },
+    "verificationOtp": { type: String }
+});
 
 
 // Model
