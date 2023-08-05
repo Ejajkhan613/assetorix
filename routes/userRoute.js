@@ -137,7 +137,6 @@ userRoute.post("/login", async (req, res) => {
     try {
         // Matching input from Database
         let finding = await UserModel.find({ mobile });
-        res.send(finding);
 
         if (finding.length == 1) {
 
