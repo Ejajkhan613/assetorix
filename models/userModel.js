@@ -10,12 +10,17 @@ const userSchema = mongoose.Schema({
     "email": { type: String, unique: true },
     "role": {
         type: String,
+        default: "customer",
         enum: ["customer", "agent", "broker", "admin", "super_admin"]
     },
     "mobile": { type: String, required: true, unique: true },
     "password": { type: String, required: true },
     "isBlocked": { type: Boolean, default: false },
-    "isVerified": { type: Boolean, default: false }
+    "isVerified": {
+        type: Boolean,
+        default: "pending",
+        enum: ["pending", "approved"]
+    }
 });
 
 
