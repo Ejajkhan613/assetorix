@@ -85,7 +85,7 @@ userRoute.post("/otp", async (req, res) => {
 
 // User Registration Route
 userRoute.post("/register", userEmailDuplicateVerification, userMobileDuplicateVerification, async (req, res) => {
-    let { avatar, name, mobile, password } = req.body;
+    let { name, mobile, password } = req.body;
 
     // Define the required fields
     const requiredFields = ["name", "mobile", "password"];

@@ -14,7 +14,8 @@ const userSchema = mongoose.Schema({
     },
     "mobile": { type: String, required: true, unique: true },
     "password": { type: String, required: true },
-    "isBlocked": { type: Boolean, default: false }
+    "isBlocked": { type: Boolean, default: false },
+    "isVerified": { type: Boolean, default: false }
 });
 
 

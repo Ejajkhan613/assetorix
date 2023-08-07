@@ -30,7 +30,7 @@ app.use(cors());
 
 // Homepage Route
 app.get("/", (req, res) => {
-    res.send("Welcome to Assetorix2");
+    res.send("Welcome to Assetorix");
 });
 
 
