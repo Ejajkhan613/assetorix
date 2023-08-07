@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
         default: "customer",
         enum: ["customer", "agent", "broker", "admin", "super_admin"]
     },
-    "mobile": { type: String, required: true, unique: true },
+    "mobile": { type: String, required: true },
     "password": { type: String, required: true },
     "isBlocked": { type: Boolean, default: false },
     "isVerified": {
