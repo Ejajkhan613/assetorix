@@ -5,9 +5,7 @@ const mongoose = require("mongoose");
 
 // Schema
 const userSchema = mongoose.Schema({
-    "avatar": { type: String, default: "" },
     "name": { type: String, required: true },
-    "email": { type: String, default: "" },
     "role": {
         type: String,
         default: "customer",
