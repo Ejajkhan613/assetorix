@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 
 // Schema
 const userSchema = mongoose.Schema({
-    "avatar": { type: String },
+    "avatar": { type: String, default: "" },
     "name": { type: String, required: true },
-    "email": { type: String, unique: true },
+    "email": { type: String, unique: true, default: "" },
     "role": {
         type: String,
         default: "customer",
@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema({
     "password": { type: String, required: true },
     "isBlocked": { type: Boolean, default: false },
     "isVerified": {
-        type: Boolean,
+        type: String,
         default: "pending",
         enum: ["pending", "approved"]
     }
