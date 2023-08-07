@@ -108,7 +108,7 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
             const token = jwt.sign({ mobile }, secretKey);
 
             // Saving Data in Database
-            let savingData = new UserModel({ avatar, name, mobile, "password": hash });
+            let savingData = new UserModel({ name, mobile, "password": hash });
             await savingData.save();
 
             // Sending Response
