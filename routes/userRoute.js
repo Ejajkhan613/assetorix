@@ -141,16 +141,16 @@ userRoute.post("/login", async (req, res) => {
 
         if (finding.length == 1) {
             bcrypt.compare(password, finding[0].password, async (err, result) => {
-                if (err) {
-                    res.status(400).send({ "msg": err });
-                    return;
-                } else {
+                if (result) {
                     // Generating Token
                     const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
 
 
                     // Sending Response
                     res.status(201).send({ "msg": "Login Successful", "token": token, "name": finding[0].name, "id": finding[0]._id });
+                } else {
+                    res.status(400).send({ "msg": "Wrong Credentials" });
+                    return;
                 }
             });
 
