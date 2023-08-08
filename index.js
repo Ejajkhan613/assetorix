@@ -11,6 +11,7 @@ require('dotenv').config();
 // Importin Custom Modules
 const { connection } = require("./configs/db");
 const { userRoute } = require("./routes/userRoute");
+const { adminRoute } = require("./routes/adminRoute");
 
 
 // Port
@@ -36,6 +37,11 @@ app.get("/", (req, res) => {
 
 // Users Route
 app.use("/user", userRoute);
+
+
+
+// Admin Route
+app.use("/admin", adminRoute);
 
 
 // Starting server and connecting to the MongoDB

@@ -15,9 +15,8 @@ const userSchema = mongoose.Schema({
     "password": { type: String, required: true },
     "isBlocked": { type: Boolean, default: false },
     "isVerified": {
-        type: String,
-        default: "pending",
-        enum: ["pending", "approved"]
+        type: Boolean,
+        default: false,
     }
 });
 
