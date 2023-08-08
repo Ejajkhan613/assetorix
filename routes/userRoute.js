@@ -45,6 +45,24 @@ const checkRequiredFields = (object, requiredFields) => {
 
 
 
+
+userRoute.get("/", tokenVerify, async (req, res) => {
+    let id = req.headers.id;
+    try {
+        if (!id) {
+            res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
+            return;
+        }
+        let data = await UserModel.find({ "_id": id }).select({ name: 1, mobile: 1 })
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While Getting User Data" });
+    }
+})
+
+
+
+
 // Send OTP Route
 userRoute.post("/otp", async (req, res) => {
     let { mobile } = req.body;
@@ -167,16 +185,20 @@ userRoute.post("/login", async (req, res) => {
 
 
 
+
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
     let id = req.headers.id;
-    let { name, email } = req.body;
+    let { name, email, mobile } = req.body;
     let obj = {};
     if (name) {
         obj.name = name;
     }
     if (email) {
         obj.email = email;
+    }
+    if (mobile) {
+        obj.mobile = mobile;
     }
     try {
         if (!id) {

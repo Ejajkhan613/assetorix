@@ -12,7 +12,6 @@ const tokenVerify = async (req, res, next) => {
         if (token) {
             jwt.verify(token, secretKey, async (err, decoded) => {
                 if (err) {
-                    console.log(err)
                     res.status(401).send({ "msg": "Unauthorized: Please Login to access this resource" });
                     return;
                 }
