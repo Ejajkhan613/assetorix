@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const { UserModel } = require("../models/userModel");
 const { checkRequiredFields } = require("../routes/userRoute");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
-const { tokenVerify } = require("../middlewares/token");
+const { adminTokenVerification } = require("../middlewares/admin");
 
 
 
@@ -120,7 +120,7 @@ adminRoute.post("/login", async (req, res) => {
 
 
 // Update User Detail
-adminRoute.patch("/update", tokenVerify, async (req, res) => {
+adminRoute.patch("/update", adminTokenVerification, async (req, res) => {
     let id = req.headers.id;
     let { name, email, mobile, role, isBlocked, isVerified } = req.body;
     let obj = {};
@@ -157,6 +157,8 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
     }
 });
+
+
 
 
 

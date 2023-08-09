@@ -45,7 +45,7 @@ app.use("/admin", adminRoute);
 
 
 // Starting server and connecting to the MongoDB
-app.listen(Port, async (req, res) => {
+app.listen(Port, async () => {
     try {
         await connection;
         console.log("Connected to Database");

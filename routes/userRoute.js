@@ -10,7 +10,7 @@ const { userEmailDuplicateVerification } = require("../duplicateVerification/ema
 const { tokenVerify } = require("../middlewares/token");
 const { otpService } = require("../services/otp");
 const { OtpModel } = require("../models/otpModel");
-
+const { PropertyModel } = require("../models/propertyModel");
 
 
 // SaltRounds
@@ -53,7 +53,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
             return;
         }
-        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1 })
+        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
@@ -210,9 +210,41 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             res.status(404).send({ "msg": "Not Found: User not found with the provided ID" });
             return;
         }
-        res.status(200).send([{ "msg": "Updated successfully" }]);
+        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
+        res.status(200).send(data);
     } catch (error) {
-        res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Updating" }]);
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
+    }
+});
+
+
+
+// User Properties
+userRoute.get("/listings", async (req, res) => {
+    let id = req.headers.id;
+    try {
+        let listings = await PropertyModel.find({ "userID": id });
+        res.status(201).send(listings);
+    } catch (error) {
+        res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
+    }
+});
+
+
+// User Wishlist
+userRoute.get("/wishlist", async (req, res) => {
+    let id = req.headers.id;
+    try {
+        let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
+        let array = [];
+        for (let a = 0; a < listings.length; a++) {
+            let data = {};
+            let finding = await PropertyModel.findOne({ "_id": listings[a] });
+            array.push(finding);
+        }
+        res.status(200).send(array);
+    } catch (error) {
+        res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
     }
 });
 

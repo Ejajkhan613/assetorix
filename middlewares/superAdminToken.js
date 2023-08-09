@@ -7,7 +7,7 @@ const secretKey = process.env.secretKey;
 
 
 // Verification
-const tokenVerify = async (req, res, next) => {
+const superAdminTokenVerification = async (req, res, next) => {
     const token = req.headers.authorization;
     let id = req.headers.id;
     try {
@@ -19,7 +19,7 @@ const tokenVerify = async (req, res, next) => {
                 }
 
                 let checking = await UserModel.find({ "mobile": decoded.mobile });
-                if (checking.length >= 1 && checking[0]._id == id && checking[0].isBlocked == false && checking[0].role == "customer") {
+                if (checking.length >= 1 && checking[0]._id == id && checking[0].role == "super_admin") {
                     next();
                 } else {
                     res.status(401).send({ "msg": "Unauthorized: User not found, please login again" });
@@ -35,5 +35,5 @@ const tokenVerify = async (req, res, next) => {
 
 
 module.exports = {
-    tokenVerify
+    superAdminTokenVerification
 };
