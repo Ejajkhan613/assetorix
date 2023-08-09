@@ -53,7 +53,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
             return;
         }
-        let data = await UserModel.find({ "_id": id }).select({ name: 1, mobile: 1 })
+        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1 })
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
