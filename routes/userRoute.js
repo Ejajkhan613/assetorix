@@ -48,19 +48,18 @@ const checkRequiredFields = (object, requiredFields) => {
 
 userRoute.get("/", tokenVerify, async (req, res) => {
     let id = req.headers.id;
-    // let roles = ["customer"];
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     try {
         if (!id) {
             res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
             return;
         }
-        // const role = res.getHeader("role");
-        // if (!roles.includes(role)) {
-        //     res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
-        //     return;
-        // }
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
         let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
-        console.log(data);
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
@@ -195,6 +194,7 @@ userRoute.post("/login", async (req, res) => {
 
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let id = req.headers.id;
     let { name, email, mobile } = req.body;
     let obj = {};
@@ -208,8 +208,9 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
         obj.mobile = mobile;
     }
     try {
-        if (!id) {
-            res.status(400).send({ "msg": "Bad Request: No User ID is Provided" });
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
         }
         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
@@ -228,8 +229,14 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
 
 // User Properties
 userRoute.get("/listings", tokenVerify, async (req, res) => {
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let id = req.headers.id;
     try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
         let listings = await PropertyModel.find({ "userID": id });
         res.status(201).send(listings);
     } catch (error) {
@@ -241,7 +248,13 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     let id = req.headers.id;
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
         let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
         let array = [];
         for (let a = 0; a < listings.length; a++) {

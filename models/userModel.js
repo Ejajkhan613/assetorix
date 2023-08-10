@@ -28,8 +28,7 @@ const userSchema = mongoose.Schema({
     },
     wishlist: {
         type: Array
-    }
-    ,
+    },
     password: {
         type: String,
         required: true

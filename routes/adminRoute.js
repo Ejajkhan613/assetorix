@@ -120,7 +120,42 @@ adminRoute.post("/login", async (req, res) => {
 
 
 // Update User Detail
+adminRoute.patch("/employee/update", tokenVerify, async (req, res) => {
+    let roles = ["employee", "admin", "super_admin"];
+    let id = req.headers.id;
+    let { name, email, mobile } = req.body;
+    let obj = {};
+    if (name) {
+        obj.name = name;
+    }
+    if (email) {
+        obj.email = email;
+    }
+    if (mobile) {
+        obj.mobile = mobile;
+    }
+    try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
+        const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
+        if (!updatedUser) {
+            res.status(404).send({ "msg": "Not Found: Details not found with the provided ID" });
+            return;
+        }
+        res.status(200).send({ "msg": "Updated successfully" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
+    }
+});
+
+
+
+// Update User Detail
 adminRoute.patch("/update", tokenVerify, async (req, res) => {
+    let roles = ["admin", "super_admin"];
     let id = req.headers.id;
     let { name, email, mobile, role, isBlocked, isVerified } = req.body;
     let obj = {};
@@ -143,8 +178,9 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
         obj.isVerified = isVerified;
     }
     try {
-        if (!id) {
-            res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
         }
         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
@@ -159,6 +195,57 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
 });
 
 
+
+// get all details except password
+adminRoute.get("/all", tokenVerify, async (req, res) => {
+    let roles = ["admin", "super_admin"];
+    let allRoles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roleQuery = req.query.role;
+    try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
+        // Validate and sanitize roleQuery parameter
+        const roleQuery = req.query.role;
+        if (!roleQuery || typeof roleQuery !== 'string' || !allRoles.includes(roleQuery)) {
+            res.status(400).send({ "msg": "Bad Request: Invalid role parameter" });
+            return;
+        }
+        let allData = await UserModel.find({ "role": roleQuery }).select('-password');
+        res.status(200).send(allData);
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Fetching all Data" });
+    }
+});
+
+
+// route to block or unblock access
+adminRoute.post("/block", tokenVerify, async (req, res) => {
+    let roles = ["admin", "super_admin"];
+    let { id, status } = req.body;
+
+    try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to modify Access Control" });
+            return;
+        }
+
+        let Data = await UserModel.findById({ "_id": id });
+        let dataRole = Data.role;
+
+        if (role == "admin" && dataRole == "super_admin") {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to block/unblock Super Admin" });
+        } else {
+            await UserModel.findByIdAndUpdate({ "_id": id }, { "isBlocked": status });
+            res.status(200).send({ "msg": "Updated Successfully" });
+        }
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+    }
+});
 
 
 
