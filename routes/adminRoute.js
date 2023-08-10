@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const { UserModel } = require("../models/userModel");
 const { checkRequiredFields } = require("../routes/userRoute");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
-const { adminTokenVerification } = require("../middlewares/admin");
+const { tokenVerify } = require("../middlewares/token");
 
 
 
@@ -120,7 +120,7 @@ adminRoute.post("/login", async (req, res) => {
 
 
 // Update User Detail
-adminRoute.patch("/update", adminTokenVerification, async (req, res) => {
+adminRoute.patch("/update", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     let { name, email, mobile, role, isBlocked, isVerified } = req.body;
     let obj = {};

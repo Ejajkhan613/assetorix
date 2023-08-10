@@ -48,12 +48,19 @@ const checkRequiredFields = (object, requiredFields) => {
 
 userRoute.get("/", tokenVerify, async (req, res) => {
     let id = req.headers.id;
+    // let roles = ["customer"];
     try {
         if (!id) {
             res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
             return;
         }
+        // const role = res.getHeader("role");
+        // if (!roles.includes(role)) {
+        //     res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+        //     return;
+        // }
         let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
+        console.log(data);
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
@@ -220,7 +227,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
 
 
 // User Properties
-userRoute.get("/listings", async (req, res) => {
+userRoute.get("/listings", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     try {
         let listings = await PropertyModel.find({ "userID": id });
@@ -232,7 +239,7 @@ userRoute.get("/listings", async (req, res) => {
 
 
 // User Wishlist
-userRoute.get("/wishlist", async (req, res) => {
+userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     try {
         let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
