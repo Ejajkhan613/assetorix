@@ -17,6 +17,7 @@ const secretKey = process.env.secretKey;
 const tokenVerify = async (req, res, next) => {
     const token = req.cookies.authorization || req.headers.authorization;
     const id = req.cookies.id || req.headers.id;
+    console.log(token, id)
 
     try {
         if (!token || !id) {
