@@ -113,119 +113,87 @@ userRoute.post("/otp", async (req, res) => {
 
 // User Registration Route
 userRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
+    let { name, mobile, password } = req.body;
+
+    // Define the required fields
+    const requiredFields = ["name", "mobile", "password"];
+
+    // Check if required fields exist and have non-empty values in the request body
+    const missingFields = checkRequiredFields(req.body, requiredFields);
+    if (missingFields.length > 0) {
+        const errorMsg = `Following Fields are Missing: ${missingFields.join(", ")}`;
+        res.status(400).send({ "msg": xss(errorMsg) });
+        return;
+    }
+
     try {
-        const { name, mobile, password } = req.body;
-        const requiredFields = ["name", "mobile", "password"];
+        bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if (err) {
+                res.status(500).send({ "msg": "Error Found while Securing your Password", "err": xss(err) });
+                return;
+            }
 
-        const missingFields = checkRequiredFields(req.body, requiredFields);
-        if (missingFields.length > 0) {
-            const errorMsg = `Missing fields: ${missingFields.join(", ")}`;
-            return res.status(400).json({ "msg": errorMsg });
-        }
+            const token = jwt.sign({ mobile }, secretKey);
 
-        const hash = await bcrypt.hash(password, saltRounds);
+            // Saving Data in Database
+            let savingData = new UserModel({ name: xss(name), mobile: xss(mobile), "password": hash });
+            await savingData.save();
 
-        const token = jwt.sign({ mobile }, secretKey);
-
-        const sanitizedUser = {
-            name: xss(name),
-            mobile: xss(mobile),
-            password: hash
-        };
-
-        const newUser = new UserModel(sanitizedUser);
-        await newUser.save();
-
-        // Sanitize output before sending response
-        const sanitizedResponse = {
-            msg: "Registration Successful",
-            token: token,
-            name: name,
-            id: xss(newUser._id)
-        };
-
-        // Adding a cookie to the response
-        res.cookie('authorization', token, {
-            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-            httpOnly: true,
-            secure: true
-            // sameSite: 'strict'
+            // Sending Response
+            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": xss(name), "id": savingData._id });
         });
-
-        res.cookie('id', sanitizedResponse.id, {
-            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-            httpOnly: true,
-            secure: true
-            // sameSite: 'strict'
-        });
-
-
-        return res.status(201).json(sanitizedResponse);
     } catch (error) {
-        console.error("Registration Error:", error);
-        return res.status(500).json({ "msg": "Server Error While Registration" });
+        res.status(500).send({ "msg": "Server Error While Registration" });
     }
 });
 
 
 
-// User Login
+
+
+// User Login Route
 userRoute.post("/login", async (req, res) => {
+    let { mobile, password } = req.body;
 
-    const { mobile, password } = req.body;
-
-    // Sanitize and validate user inputs
-    let sanitizedMobile = xss(mobile);
-
-    if (!mobile) {
-        res.status(400).send({ "msg": "Please Provide Your Mobile" });
+    // Validate and sanitize input
+    if (!mobile || !password) {
+        res.status(400).send({ "msg": "Please provide valid credentials" });
         return;
     }
-    if (!password) {
-        res.status(400).send({ "msg": "Please Provide Your Password" });
-        return;
-    }
+
     try {
+        // Sanitize input before querying the database
+        mobile = xss(mobile);
 
-        // Find user by mobile
-        const user = await UserModel.findOne({ "mobile": sanitizedMobile });
+        // Matching input from Database
+        let finding = await UserModel.find({ mobile });
 
-        if (user && await bcrypt.compare(password, user.password)) {
-            // Generate token
-            const token = jwt.sign({ mobile: user.mobile }, secretKey);
+        if (finding.length === 1) {
+            bcrypt.compare(password, finding[0].password, async (err, result) => {
+                if (result) {
+                    // Generating Token
+                    const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
 
-            // Sanitize output before sending response
-            const sanitizedResponse = {
-                msg: "Login Successful",
-                token: token,
-                name: xss(user.name),
-                id: xss(user._id)
-            };
+                    // Sanitize and escape output before sending response
+                    const sanitizedResponse = {
+                        msg: "Login Successful",
+                        token: token,
+                        name: xss(finding[0].name),
+                        id: xss(finding[0]._id)
+                    };
 
-            // Adding a cookie to the response
-            res.cookie('authorization', token, {
-                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-                httpOnly: true,
-                secure: true
-                // sameSite: 'strict'
+                    // Sending Response
+                    res.status(201).send(sanitizedResponse);
+                } else {
+                    res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
+                    return;
+                }
             });
-
-            res.cookie('id', sanitizedResponse.id, {
-                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-                httpOnly: true,
-                secure: true
-                // sameSite: 'strict'
-            });
-
-
-
-            return res.status(200).json(sanitizedResponse);
         } else {
-            return res.status(400).json({ "msg": "Invalid credentials" });
+            res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
         }
     } catch (error) {
-        console.error("Login Error:", error);
-        return res.status(500).json({ "msg": "Internal Server Error: Something went wrong while login" });
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Login" });
     }
 });
 
@@ -255,7 +223,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
     }
 
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -284,7 +252,7 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let id = req.headers.id;
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -302,7 +270,7 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;

@@ -55,37 +55,21 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
     }
 
     try {
-        const hash = await bcrypt.hash(password, saltRounds);
+        bcrypt.hash(password, saltRounds, async (err, hash) => {
+            if (err) {
+                res.status(500).send({ "msg": "Error Found while Securing your Password", "err": xss(err) });
+                return;
+            }
 
-        const token = jwt.sign({ mobile }, secretKey);
+            const token = jwt.sign({ mobile }, secretKey);
 
-        const savingData = new UserModel({ name, mobile, role, "password": hash });
-        await savingData.save();
+            // Saving Data in Database
+            let savingData = new UserModel({ name, mobile, "password": hash, role });
+            await savingData.save();
 
-        // Sanitize output before sending response
-        const sanitizedResponse = {
-            msg: "Registration Successful",
-            token,
-            name,
-            id: xss(savingData._id)
-        };
-
-        // Adding a cookie to the response
-        res.cookie('authorization', token, {
-            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-            httpOnly: true,
-            secure: true
-            // sameSite: 'strict'
+            // Sending Response
+            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id });
         });
-
-        res.cookie('id', sanitizedResponse.id, {
-            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-            httpOnly: true,
-            secure: true
-            // sameSite: 'strict'
-        });
-
-        return res.status(201).send(sanitizedResponse);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Registration" });
     }
@@ -100,56 +84,37 @@ adminRoute.post("/login", async (req, res) => {
 
     // Sanitize and validate user inputs
     mobile = xss(mobile);
+    password = xss(password);
+
+    if (!mobile) {
+        res.status(400).send({ "msg": "Please Provide Your Mobile" });
+        return;
+    }
+    if (!password) {
+        res.status(400).send({ "msg": "Please Provide Your Password" });
+        return;
+    }
 
     try {
-        if (!mobile) {
-            res.status(400).send({ "msg": "Please Provide Your Mobile" });
-            return;
-        }
-        if (!password) {
-            res.status(400).send({ "msg": "Please Provide Your Password" });
-            return;
-        }
         // Matching input from Database
-        const user = await UserModel.findOne({ "mobile": mobile });
-        if (!user) {
-            res.status(400).send({ "msg": "Invalid credentials." });
-            return;
-        }
+        let finding = await UserModel.find({ mobile });
 
-        // Compare the hashed password
-        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (finding.length === 1 && (finding[0].role === "admin" || finding[0].role === "super_admin")) {
 
-        if (passwordMatch && (user.role === "admin" || user.role === "super_admin")) {
-            // Generate JWT token
-            const token = jwt.sign({ mobile: user.mobile }, secretKey);
+            bcrypt.compare(password, finding[0].password, (err, result) => {
+                if (result) {
+                    // Generating Token
+                    const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
 
-            // Sanitize output before sending response
-            const sanitizedResponse = {
-                msg: "Login Successful",
-                token,
-                name: xss(user.name),
-                id: xss(user._id)
-            };
-
-            // Adding a cookie to the response
-            res.cookie('authorization', token, {
-                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-                httpOnly: true,
-                secure: true
-                // sameSite: 'strict'
+                    // Sending Response
+                    res.status(201).send({ "msg": "Login Successful", "token": token, "name": finding[0].name, "id": finding[0]._id });
+                } else {
+                    res.status(400).send({ "msg": "Wrong Credentials" });
+                }
             });
 
-            res.cookie('id', sanitizedResponse.id, {
-                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
-                httpOnly: true,
-                secure: true
-                // sameSite: 'strict'
-            });
-
-            return res.status(200).json(sanitizedResponse);
         } else {
-            return res.status(400).json({ "msg": "Invalid credentials." });
+            res.status(400).send({ "msg": "Wrong Credentials" });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Login" });
@@ -159,48 +124,48 @@ adminRoute.post("/login", async (req, res) => {
 
 
 
-// // Update employee Detail
-// adminRoute.patch("/employee/update", tokenVerify, async (req, res) => {
-//     let roles = ["employee", "admin", "super_admin"];
-//     let id = req.headers.id;
-//     let { name, email, mobile } = req.body;
-//     let obj = {};
+// Update employee Detail
+adminRoute.patch("/employee/update", tokenVerify, async (req, res) => {
+    let roles = ["employee", "admin", "super_admin"];
+    let id = req.headers.id;
+    let { name, email, mobile } = req.body;
+    let obj = {};
 
-//     // Sanitize and validate user inputs
-//     if (name) {
-//         obj.name = xss(name);
-//     }
-//     if (email) {
-//         obj.email = xss(email);
-//     }
-//     if (mobile) {
-//         obj.mobile = xss(mobile);
-//     }
+    // Sanitize and validate user inputs
+    if (name) {
+        obj.name = xss(name);
+    }
+    if (email) {
+        obj.email = xss(email);
+    }
+    if (mobile) {
+        obj.mobile = xss(mobile);
+    }
 
-//     try {
-//         const role = res.getHeader("role");
-//         if (!roles.includes(role)) {
-//             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
-//             return;
-//         }
-//         res.removeHeader("role");
-//         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
-//         if (!updatedUser) {
-//             res.status(404).send({ "msg": "Not Found: Details not found with the provided ID" });
-//             return;
-//         }
-//         res.status(200).send({ "msg": "Updated successfully" });
-//     } catch (error) {
-//         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
-//     }
-// });
+    try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            return;
+        }
+        res.removeHeader("role");
+        const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
+        if (!updatedUser) {
+            res.status(404).send({ "msg": "Not Found: Details not found with the provided ID" });
+            return;
+        }
+        res.status(200).send({ "msg": "Updated successfully" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
+    }
+});
 
 
 
 
 // Update admin/super admin Detail
 adminRoute.patch("/update", tokenVerify, async (req, res) => {
-    let roles = ["employee", "admin", "super_admin"];
+    let roles = ["admin", "super_admin"];
     let id = req.headers.id;
     let { name, email, mobile, role, isBlocked, isVerified } = req.body;
     let obj = {};
@@ -215,7 +180,7 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
     }
 
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -259,7 +224,7 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
         obj.isVerified = isVerified;
     }
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -283,7 +248,7 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
     let allRoles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let roleQuery = req.query.role;
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -308,7 +273,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
     let { id, status } = req.body;
 
     try {
-        const role = res.locals.role;
+        const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to modify Access Control" });
             return;
