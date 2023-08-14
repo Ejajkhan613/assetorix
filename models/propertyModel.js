@@ -28,10 +28,6 @@ const propertySchema = mongoose.Schema({
         state: String,
         zip: String
     },
-    rentAmount: {
-        type: Number,
-        required: true
-    },
     bedrooms: {
         type: Number
     },

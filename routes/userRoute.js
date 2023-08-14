@@ -2,6 +2,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const xss = require('xss');
 
 // Custom Modules
 const { UserModel } = require("../models/userModel");
@@ -108,85 +109,123 @@ userRoute.post("/otp", async (req, res) => {
 
 
 
+
+
 // User Registration Route
 userRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
-    let { name, mobile, password } = req.body;
-
-    // Define the required fields
-    const requiredFields = ["name", "mobile", "password"];
-
-    // Check if required fields exist and have non-empty values in the request body
-    const missingFields = checkRequiredFields(req.body, requiredFields);
-    if (missingFields.length > 0) {
-        const errorMsg = `Following Fields are Missing: ${missingFields.join(", ")}`;
-        res.status(400).send({ "msg": errorMsg });
-        return;
-    }
-
     try {
-        bcrypt.hash(password, saltRounds, async (err, hash) => {
-            if (err) {
-                res.status(500).send({ "msg": "Error Found while Securing your Password", "err": err });
-                return;
-            }
+        const { name, mobile, password } = req.body;
+        const requiredFields = ["name", "mobile", "password"];
 
-            const token = jwt.sign({ mobile }, secretKey);
+        const missingFields = checkRequiredFields(req.body, requiredFields);
+        if (missingFields.length > 0) {
+            const errorMsg = `Missing fields: ${missingFields.join(", ")}`;
+            return res.status(400).json({ "msg": errorMsg });
+        }
 
-            // Saving Data in Database
-            let savingData = new UserModel({ name, mobile, "password": hash });
-            await savingData.save();
+        const hash = await bcrypt.hash(password, saltRounds);
 
-            // Sending Response
-            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id });
+        const token = jwt.sign({ mobile }, secretKey);
+
+        const sanitizedUser = {
+            name: xss(name),
+            mobile: xss(mobile),
+            password: hash
+        };
+
+        const newUser = new UserModel(sanitizedUser);
+        await newUser.save();
+
+        // Sanitize output before sending response
+        const sanitizedResponse = {
+            msg: "Registration Successful",
+            token: token,
+            name: name,
+            id: xss(newUser._id)
+        };
+
+        // Adding a cookie to the response
+        res.cookie('authorization', token, {
+            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
+            httpOnly: true,
+            secure: true
+            // sameSite: 'strict'
         });
+
+        res.cookie('id', sanitizedResponse.id, {
+            maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
+            httpOnly: true,
+            secure: true
+            // sameSite: 'strict'
+        });
+
+
+        return res.status(201).json(sanitizedResponse);
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Registration" });
+        console.error("Registration Error:", error);
+        return res.status(500).json({ "msg": "Server Error While Registration" });
     }
 });
 
 
 
-
-// User Login Route
+// User Login
 userRoute.post("/login", async (req, res) => {
-    let { mobile, password } = req.body;
-    if (mobile == "") {
+
+    const { mobile, password } = req.body;
+
+    // Sanitize and validate user inputs
+    let sanitizedMobile = xss(mobile);
+
+    if (!mobile) {
         res.status(400).send({ "msg": "Please Provide Your Mobile" });
         return;
     }
-    if (password == "") {
+    if (!password) {
         res.status(400).send({ "msg": "Please Provide Your Password" });
         return;
     }
-
     try {
-        // Matching input from Database
-        let finding = await UserModel.find({ mobile });
 
-        if (finding.length == 1) {
-            bcrypt.compare(password, finding[0].password, async (err, result) => {
-                if (result) {
-                    // Generating Token
-                    const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
+        // Find user by mobile
+        const user = await UserModel.findOne({ "mobile": sanitizedMobile });
 
+        if (user && await bcrypt.compare(password, user.password)) {
+            // Generate token
+            const token = jwt.sign({ mobile: user.mobile }, secretKey);
 
-                    // Sending Response
-                    res.status(201).send({ "msg": "Login Successful", "token": token, "name": finding[0].name, "id": finding[0]._id });
-                } else {
-                    res.status(400).send({ "msg": "Wrong Credentials" });
-                    return;
-                }
+            // Sanitize output before sending response
+            const sanitizedResponse = {
+                msg: "Login Successful",
+                token: token,
+                name: xss(user.name),
+                id: xss(user._id)
+            };
+
+            // Adding a cookie to the response
+            res.cookie('authorization', token, {
+                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
+                httpOnly: true,
+                secure: true
+                // sameSite: 'strict'
             });
 
+            res.cookie('id', sanitizedResponse.id, {
+                maxAge: 20 * 24 * 60 * 60 * 1000, // 20 days of expiration
+                httpOnly: true,
+                secure: true
+                // sameSite: 'strict'
+            });
+
+            return res.status(200).json(sanitizedResponse);
         } else {
-            res.status(400).send({ "msg": "Wrong Credentials" });
+            return res.status(400).json({ "msg": "Invalid credentials" });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Login" });
+        console.error("Login Error:", error);
+        return res.status(500).json({ "msg": "Internal Server Error: Something went wrong while login" });
     }
 });
-
-
 
 
 
@@ -194,36 +233,47 @@ userRoute.post("/login", async (req, res) => {
 
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
+
+    // accepted roles
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+
     let id = req.headers.id;
     let { name, email, mobile } = req.body;
     let obj = {};
+
+    // Sanitize and validate input data
     if (name) {
-        obj.name = name;
+        obj.name = xss(name);
     }
     if (email) {
-        obj.email = email;
+        obj.email = xss(email);
     }
     if (mobile) {
-        obj.mobile = mobile;
+        obj.mobile = xss(mobile);
     }
+
     try {
         const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
         }
+
         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
         if (!updatedUser) {
             res.status(404).send({ "msg": "Not Found: User not found with the provided ID" });
             return;
         }
+
         let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
     }
 });
+
+
+
 
 
 
