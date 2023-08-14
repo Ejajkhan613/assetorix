@@ -215,7 +215,7 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
     }
 
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -259,7 +259,7 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
         obj.isVerified = isVerified;
     }
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -283,7 +283,7 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
     let allRoles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let roleQuery = req.query.role;
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -308,7 +308,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
     let { id, status } = req.body;
 
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to modify Access Control" });
             return;

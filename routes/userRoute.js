@@ -217,6 +217,8 @@ userRoute.post("/login", async (req, res) => {
                 // sameSite: 'strict'
             });
 
+
+
             return res.status(200).json(sanitizedResponse);
         } else {
             return res.status(400).json({ "msg": "Invalid credentials" });
@@ -253,7 +255,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
     }
 
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -282,7 +284,7 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     let id = req.headers.id;
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;
@@ -300,7 +302,7 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
     try {
-        const role = res.getHeader("role");
+        const role = res.locals.role;
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
             return;

@@ -15,9 +15,9 @@ const secretKey = process.env.secretKey;
 
 // Verification middleware
 const tokenVerify = async (req, res, next) => {
-    const token = req.cookies.authorization || req.headers.authorization;
-    const id = req.cookies.id || req.headers.id;
-    console.log(token, id)
+    console.log(req.cookies)
+    const token = req.headers.authorization;
+    const id = req.headers.id;
 
     try {
         if (!token || !id) {
