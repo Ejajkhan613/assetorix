@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const xss = require('xss');
 
+
+
 // Custom Modules
 const { UserModel } = require("../models/userModel");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
@@ -14,8 +16,10 @@ const { OtpModel } = require("../models/otpModel");
 const { PropertyModel } = require("../models/propertyModel");
 
 
+
 // SaltRounds
 const saltRounds = 10;
+
 
 
 // Secret Key
@@ -46,7 +50,7 @@ const checkRequiredFields = (object, requiredFields) => {
 
 
 
-
+// Get User Details
 userRoute.get("/", tokenVerify, async (req, res) => {
     let id = req.headers.id;
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
@@ -65,8 +69,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
     }
-})
-
+});
 
 
 
@@ -183,7 +186,7 @@ userRoute.post("/login", async (req, res) => {
                     };
 
                     // Sending Response
-                    res.status(201).send(sanitizedResponse);
+                    res.status(200).send(sanitizedResponse);
                 } else {
                     res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
                     return;

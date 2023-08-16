@@ -11,6 +11,7 @@ require('dotenv').config();
 // Importin Custom Modules
 const { connection } = require("./configs/db");
 const { userRoute } = require("./routes/userRoute");
+const { propertyRoute } = require("./routes/propertyRoute");
 const { adminRoute } = require("./routes/adminRoute");
 
 
@@ -37,6 +38,11 @@ app.get("/", (req, res) => {
 
 // Users Route
 app.use("/user", userRoute);
+
+
+
+// Property Route
+app.use("/property", propertyRoute);
 
 
 

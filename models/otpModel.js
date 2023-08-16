@@ -1,7 +1,9 @@
+// Dependencies
 const mongoose = require("mongoose");
 
 
 
+// Schema
 const otpSchema = mongoose.Schema({
     userID: {
         type: String,
@@ -23,7 +25,11 @@ const otpSchema = mongoose.Schema({
 });
 
 
+
+// Model
 const OtpModel = mongoose.model("otp", otpSchema);
 
 
+
+// Exporting Modules
 module.exports = { OtpModel };

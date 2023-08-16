@@ -1,6 +1,8 @@
 // Dependencies
 const mongoose = require("mongoose");
 
+
+
 // Schema
 const propertySchema = mongoose.Schema({
     userID: {
@@ -14,37 +16,32 @@ const propertySchema = mongoose.Schema({
     managedBy: {
         type: String
     },
-    propertyName: {
-        type: String,
-        required: true
-    },
     propertyType: {
+        type: String
+    },
+    looking_for: {
         type: String,
-        enum: ["Apartment", "House", "Condo", "Villa", "Other"]
+        enum: ["sell", "rent", "pg"]
     },
     address: {
-        street: String,
+        house: String,
         city: String,
         state: String,
-        zip: String
-    },
-    bedrooms: {
-        type: Number
-    },
-    bathrooms: {
-        type: Number
-    },
-    amenities: {
-        type: [String]
+        country: String,
+        zip: Number
     },
     isActive: {
         type: Boolean,
-        default: true
+        default: false
     }
-});
+}, { "strict": false });
+
+
 
 // Model
 const PropertyModel = mongoose.model("property", propertySchema);
+
+
 
 // Exporting Modules
 module.exports = { PropertyModel };

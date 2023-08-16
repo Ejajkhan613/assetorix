@@ -35,6 +35,6 @@ const tokenVerify = async (req, res, next) => {
 };
 
 
-module.exports = {
-    tokenVerify
-};
+
+// Exporting Module
+module.exports = { tokenVerify };

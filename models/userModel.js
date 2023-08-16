@@ -1,6 +1,8 @@
 // Dependencies
 const mongoose = require("mongoose");
 
+
+
 // Schema
 const userSchema = mongoose.Schema({
     avatar: {
@@ -47,8 +49,12 @@ const userSchema = mongoose.Schema({
     }
 });
 
+
+
 // Model
 const UserModel = mongoose.model("user", userSchema);
+
+
 
 // Exporting Modules
 module.exports = { UserModel };
