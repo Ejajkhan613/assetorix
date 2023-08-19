@@ -16,19 +16,24 @@ const propertySchema = mongoose.Schema({
     managedBy: {
         type: String
     },
-    propertyType: {
-        type: String
-    },
-    looking_for: {
+    propertyGroup: {
         type: String,
-        enum: ["sell", "rent", "pg"]
+        enum: ["Residential", "Commercial"]
+    },
+    propertyType: {
+        type: String,
+        enum: ["Flat/Apartment"]
+    },
+    lookingFor: {
+        type: String,
+        enum: ["Sell", "Rent", "PG"]
     },
     address: {
-        house: String,
+        locality: String,
+        pincode: Number,
         city: String,
         state: String,
-        country: String,
-        zip: Number
+        country: String
     },
     isActive: {
         type: Boolean,

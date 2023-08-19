@@ -19,36 +19,70 @@ const propertyRoute = express.Router();
 propertyRoute.use(express.json());
 
 
-// all Property
+
+// Items Per Page
+const ITEMS_PER_PAGE = 10;
+
+
+
+// get Property Details
 propertyRoute.get("/", async (req, res) => {
     try {
-        const { locality, city, state, country, looking_for } = req.query;
+        const { locality, pincode, city, state, country, page } = req.query;
+
+        const currentPage = parseInt(page) || 1;
+
+        const sanitizedLocality = xss(locality);
+        const sanitizedCity = xss(city);
+        const sanitizedState = xss(state);
+        const sanitizedCountry = xss(country);
 
         let addressFilters = {};
 
-        if (locality) {
-            addressFilters["address.locality"] = { $regex: new RegExp(locality, "i") };
+        if (sanitizedLocality) {
+            addressFilters["address.locality"] = { $regex: new RegExp(sanitizedLocality, "i") };
         }
 
-        if (city) {
-            addressFilters["address.city"] = { $regex: new RegExp(city, "i") };
+        if (pincode) {
+            addressFilters["address.pincode"] = xss(pincode);
         }
 
-        if (state) {
-            addressFilters["address.state"] = { $regex: new RegExp(state, "i") };
+        if (sanitizedCity) {
+            addressFilters["address.city"] = { $regex: new RegExp(sanitizedCity, "i") };
         }
 
-        if (country) {
-            addressFilters["address.country"] = { $regex: new RegExp(country, "i") };
+        if (sanitizedState) {
+            addressFilters["address.state"] = { $regex: new RegExp(sanitizedState, "i") };
         }
 
-        if (looking_for) {
-            addressFilters.looking_for = { $regex: new RegExp(looking_for, "i") };
+        if (sanitizedCountry) {
+            addressFilters["address.country"] = { $regex: new RegExp(sanitizedCountry, "i") };
         }
 
-        let data = await PropertyModel.find(addressFilters);
+        console.log(addressFilters)
 
-        res.status(200).send(data);
+        const totalCount = await PropertyModel.countDocuments(addressFilters);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+        const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
+        let data = await PropertyModel.find(addressFilters)
+            .skip(skipItems)
+            .limit(ITEMS_PER_PAGE);
+
+        // Adjust the data if it's the last page and there's not enough data for a full page
+        if (data.length === 0 && currentPage > 1) {
+            const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
+            data = await PropertyModel.find(addressFilters)
+                .skip(lastPageSkipItems)
+                .limit(totalCount % ITEMS_PER_PAGE);
+        }
+
+        res.status(200).send({
+            data,
+            currentPage: data.length === 0 ? totalPages : currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }

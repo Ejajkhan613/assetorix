@@ -21,6 +21,7 @@ const tokenVerify = async (req, res, next) => {
                 let checking = await UserModel.find({ "mobile": decoded.mobile });
                 if (checking.length >= 1 && checking[0]._id == id && checking[0].isBlocked == false) {
                     res.setHeader("role", checking[0].role);
+                    res.setHeader("x-powered-by", "Ejajul Ansari - NodeJS Developer");
                     next();
                 } else {
                     res.status(401).send({ "msg": "Unauthorized: User not found, please login again" });

@@ -12,6 +12,7 @@ require('dotenv').config();
 const { connection } = require("./configs/db");
 const { userRoute } = require("./routes/userRoute");
 const { propertyRoute } = require("./routes/propertyRoute");
+const { pincodeRoute } = require("./routes/pincodeRoute");
 const { adminRoute } = require("./routes/adminRoute");
 
 
@@ -43,6 +44,11 @@ app.use("/user", userRoute);
 
 // Property Route
 app.use("/property", propertyRoute);
+
+
+
+// Property Route
+app.use("/pincode", pincodeRoute);
 
 
 
