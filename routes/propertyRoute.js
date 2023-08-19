@@ -99,7 +99,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
     try {
         let newData = new PropertyModel(obj);
         await newData.save();
-        res.status(201).send({ "msg": "Property Posted Successfully" });
+        res.status(201).send({ "msg": "Property Posted Successfully", obj });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
