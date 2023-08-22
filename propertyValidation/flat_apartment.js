@@ -492,26 +492,49 @@ function flat_apartment(data) {
     obj.totalFloors = Number(xss(data.totalFloors));
 
 
-    // Checking which Floor Number ist Going to sell
+    // Checking which Floor Number is Going to sell
     if (!data.floorOn) {
-        return { "msg": "ERROR", "error": "Property Floor Number" };
+        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
     }
     // Adding Floor Number
     obj.floorOn = xss(data.floorOn);
 
 
     if (!data.areaUnit) {
-        return { "msg": "ERROR", "error": "Area Unit" };
+        return { "msg": "ERROR", "error": "Missing Area Unit" };
     }
     obj.areaUnit = xss(data.areaUnit);
 
 
     if (!data.countryCurrency) {
-        return { "msg": "ERROR", "error": "Area Unit" };
+        return { "msg": "ERROR", "error": "Missing Country Currency Code" };
     }
     obj.countryCurrency = xss(data.countryCurrency);
 
 
+
+    // Checking availabilityStatus
+    if (!data.availabilityStatus) {
+        return { "msg": "ERROR", "error": "Missing Availability Status" };
+    }
+    // Adding availabilityStatus
+    obj.availabilityStatus = xss(data.availabilityStatus);
+
+    if (data.availabilityStatus == "Ready to move") {
+        if (data.propertyStatus) {
+            obj.propertyStatus = xss(data.propertyStatus);
+        } else {
+            return { "msg": "ERROR", "error": "Missing Property Year Status" };
+        }
+    }
+
+    if (data.availabilityStatus == "Under construction") {
+        if (data.expectedByYear) {
+            obj.expectedByYear = xss(data.expectedByYear);
+        } else {
+            return { "msg": "ERROR", "error": "Missing Expected by Year" };
+        }
+    }
 
     return { "msg": "SUCCESS", "data": obj };
 }
