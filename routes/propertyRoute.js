@@ -7,7 +7,7 @@ const xss = require("xss");
 // Custom Modules
 const { PropertyModel } = require("../models/propertyModel");
 const { tokenVerify } = require("../middlewares/token");
-
+const { flat_apartment } = require("../propertyValidation/flat_apartment");
 
 
 // Creating Route Variable
@@ -94,16 +94,31 @@ propertyRoute.get("/", async (req, res) => {
 
 // Post Property
 propertyRoute.post("/", tokenVerify, async (req, res) => {
-    let obj = req.body;
-    obj.userID = req.headers.id;
     try {
-        let newData = new PropertyModel(obj);
-        await newData.save();
-        res.status(201).send({ "msg": "Property Posted Successfully", obj });
+        let data = req.body;
+        data.userID = xss(req.headers.id);
+
+        if (data.propertyType == "Flat / Apartment") {
+            let obj = flat_apartment(data);
+            if (obj.msg == "SUCCESS") {
+                let newData = new PropertyModel(obj.data);
+                await newData.save();
+                res.status(201).send({ "msg": "Property Posted Successfully" });
+            } else {
+                res.status(401).send({ "msg": obj.error });
+            }
+            // let newData = new PropertyModel(data);
+            // await newData.save();
+            // res.status(201).send({ "msg": "Property Posted Successfully", obj });
+        } else {
+            res.status(201).send({ "msg": "Different Property Type", "data": data });
+        }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
 });
+
+
 
 
 
