@@ -512,6 +512,12 @@ function flat_apartment(data) {
     obj.countryCurrency = xss(data.countryCurrency);
 
 
+    if (!data.description) {
+        return { "msg": "ERROR", "error": "Missing Description" };
+    }
+    obj.description = xss(data.description);
+
+
 
     // Checking availabilityStatus
     if (!data.availabilityStatus) {
