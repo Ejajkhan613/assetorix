@@ -420,19 +420,19 @@ function flat_apartment(data) {
 
 
     // Checking Open Parking
-    if (!data.parking.openParking) {
-        return { "msg": "ERROR", "error": "Open Parking Count is not Present" };
+    if (data.parking.openParking) {
+        parking.openParking = Number(xss(data.parking.openParking));
     }
-    // Adding Open Parking
-    parking.openParking = Number(xss(data.parking.openParking));
+
 
 
     // Checking Close Parking
     if (!data.parking.closeParking) {
-        return { "msg": "ERROR", "error": "Close Parking Count is not Present" };
+        parking.closeParking = Number(xss(data.parking.closeParking));
     }
-    // Adding Close Parking
-    parking.closeParking = Number(xss(data.parking.closeParking));
+
+    obj.parking = parking;
+
 
 
     // --------------------------------- PARKING OBJECT ENDING ---------------------------------
