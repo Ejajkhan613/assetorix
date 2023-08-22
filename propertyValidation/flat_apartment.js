@@ -500,8 +500,14 @@ function flat_apartment(data) {
     obj.floorOn = xss(data.floorOn);
 
 
+    if (!data.plotArea) {
+        return { "msg": "ERROR", "error": "Missing Plot Area" };
+    }
+    obj.plotArea = Number(xss(data.plotArea));
+
+
     if (!data.areaUnit) {
-        return { "msg": "ERROR", "error": "Missing Area Unit" };
+        return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
     obj.areaUnit = xss(data.areaUnit);
 
