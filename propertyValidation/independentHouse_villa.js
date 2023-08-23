@@ -552,4 +552,4 @@ function independentHouse_villa(data) {
 }
 
 
-module.exports = { flat_apartment };
+module.exports = { independentHouse_villa };
