@@ -93,36 +93,74 @@ propertyRoute.get("/", async (req, res) => {
 
 
 
+// // Post Property
+// propertyRoute.post("/", tokenVerify, async (req, res) => {
+//     try {
+//         if (data.propertyType == "Flat / Apartment" && data.lookingFor == "Sell") {
+//             let obj = flat_apartment(req.body);
+//             if (obj.msg == "SUCCESS") {
+//                 obj.data.userID = xss(req.headers.id);
+//                 let newData = new PropertyModel(obj.data);
+//                 await newData.save();
+//                 res.status(201).send({ "msg": "Property Posted Successfully" });
+//             } else {
+//                 res.status(401).send({ "msg": obj.error });
+//             }
+//         } else if (data.propertyType == "Independent House / villa" && data.lookingFor == "Sell") {
+//             let obj = independentHouse_villa(req.body);
+//             if (obj.msg == "SUCCESS") {
+//                 obj.data.userID = xss(req.headers.id);
+//                 let newData = new PropertyModel(obj.data);
+//                 await newData.save();
+//                 res.status(201).send({ "msg": "Property Posted Successfully" });
+//             } else {
+//                 res.status(401).send({ "msg": obj.error });
+//             }
+//         } else {
+//             res.status(401).send({ "msg": "Data Validation Not Implemented for this property Type" });
+//         }
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While Posting Property" });
+//     }
+// });
+
+
 // Post Property
 propertyRoute.post("/", tokenVerify, async (req, res) => {
+    let payload = req.body;
     try {
-        if (data.propertyType == "Flat / Apartment" && data.lookingFor == "Sell") {
-            let obj = flat_apartment(req.body);
-            if (obj.msg == "SUCCESS") {
-                obj.data.userID = xss(req.headers.id);
-                let newData = new PropertyModel(obj.data);
-                await newData.save();
-                res.status(201).send({ "msg": "Property Posted Successfully" });
+        if (payload.lookingFor == "Sell") {
+            if (payload.propertyType == "Flat / Apartment") {
+                let obj = flat_apartment(payload);
+                if (obj.msg == "SUCCESS") {
+                    obj.data.userID = xss(req.headers.id);
+                    let newData = new PropertyModel(obj.data);
+                    await newData.save();
+                    res.status(201).send({ "msg": `Flat/Apartment Posted Successfully` });
+                } else {
+                    res.status(401).send({ "msg": obj.error });
+                }
+            } else if (payload.propertyType == "Independent House / villa") {
+                let obj = independentHouse_villa(payload);
+                if (obj.msg == "SUCCESS") {
+                    obj.data.userID = xss(req.headers.id);
+                    let newData = new PropertyModel(obj.data);
+                    await newData.save();
+                    res.status(201).send({ "msg": "Independent House/villa Posted Successfully" });
+                } else {
+                    res.status(401).send({ "msg": obj.error });
+                }
             } else {
-                res.status(401).send({ "msg": obj.error });
-            }
-        } else if (data.propertyType == "Independent House / villa" && data.lookingFor == "Sell") {
-            let obj = independentHouse_villa(req.body);
-            if (obj.msg == "SUCCESS") {
-                obj.data.userID = xss(req.headers.id);
-                let newData = new PropertyModel(obj.data);
-                await newData.save();
-                res.status(201).send({ "msg": "Property Posted Successfully" });
-            } else {
-                res.status(401).send({ "msg": obj.error });
+                res.status(401).send({ "msg": `Data Validation Not Implemented for ${payload.propertyType}` });
             }
         } else {
-            res.status(401).send({ "msg": "Data Validation Not Implemented for this property Type" });
+            res.status(401).send({ "msg": `Data Validation Not Implemented for ${payload.lookingFor}` });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
 });
+
 
 
 
