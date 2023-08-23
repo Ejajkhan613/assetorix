@@ -548,6 +548,18 @@ function independentHouse_villa(data) {
         }
     }
 
+    if (data.additionalPricingDetails) {
+        let additionalPricingDetails = {};
+
+        additionalPricingDetails.maintenancePrice = xss(data.additionalPricingDetails.maintenancePrice);
+        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
+        additionalPricingDetails.expectedRental = xss(data.additionalPricingDetails.expectedRental);
+        additionalPricingDetails.bookingAmount = xss(data.additionalPricingDetails.bookingAmount);
+        additionalPricingDetails.annualDuesPayable = xss(data.additionalPricingDetails.annualDuesPayable);
+
+        obj.additionalPricingDetails = additionalPricingDetails;
+    }
+
     return { "msg": "SUCCESS", "data": obj };
 }
 
