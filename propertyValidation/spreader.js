@@ -14,7 +14,7 @@ function spreader(payload) {
             return flat_apartment(payload);
         } else if (payload.propertyType == "Independent House / villa") {
             return independentHouse_villa(payload);
-        } else if (payload.propertyType == "Independent House / villa") {
+        } else if (payload.propertyType == "Independent / Builder Floor") {
             return independent_builderFloor(payload);
         } else {
             return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.propertyType}` }
