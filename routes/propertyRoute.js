@@ -96,11 +96,11 @@ propertyRoute.get("/", async (req, res) => {
 propertyRoute.post("/", tokenVerify, async (req, res) => {
     try {
         let data = req.body;
-        data.userID = xss(req.headers.id);
 
         if (data.propertyType == "Flat / Apartment") {
             let obj = flat_apartment(data);
             if (obj.msg == "SUCCESS") {
+                obj.data.userID = xss(req.headers.id);
                 let newData = new PropertyModel(obj.data);
                 await newData.save();
                 res.status(201).send({ "msg": "Property Posted Successfully" });
