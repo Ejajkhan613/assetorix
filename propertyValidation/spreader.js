@@ -4,6 +4,7 @@ const xss = require("xss");
 
 const { flat_apartment } = require("../propertyValidation/flat_apartment");
 const { independentHouse_villa } = require("../propertyValidation/independentHouse_villa");
+const { independent_builderFloor } = require("../propertyValidation/independent_builderFloor");
 
 
 
@@ -13,6 +14,8 @@ function spreader(payload) {
             return flat_apartment(payload);
         } else if (payload.propertyType == "Independent House / villa") {
             return independentHouse_villa(payload);
+        } else if (payload.propertyType == "Independent House / villa") {
+            return independent_builderFloor(payload);
         } else {
             return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.propertyType}` }
         }
