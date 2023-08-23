@@ -107,11 +107,9 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             } else {
                 res.status(401).send({ "msg": obj.error });
             }
-            // let newData = new PropertyModel(data);
-            // await newData.save();
-            // res.status(201).send({ "msg": "Property Posted Successfully", obj });
         } else {
             data.userID = xss(req.headers.id);
+            console.log(data)
             let newData = new PropertyModel(data);
             await newData.save();
             res.status(201).send({ "msg": "Property Posted Successfully", "data": newData });
@@ -120,7 +118,6 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
 });
-
 
 
 
