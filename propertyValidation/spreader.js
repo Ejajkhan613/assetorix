@@ -6,6 +6,7 @@ const { flat_apartment } = require("../propertyValidation/flat_apartment");
 const { independentHouse_villa } = require("../propertyValidation/independentHouse_villa");
 const { independent_builderFloor } = require("../propertyValidation/independent_builderFloor");
 const { servicedApartment } = require("../propertyValidation/servicedApartment");
+const { rk_studio } = require("../propertyValidation/rk_studio");
 
 
 
@@ -18,7 +19,9 @@ function spreader(payload) {
         } else if (payload.propertyType == "Independent / Builder Floor") {
             return independent_builderFloor(payload);
         } else if (payload.propertyType == "Serviced Apartment") {
-            return servicedApartment(payload)
+            return servicedApartment(payload);
+        } else if (payload.propertyType == "1RK / Studio Apartment") {
+            return rk_studio(payload);
         } else {
             return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.propertyType}` }
         }
