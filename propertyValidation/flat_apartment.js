@@ -21,12 +21,27 @@ function flat_apartment(data) {
     let address = {};
 
 
+    // Checking House Number
+    if (data.address.houseNumber) {
+        // Adding House Number
+        address.houseNumber = xss(data.address.houseNumber);
+    }
+
+
     // Checking Apartment Name
     if (!data.address.apartmentName) {
         return { "msg": "ERROR", "error": "Missing Apartment Name" };
     }
     // Adding Apartment Name
     address.apartmentName = xss(data.address.apartmentName);
+
+
+    // Checking Pincode
+    if (!data.address.pincode) {
+        return { "msg": "ERROR", "error": "Missing pincode" };
+    }
+    // Adding Pincode
+    address.pincode = xss(data.address.pincode);
 
 
     // Checking Locality
@@ -36,13 +51,6 @@ function flat_apartment(data) {
     // Adding Locality
     address.locality = xss(data.address.locality);
 
-
-    // Checking Pincode
-    if (!data.address.pincode) {
-        return { "msg": "ERROR", "error": "Missing pincode" };
-    }
-    // Adding Pincode
-    address.pincode = xss(data.address.pincode);
 
 
     // Checking City
@@ -67,13 +75,6 @@ function flat_apartment(data) {
     }
     // Adding Country
     address.country = xss(data.address.country);
-
-
-    // Checking House Number
-    if (data.address.houseNumber) {
-        // Adding House Number
-        address.houseNumber = xss(data.address.houseNumber);
-    }
 
 
     // Adding Address Object in Main Object

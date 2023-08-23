@@ -8,6 +8,7 @@ const xss = require("xss");
 const { PropertyModel } = require("../models/propertyModel");
 const { tokenVerify } = require("../middlewares/token");
 const { flat_apartment } = require("../propertyValidation/flat_apartment");
+const { independentHouse_villa } = require("../propertyValidation/independentHouse_villa");
 
 
 // Creating Route Variable
@@ -95,10 +96,18 @@ propertyRoute.get("/", async (req, res) => {
 // Post Property
 propertyRoute.post("/", tokenVerify, async (req, res) => {
     try {
-        let data = req.body;
-
-        if (data.propertyType == "Flat / Apartment") {
-            let obj = flat_apartment(data);
+        if (data.propertyType == "Flat / Apartment" && data.lookingFor == "Sell") {
+            let obj = flat_apartment(req.body);
+            if (obj.msg == "SUCCESS") {
+                obj.data.userID = xss(req.headers.id);
+                let newData = new PropertyModel(obj.data);
+                await newData.save();
+                res.status(201).send({ "msg": "Property Posted Successfully" });
+            } else {
+                res.status(401).send({ "msg": obj.error });
+            }
+        } else if (data.propertyType == "Independent House / villa" && data.lookingFor == "Sell") {
+            let obj = independentHouse_villa(req.body);
             if (obj.msg == "SUCCESS") {
                 obj.data.userID = xss(req.headers.id);
                 let newData = new PropertyModel(obj.data);
@@ -108,11 +117,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
                 res.status(401).send({ "msg": obj.error });
             }
         } else {
-            data.userID = xss(req.headers.id);
-            console.log(data)
-            let newData = new PropertyModel(data);
-            await newData.save();
-            res.status(201).send({ "msg": "Property Posted Successfully", "data": newData });
+            res.status(401).send({ "msg": "Data Validation Not Implemented for this property Type" });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
