@@ -111,7 +111,10 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             // await newData.save();
             // res.status(201).send({ "msg": "Property Posted Successfully", obj });
         } else {
-            res.status(201).send({ "msg": "Different Property Type", "data": data });
+            data.userID = xss(req.headers.id);
+            let newData = new PropertyModel(data);
+            await newData.save();
+            res.status(201).send({ "msg": "Property Posted Successfully", "data": newData });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
