@@ -1,7 +1,7 @@
 const xss = require("xss");
 
 
-function independent_builderFloor(data) {
+function farmhouse(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
@@ -493,24 +493,38 @@ function independent_builderFloor(data) {
 
 
     // Checking which Floor Number is Going to sell
-    if (!data.floorOn) {
-        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
-    }
+    // if (!data.floorOn) {
+    //     return { "msg": "ERROR", "error": "Missing Property Floor Number" };
+    // }
     // Adding Floor Number
-    obj.floorOn = xss(data.floorOn);
+    // obj.floorOn = xss(data.floorOn);
 
 
+    // Checking Plot Area
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
+    // Adding Plot Area
     obj.plotArea = Number(xss(data.plotArea));
 
 
+    // Checking Plot Area Unit
     if (!data.plotAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
+    // Adding Plot Area Unit
     obj.plotAreaUnit = xss(data.plotAreaUnit);
 
+
+    // Adding Carpet Area
+    if (data.carpetArea) {
+        obj.carpetArea = Number(xss(data.carpetArea));
+    }
+
+    // Adding Carpet Area Unit
+    if (data.carpetAreaUnit) {
+        obj.carpetAreaUnit = xss(data.carpetAreaUnit);
+    }
 
     // Adding Builtup Area
     if (data.builtupArea) {
@@ -520,17 +534,6 @@ function independent_builderFloor(data) {
     // Adding Builtup Area Unit
     if (data.builtupAreaUnit) {
         obj.builtupAreaUnit = xss(data.builtupAreaUnit);
-    }
-
-
-    // Adding Super Builtup Area
-    if (data.superBuiltupArea) {
-        obj.superBuiltupArea = Number(xss(data.superBuiltupArea));
-    }
-
-    // Adding Super Builtup Area Unit
-    if (data.superBuiltupAreaUnit) {
-        obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
     }
 
     // Checking Country Currency Code
@@ -589,4 +592,4 @@ function independent_builderFloor(data) {
 }
 
 
-module.exports = { independent_builderFloor };
+module.exports = { farmhouse };

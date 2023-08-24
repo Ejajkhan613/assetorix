@@ -500,28 +500,54 @@ function flat_apartment(data) {
     // Adding Floor Number
     obj.floorOn = xss(data.floorOn);
 
-
+    // Checking Plot Area
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
+    // Adding Plot Area
     obj.plotArea = Number(xss(data.plotArea));
 
-
-    if (!data.areaUnit) {
+    // Checking Plot Area Unit
+    if (!data.plotAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
-    obj.areaUnit = xss(data.areaUnit);
+    // Adding Plot Area Unit
+    obj.plotAreaUnit = xss(data.plotAreaUnit);
 
 
+    // Adding Builtup Area
+    if (data.builtupArea) {
+        obj.builtupArea = Number(xss(data.builtupArea));
+    }
+
+    // Adding Builtup Area Unit
+    if (data.builtupAreaUnit) {
+        obj.builtupAreaUnit = xss(data.builtupAreaUnit);
+    }
+
+
+    // Adding Super Builtup Area
+    if (data.superBuiltupArea) {
+        obj.superBuiltupArea = Number(xss(data.superBuiltupArea));
+    }
+
+    // Adding Super Builtup Area Unit
+    if (data.superBuiltupAreaUnit) {
+        obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
+    }
+
+    // Checking Country Currency Code
     if (!data.countryCurrency) {
         return { "msg": "ERROR", "error": "Missing Country Currency Code" };
     }
+    // Adding Country Currency Code
     obj.countryCurrency = xss(data.countryCurrency);
 
-
+    // Checking Description
     if (!data.description) {
         return { "msg": "ERROR", "error": "Missing Description" };
     }
+    // Adding Description
     obj.description = xss(data.description);
 
 

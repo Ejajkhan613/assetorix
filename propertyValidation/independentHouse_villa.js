@@ -506,21 +506,45 @@ function independentHouse_villa(data) {
     obj.plotArea = Number(xss(data.plotArea));
 
 
-    if (!data.areaUnit) {
+    if (!data.plotAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
-    obj.areaUnit = xss(data.areaUnit);
+    obj.plotAreaUnit = xss(data.plotAreaUnit);
 
 
+    // Adding Carpet Area
+    if (data.carpetArea) {
+        obj.carpetArea = Number(xss(data.carpetArea));
+    }
+
+    // Adding Carpet Area Unit
+    if (data.carpetAreaUnit) {
+        obj.carpetAreaUnit = xss(data.carpetAreaUnit);
+    }
+
+    // Adding Builtup Area
+    if (data.builtupArea) {
+        obj.builtupArea = Number(xss(data.builtupArea));
+    }
+
+    // Adding Builtup Area Unit
+    if (data.builtupAreaUnit) {
+        obj.builtupAreaUnit = xss(data.builtupAreaUnit);
+    }
+
+    // Checking Country Currency Code
     if (!data.countryCurrency) {
         return { "msg": "ERROR", "error": "Missing Country Currency Code" };
     }
+    // Adding Country Currency Code
     obj.countryCurrency = xss(data.countryCurrency);
 
 
+    // Checking Description
     if (!data.description) {
         return { "msg": "ERROR", "error": "Missing Description" };
     }
+    // Adding Description
     obj.description = xss(data.description);
 
 
