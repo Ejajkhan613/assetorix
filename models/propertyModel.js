@@ -22,7 +22,7 @@ const propertySchema = mongoose.Schema({
     },
     propertyType: {
         type: String,
-        enum: ["Flat / Apartment", "Independent House / Villa", "Independent / Builder Floor", "Serviced Apartment", "1RK / Studio Apartment", "Farmhouse"]
+        enum: ["Flat / Apartment", "Independent House / Villa", "Independent / Builder Floor", "Serviced Apartment", "1RK / Studio Apartment", "Farmhouse", "Plot / Land"]
     },
     lookingFor: {
         type: String,

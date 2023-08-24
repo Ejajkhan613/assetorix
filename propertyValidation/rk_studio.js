@@ -14,7 +14,7 @@ function rk_studio(data) {
 
     // Checking if address object is present in the input from frontend
     if (!data.address) {
-        return { "msg": "ERROR", "error": "address Data is not Present" };
+        return { "msg": "ERROR", "error": "Address Details not Present" };
     }
 
     // if present then creating a new address object that will be added in Main Object
@@ -38,7 +38,7 @@ function rk_studio(data) {
 
     // Checking Pincode
     if (!data.address.pincode) {
-        return { "msg": "ERROR", "error": "Missing pincode" };
+        return { "msg": "ERROR", "error": "Missing Pincode" };
     }
     // Adding Pincode
     address.pincode = xss(data.address.pincode);
@@ -46,7 +46,7 @@ function rk_studio(data) {
 
     // Checking Locality
     if (!data.address.locality) {
-        return { "msg": "ERROR", "error": "Missing locality" };
+        return { "msg": "ERROR", "error": "Missing Locality" };
     }
     // Adding Locality
     address.locality = xss(data.address.locality);
@@ -54,7 +54,7 @@ function rk_studio(data) {
 
     // Checking City
     if (!data.address.city) {
-        return { "msg": "ERROR", "error": "Missing city" };
+        return { "msg": "ERROR", "error": "Missing City" };
     }
     // Adding City
     address.city = xss(data.address.city);
@@ -62,7 +62,7 @@ function rk_studio(data) {
 
     // Checking State
     if (!data.address.state) {
-        return { "msg": "ERROR", "error": "Missing state" };
+        return { "msg": "ERROR", "error": "Missing State" };
     }
     // Adding State
     address.state = xss(data.address.state);
@@ -70,7 +70,7 @@ function rk_studio(data) {
 
     // Checking Country
     if (!data.address.country) {
-        return { "msg": "ERROR", "error": "Missing country" };
+        return { "msg": "ERROR", "error": "Missing Country" };
     }
     // Adding Country
     address.country = xss(data.address.country);
@@ -114,7 +114,7 @@ function rk_studio(data) {
 
     // Checking Balcony Counts
     if (!data.roomDetails.balcony) {
-        return { "msg": "ERROR", "error": "Missing Balconys Quantity" };
+        return { "msg": "ERROR", "error": "Missing Balconies Quantity" };
     }
     // Adding Balcony Counts
     roomDetails.balcony = Number(xss(data.roomDetails.balcony));
@@ -128,7 +128,7 @@ function rk_studio(data) {
 
     // Checking Looking For
     if (!data.lookingFor) {
-        return { "msg": "ERROR", "error": "Missing lookingFor" };
+        return { "msg": "ERROR", "error": "Missing looking For" };
     }
     // Adding Looking For
     obj.lookingFor = xss(data.lookingFor);
@@ -160,7 +160,7 @@ function rk_studio(data) {
 
     // Checking Property Price
     if (!data.price) {
-        return { "msg": "ERROR", "error": "Missing price" };
+        return { "msg": "ERROR", "error": "Missing Price" };
     }
     // Adding Property Price
     obj.price = Number(xss(data.price));
@@ -372,13 +372,13 @@ function rk_studio(data) {
 
         let furnishedObj = {};
 
-        furnishedObj.light = xss(data.furnishedObj.light);
-        furnishedObj.fans = xss(data.furnishedObj.fans);
-        furnishedObj.ac = xss(data.furnishedObj.ac);
-        furnishedObj.tv = xss(data.furnishedObj.tv);
-        furnishedObj.beds = xss(data.furnishedObj.beds);
-        furnishedObj.wardrobe = xss(data.furnishedObj.wardrobe);
-        furnishedObj.geyser = xss(data.furnishedObj.geyser);
+        furnishedObj.light = Number(xss(data.furnishedObj.light));
+        furnishedObj.fans = Number(xss(data.furnishedObj.fans));
+        furnishedObj.ac = Number(xss(data.furnishedObj.ac));
+        furnishedObj.tv = Number(xss(data.furnishedObj.tv));
+        furnishedObj.beds = Number(xss(data.furnishedObj.beds));
+        furnishedObj.wardrobe = Number(xss(data.furnishedObj.wardrobe));
+        furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
 
         obj.furnishedObj = furnishedObj;
     }
@@ -412,7 +412,7 @@ function rk_studio(data) {
 
     // Checking if parking object is present in the input from frontend
     if (!data.parking) {
-        return { "msg": "ERROR", "error": "Parking Data is not Present" };
+        return { "msg": "ERROR", "error": "Missing Parking Details" };
     }
 
     // if present then creating a new parking object that will be added in Main Object
@@ -445,7 +445,7 @@ function rk_studio(data) {
 
     // Checking Power Backup
     if (!data.powerBackup) {
-        return { "msg": "ERROR", "error": "Missing Power Backup" };
+        return { "msg": "ERROR", "error": "Missing Power Backup Details" };
     }
     // Adding Power Backup
     obj.powerBackup = xss(data.powerBackup);
@@ -453,7 +453,7 @@ function rk_studio(data) {
 
     // Checking Property Facing (Direction of Property)
     if (!data.propertyFacing) {
-        return { "msg": "ERROR", "error": "Missing Property Facing" };
+        return { "msg": "ERROR", "error": "Missing Property Facing Direction" };
     }
     // Adding Property Facing
     obj.propertyFacing = xss(data.propertyFacing);
@@ -484,11 +484,11 @@ function rk_studio(data) {
     obj.roadFacingWidthType = xss(data.roadFacingWidthType);
 
 
-    // Checking Total Floors
+    // Checking Missing Total Floors
     if (!data.totalFloors) {
-        return { "msg": "ERROR", "error": "Total Floors" };
+        return { "msg": "ERROR", "error": "Missing Total Floors" };
     }
-    // Adding Total Floors
+    // Adding Missing Total Floors
     obj.totalFloors = Number(xss(data.totalFloors));
 
 
@@ -581,11 +581,11 @@ function rk_studio(data) {
     if (data.additionalPricingDetails) {
         let additionalPricingDetails = {};
 
-        additionalPricingDetails.maintenancePrice = xss(data.additionalPricingDetails.maintenancePrice);
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
         additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-        additionalPricingDetails.bookingAmount = xss(data.additionalPricingDetails.bookingAmount);
-        additionalPricingDetails.annualDuesPayable = xss(data.additionalPricingDetails.annualDuesPayable);
-        additionalPricingDetails.membershipCharge = xss(data.additionalPricingDetails.membershipCharge);
+        additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
+        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
+        additionalPricingDetails.membershipCharge = Number(xss(data.additionalPricingDetails.membershipCharge));
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }

@@ -26,7 +26,7 @@ function spreader(payload) {
         } else if (payload.propertyType == "Plot / Land") {
             return plot_land(payload);
         } else {
-            return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.propertyType}` }
+            return { "msg": "ERROR", "error": `${payload.propertyType} is Wrong Property Type` }
         }
     } else if (payload.lookingFor == "Rent") {
         return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.lookingFor}` }

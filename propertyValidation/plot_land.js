@@ -14,7 +14,7 @@ function plot_land(data) {
 
     // Checking if address object is present in the input from frontend
     if (!data.address) {
-        return { "msg": "ERROR", "error": "address Data is not Present" };
+        return { "msg": "ERROR", "error": "Address Details not Present" };
     }
 
     // if present then creating a new address object that will be added in Main Object
@@ -38,7 +38,7 @@ function plot_land(data) {
 
     // Checking Pincode
     if (!data.address.pincode) {
-        return { "msg": "ERROR", "error": "Missing pincode" };
+        return { "msg": "ERROR", "error": "Missing Pincode" };
     }
     // Adding Pincode
     address.pincode = xss(data.address.pincode);
@@ -46,7 +46,7 @@ function plot_land(data) {
 
     // Checking Locality
     if (!data.address.locality) {
-        return { "msg": "ERROR", "error": "Missing locality" };
+        return { "msg": "ERROR", "error": "Missing Locality" };
     }
     // Adding Locality
     address.locality = xss(data.address.locality);
@@ -54,7 +54,7 @@ function plot_land(data) {
 
     // Checking City
     if (!data.address.city) {
-        return { "msg": "ERROR", "error": "Missing city" };
+        return { "msg": "ERROR", "error": "Missing City" };
     }
     // Adding City
     address.city = xss(data.address.city);
@@ -62,7 +62,7 @@ function plot_land(data) {
 
     // Checking State
     if (!data.address.state) {
-        return { "msg": "ERROR", "error": "Missing state" };
+        return { "msg": "ERROR", "error": "Missing State" };
     }
     // Adding State
     address.state = xss(data.address.state);
@@ -70,7 +70,7 @@ function plot_land(data) {
 
     // Checking Country
     if (!data.address.country) {
-        return { "msg": "ERROR", "error": "Missing country" };
+        return { "msg": "ERROR", "error": "Missing Country" };
     }
     // Adding Country
     address.country = xss(data.address.country);
@@ -86,7 +86,7 @@ function plot_land(data) {
 
     // Checking Looking For
     if (!data.lookingFor) {
-        return { "msg": "ERROR", "error": "Missing lookingFor" };
+        return { "msg": "ERROR", "error": "Missing looking For" };
     }
     // Adding Looking For
     obj.lookingFor = xss(data.lookingFor);
@@ -118,7 +118,7 @@ function plot_land(data) {
 
     // Checking Property Price
     if (!data.price) {
-        return { "msg": "ERROR", "error": "Missing price" };
+        return { "msg": "ERROR", "error": "Missing Price" };
     }
     // Adding Property Price
     obj.price = Number(xss(data.price));
@@ -166,93 +166,6 @@ function plot_land(data) {
 
 
     // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
-
-
-
-
-
-    // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
-
-
-    let propertyFeatures = [];
-
-    if (data.propertyFeatures.length) {
-        for (let a = 0; a < data.propertyFeatures.length; a++) {
-            propertyFeatures.push(xss(data.propertyFeatures[a]));
-        }
-    }
-
-    obj.propertyFeatures = propertyFeatures;
-
-
-    // --------------------------------- PROPERTY FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-
-    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY STARTING ---------------------------------
-
-
-    let society_buildingFeatures = [];
-
-    if (data.society_buildingFeatures.length) {
-        for (let a = 0; a < data.society_buildingFeatures.length; a++) {
-            society_buildingFeatures.push(xss(data.society_buildingFeatures[a]));
-        }
-    }
-
-    obj.society_buildingFeatures = society_buildingFeatures;
-
-
-    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-
-    // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
-
-
-    let additionalFeatures = [];
-
-    if (data.additionalFeatures.length) {
-        for (let a = 0; a < data.additionalFeatures.length; a++) {
-            additionalFeatures.push(xss(data.additionalFeatures[a]));
-        }
-    }
-
-    obj.additionalFeatures = additionalFeatures;
-
-
-    // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-    // --------------------------------- WATER SOURCES ARRAY STARTING ---------------------------------
-
-
-    let waterSources = [];
-
-    if (data.waterSources.length) {
-        for (let a = 0; a < data.waterSources.length; a++) {
-            waterSources.push(xss(data.waterSources[a]));
-        }
-    }
-
-    obj.waterSources = waterSources;
-
-
-    // --------------------------------- WATER SOURCES ARRAY ENDING ---------------------------------
-
-
 
 
 
@@ -312,118 +225,13 @@ function plot_land(data) {
 
 
 
-    // --------------------------------- FURNISHED LIST ARRAY STARTING ---------------------------------
-
-    obj.furnished = data.furnished;
-
-    if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
-
-        let furnishedList = [];
-
-        if (data.furnishedList.length) {
-            for (let a = 0; a < data.furnishedList.length; a++) {
-                furnishedList.push(xss(data.furnishedList[a]));
-            }
-        }
-
-        obj.furnishedList = furnishedList;
-
-        let furnishedObj = {};
-
-        furnishedObj.light = xss(data.furnishedObj.light);
-        furnishedObj.fans = xss(data.furnishedObj.fans);
-        furnishedObj.ac = xss(data.furnishedObj.ac);
-        furnishedObj.tv = xss(data.furnishedObj.tv);
-        furnishedObj.beds = xss(data.furnishedObj.beds);
-        furnishedObj.wardrobe = xss(data.furnishedObj.wardrobe);
-        furnishedObj.geyser = xss(data.furnishedObj.geyser);
-
-        obj.furnishedObj = furnishedObj;
-    }
-
-
-
-    // --------------------------------- FURNISHED LIST ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- OTHER ROOMS ARRAY STARTING ---------------------------------
-
-
-    let otherRoom = [];
-
-    if (data.otherRoom.length) {
-        for (let a = 0; a < data.otherRoom.length; a++) {
-            otherRoom.push(xss(data.otherRoom[a]));
-        }
-    }
-
-    obj.otherRoom = otherRoom;
-
-
-    // --------------------------------- OTHER ROOMS ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- PARKING OBJECT STARTING ---------------------------------
-
-
-    // Checking if parking object is present in the input from frontend
-    if (!data.parking) {
-        return { "msg": "ERROR", "error": "Parking Data is not Present" };
-    }
-
-    // if present then creating a new parking object that will be added in Main Object
-    let parking = {};
-
-
-    // Checking Open Parking
-    if (data.parking.openParking) {
-        parking.openParking = Number(xss(data.parking.openParking));
-    }
-
-
-
-    // Checking Close Parking
-    if (data.parking.closeParking) {
-        parking.closeParking = Number(xss(data.parking.closeParking));
-    }
-
-    obj.parking = parking;
-
-
-
-    // --------------------------------- PARKING OBJECT ENDING ---------------------------------
-
-
-
-
-
-
-
-    // Checking Power Backup
-    if (!data.powerBackup) {
-        return { "msg": "ERROR", "error": "Missing Power Backup" };
-    }
-    // Adding Power Backup
-    obj.powerBackup = xss(data.powerBackup);
-
 
     // Checking Property Facing (Direction of Property)
     if (!data.propertyFacing) {
-        return { "msg": "ERROR", "error": "Missing Property Facing" };
+        return { "msg": "ERROR", "error": "Missing Property Facing Direction" };
     }
     // Adding Property Facing
     obj.propertyFacing = xss(data.propertyFacing);
-
-
-    // Checking Property Flooring Type
-    if (!data.flooring) {
-        return { "msg": "ERROR", "error": "Missing Property Flooring Type" };
-    }
-    // Adding Property Flooring Type
-    obj.flooring = xss(data.flooring);
-
 
 
     // Checking Main Road Width
@@ -442,12 +250,12 @@ function plot_land(data) {
     obj.roadFacingWidthType = xss(data.roadFacingWidthType);
 
 
-    // Checking Total Floors
-    if (!data.totalFloors) {
+    // Checking Missing Total Floors
+    if (!data.totalFloorsAllowed) {
         return { "msg": "ERROR", "error": "Missing Total Allowed Floors" };
     }
-    // Adding Total Floors
-    obj.totalFloors = Number(xss(data.totalFloors));
+    // Adding Missing Total Floors
+    obj.totalFloorsAllowed = Number(xss(data.totalFloorsAllowed));
 
 
     // Checking Boundary Wall Detail
@@ -467,20 +275,20 @@ function plot_land(data) {
 
 
     // Checking Any Construction Done Detail
-    if (!data.constructionDone) {
-        return { "msg": "ERROR", "error": "Missing Any Construction Done Detail" };
+    if (!data.constructionOnProperty) {
+        return { "msg": "ERROR", "error": "Missing Any Construction On Plot Detail" };
     }
     // Adding Any Construction Done Detail
-    obj.constructionDone = xss(data.constructionDone);
+    obj.constructionOnProperty = xss(data.constructionOnProperty);
 
 
     // Adding List if Constructions Done on Plot
-    if (data.constructionDone == "Yes") {
-        let constructionDoneList = [];
-        for (let a = 0; a < constructionDoneList.length; a++) {
-            constructionDoneList.push(xss(data.constructionDoneList[a]));
+    if (data.constructionOnProperty == "Yes") {
+        let constructionOnPropertyList = [];
+        for (let a = 0; a < constructionOnPropertyList.length; a++) {
+            constructionOnPropertyList.push(xss(data.constructionOnPropertyList[a]));
         }
-        obj.constructionDoneList = constructionDoneList;
+        obj.constructionOnPropertyList = constructionOnPropertyList;
     }
 
 
@@ -541,38 +349,23 @@ function plot_land(data) {
     obj.description = xss(data.description);
 
 
-
-    // Checking availabilityStatus
-    if (!data.availabilityStatus) {
-        return { "msg": "ERROR", "error": "Missing Availability Status" };
+    // Checking Plot Expected By Year
+    if (!data.expectedByYear) {
+        return { "msg": "ERROR", "error": "Missing Expected by Year" };
     }
-    // Adding availabilityStatus
-    obj.availabilityStatus = xss(data.availabilityStatus);
+    // Checking Plot Expected By Year
+    obj.expectedByYear = xss(data.expectedByYear);
 
-    if (data.availabilityStatus == "Ready to move") {
-        if (data.propertyStatus) {
-            obj.propertyStatus = xss(data.propertyStatus);
-        } else {
-            return { "msg": "ERROR", "error": "Missing Property Year Status" };
-        }
-    }
 
-    if (data.availabilityStatus == "Under construction") {
-        if (data.expectedByYear) {
-            obj.expectedByYear = xss(data.expectedByYear);
-        } else {
-            return { "msg": "ERROR", "error": "Missing Expected by Year" };
-        }
-    }
 
     if (data.additionalPricingDetails) {
         let additionalPricingDetails = {};
 
-        additionalPricingDetails.maintenancePrice = xss(data.additionalPricingDetails.maintenancePrice);
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
         additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-        additionalPricingDetails.expectedRental = xss(data.additionalPricingDetails.expectedRental);
-        additionalPricingDetails.bookingAmount = xss(data.additionalPricingDetails.bookingAmount);
-        additionalPricingDetails.annualDuesPayable = xss(data.additionalPricingDetails.annualDuesPayable);
+        additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
+        additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
+        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
