@@ -285,7 +285,7 @@ function plot_land(data) {
     // Adding List if Constructions Done on Plot
     if (data.constructionOnProperty == "Yes") {
         let constructionOnPropertyList = [];
-        for (let a = 0; a < constructionOnPropertyList.length; a++) {
+        for (let a = 0; a < data.constructionOnPropertyList.length; a++) {
             constructionOnPropertyList.push(xss(data.constructionOnPropertyList[a]));
         }
         obj.constructionOnPropertyList = constructionOnPropertyList;
@@ -295,7 +295,7 @@ function plot_land(data) {
     // Adding List of Property Approval Authorities
     if (data.propertyApprovalAuthorityList) {
         let propertyApprovalAuthorityList = [];
-        for (let a = 0; a < propertyApprovalAuthorityList.length; a++) {
+        for (let a = 0; a < data.propertyApprovalAuthorityList.length; a++) {
             propertyApprovalAuthorityList.push(xss(data.propertyApprovalAuthorityList[a]));
         }
         obj.propertyApprovalAuthorityList = propertyApprovalAuthorityList;
@@ -369,6 +369,7 @@ function plot_land(data) {
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
+    console.log(obj)
 
     return { "msg": "SUCCESS", "data": obj };
 }

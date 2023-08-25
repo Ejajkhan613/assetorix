@@ -9,7 +9,7 @@ const { plot_land } = require("../propertyValidation/plot_land");
 
 
 // Function to send payload to dedicated property validators
-function spreader(payload) {
+function spreader(payload) { 
     if (payload.lookingFor == "Sell") {
         if (payload.propertyType == "Flat / Apartment") {
             return flat_apartment(payload);
