@@ -57,7 +57,7 @@ function spreader(payload) {
     } else {
         return { "msg": "ERROR", "error": "Wrong Looking For Type" };
     }
-}
+};
 
 
 // Exporting Module
