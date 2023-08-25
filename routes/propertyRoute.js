@@ -127,12 +127,10 @@ propertyRoute.get("/", async (req, res) => {
 // Post Property
 propertyRoute.post("/", tokenVerify, async (req, res) => {
     let payload = req.body;
-    console.log(payload);
     try {
         let obj = spreader(payload);
 
         if (obj.msg == "SUCCESS") {
-            console.log("DATA is coming")
             obj.data.userID = xss(req.headers.id);
             let newData = new PropertyModel(obj.data);
             await newData.save();
@@ -141,7 +139,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             res.status(401).send({ "msg": obj.error });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Posting Property", "error": req.body });
+        res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
 });
 
