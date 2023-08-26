@@ -112,7 +112,7 @@ function spreader(payload) {
                 } else if (payload.retailSpaceType == "Commercial Showrooms") {
                     return commercialShowrooms(payload);
                 } else {
-                    return { "msg": "ERROR", "error": `${payload.retailSpaceType} is Wrong Retail Space` }
+                    return { "msg": "ERROR", "error": `${payload.retailSpaceType} is Wrong Retail Space Type` }
                 }
             } else {
                 return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.propertyType}` }

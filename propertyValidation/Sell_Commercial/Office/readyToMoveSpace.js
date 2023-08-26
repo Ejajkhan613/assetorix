@@ -459,6 +459,16 @@ function readyToMoveSpace(data) {
 
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
+    if (data.additionalPricingDetails) {
+        let additionalPricingDetails = {};
+
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
+        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
+
+        obj.additionalPricingDetails = additionalPricingDetails;
+    }
+
+
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
@@ -561,14 +571,7 @@ function readyToMoveSpace(data) {
 
 
 
-    if (data.additionalPricingDetails) {
-        let additionalPricingDetails = {};
 
-        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
-        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-
-        obj.additionalPricingDetails = additionalPricingDetails;
-    }
 
     return { "msg": "SUCCESS", "data": obj };
 }
