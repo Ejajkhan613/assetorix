@@ -104,12 +104,12 @@ function bareShellOfficeSpace(data) {
         if (!data.washroomDetails.privateWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
         }
-        washroomDetails.privateWashrooms = Number(xss(privateWashrooms));
+        washroomDetails.privateWashrooms = Number(xss(data.washroomDetails.privateWashrooms));
 
         if (!data.washroomDetails.sharedWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
         }
-        washroomDetails.sharedWashrooms = Number(xss(sharedWashrooms));
+        washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
     }
 
     // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
@@ -226,7 +226,7 @@ function bareShellOfficeSpace(data) {
     if (!data.lift) {
         return { "msg": "ERROR", "error": "Missing Lift Details" };
     }
-    obj.lift = xss(lift);
+    obj.lift = xss(data.lift);
 
     if (data.lift == "Available") {
         let liftDetails = {};
@@ -243,7 +243,7 @@ function bareShellOfficeSpace(data) {
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing parking Details" };
     }
-    obj.parking = xss(parking);
+    obj.parking = xss(data.parking);
 
     if (data.parking == "Available") {
 
@@ -417,19 +417,19 @@ function bareShellOfficeSpace(data) {
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
-    obj.preLeased_Rented = xss(preLeased_Rented);
+    obj.preLeased_Rented = xss(data.preLeased_Rented);
 
 
     if (!data.noc) {
         return { "msg": "ERROR", "error": "Missing NOC Certified" };
     }
-    obj.noc = xss(noc);
+    obj.noc = xss(data.noc);
 
 
     if (!data.occupancy) {
         return { "msg": "ERROR", "error": "Missing Occupancy Certified" };
     }
-    obj.occupancy = xss(occupancy);
+    obj.occupancy = xss(data.occupancy);
 
 
 

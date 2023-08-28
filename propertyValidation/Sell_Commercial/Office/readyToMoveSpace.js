@@ -146,7 +146,6 @@ function readyToMoveSpace(data) {
 
 
 
-
     // --------------------------------- OFFICE SETUP DETAILS STARTING ---------------------------------
 
 
@@ -211,16 +210,17 @@ function readyToMoveSpace(data) {
         if (!data.washroomDetails.privateWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
         }
-        washroomDetails.privateWashrooms = Number(xss(privateWashrooms));
+        washroomDetails.privateWashrooms = Number(xss(data.washroomDetails.privateWashrooms));
 
         if (!data.washroomDetails.sharedWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
         }
-        washroomDetails.sharedWashrooms = Number(xss(sharedWashrooms));
+        washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
+
+        obj.washroomDetails = washroomDetails;
     }
 
     // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
-
 
     // Conference Room
     if (!data.conferenceRoom) {
@@ -350,7 +350,7 @@ function readyToMoveSpace(data) {
     if (!data.lift) {
         return { "msg": "ERROR", "error": "Missing Lift Details" };
     }
-    obj.lift = xss(lift);
+    obj.lift = xss(data.lift);
 
     if (data.lift == "Available") {
         let liftDetails = {};
@@ -367,7 +367,7 @@ function readyToMoveSpace(data) {
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing parking Details" };
     }
-    obj.parking = xss(parking);
+    obj.parking = xss(data.parking);
 
     if (data.parking == "Available") {
 
@@ -472,19 +472,31 @@ function readyToMoveSpace(data) {
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
-    obj.preLeased_Rented = xss(preLeased_Rented);
+    obj.preLeased_Rented = xss(data.preLeased_Rented);
+
+
+    if (data.preLeased_Rented == "Yes") {
+        let preLeased_RentedDetails = {};
+
+        preLeased_RentedDetails.currentRentPerMonth = Number(xss(data.preLeased_RentedDetails.currentRentPerMonth));
+        preLeased_RentedDetails.leaseTenureInYear = xss(data.preLeased_RentedDetails.leaseTenureInYear);
+        preLeased_RentedDetails.annualRentIncrease = xss(data.preLeased_RentedDetails.annualRentIncrease);
+        preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
+
+        obj.preLeased_RentedDetails = preLeased_RentedDetails;
+    }
 
 
     if (!data.noc) {
         return { "msg": "ERROR", "error": "Missing NOC Certified" };
     }
-    obj.noc = xss(noc);
+    obj.noc = xss(data.noc);
 
 
     if (!data.occupancy) {
         return { "msg": "ERROR", "error": "Missing Occupancy Certified" };
     }
-    obj.occupancy = xss(occupancy);
+    obj.occupancy = xss(data.occupancy);
 
 
 
