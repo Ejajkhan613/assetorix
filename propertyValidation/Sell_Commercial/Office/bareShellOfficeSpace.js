@@ -166,7 +166,6 @@ function bareShellOfficeSpace(data) {
 
     obj.facilityAvailable = facilityAvailable;
 
-
     // --------------------------------- FIRE SAFETY ARRAY STARTING ---------------------------------
 
 
@@ -259,6 +258,7 @@ function bareShellOfficeSpace(data) {
             obj.parkingCount = Number(xss(data.parkingCount));
         }
     }
+
 
 
     // Checking availabilityStatus
