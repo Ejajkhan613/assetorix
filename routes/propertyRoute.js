@@ -59,8 +59,6 @@ propertyRoute.get("/", async (req, res) => {
             addressFilters["address.country"] = { $regex: new RegExp(sanitizedCountry, "i") };
         }
 
-        console.log(addressFilters)
-
         const totalCount = await PropertyModel.countDocuments(addressFilters);
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 

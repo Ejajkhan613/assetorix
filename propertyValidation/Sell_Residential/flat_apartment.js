@@ -151,6 +151,11 @@ function flat_apartment(data) {
     obj.propertyType = xss(data.propertyType);
 
 
+
+
+
+
+
     // Checking OwnerShip Type
     if (!data.ownership) {
         return { "msg": "ERROR", "error": "Missing Ownership" };
