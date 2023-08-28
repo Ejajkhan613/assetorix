@@ -107,14 +107,14 @@ function coworkingOfficeSpace(data) {
     obj.washrooms = xss(data.washrooms);
 
     // Checking Carpet Area
-    if (!data.carpetArea) {
+    if (data.carpetArea) {
         return { "msg": "ERROR", "error": "Missing Carpet Area" };
     }
     // Adding Carpet Area
     obj.carpetArea = Number(xss(data.carpetArea));
 
     // Checking Carpet Area Unit
-    if (!data.carpetAreaUnit) {
+    if (data.carpetAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
     }
     // Adding Carpet Area Unit
