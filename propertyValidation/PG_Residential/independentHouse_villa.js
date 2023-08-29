@@ -1,38 +1,12 @@
 const xss = require("xss");
 
 
-function independentHouse_villa_Rent(data) {
+function independentHouse_villa_PG(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
     // Main Object that will be saved in DB
     let obj = {};
-
-
-
-    // Checking Looking For
-    if (!data.lookingFor) {
-        return { "msg": "ERROR", "error": "Missing looking For" };
-    }
-    // Adding Looking For
-    obj.lookingFor = xss(data.lookingFor);
-
-
-    // Checking Property Group
-    if (!data.propertyGroup) {
-        return { "msg": "ERROR", "error": "Missing Property Group" };
-    }
-    // Adding Property Group
-    obj.propertyGroup = xss(data.propertyGroup);
-
-
-    // Checking Property Type
-    if (!data.propertyType) {
-        return { "msg": "ERROR", "error": "Missing Property Type" };
-    }
-    // Adding Property Type
-    obj.propertyType = xss(data.propertyType);
-
 
 
 
@@ -109,6 +83,7 @@ function independentHouse_villa_Rent(data) {
 
 
 
+
     // --------------------------------- ROOM DETAILS STARTING ---------------------------------
 
 
@@ -151,6 +126,68 @@ function independentHouse_villa_Rent(data) {
 
 
 
+    // Checking Looking For
+    if (!data.lookingFor) {
+        return { "msg": "ERROR", "error": "Missing looking For" };
+    }
+    // Adding Looking For
+    obj.lookingFor = xss(data.lookingFor);
+
+
+    // Checking Property Group
+    if (!data.propertyGroup) {
+        return { "msg": "ERROR", "error": "Missing Property Group" };
+    }
+    // Adding Property Group
+    obj.propertyGroup = xss(data.propertyGroup);
+
+
+    // Checking Property Type
+    if (!data.propertyType) {
+        return { "msg": "ERROR", "error": "Missing Property Type" };
+    }
+    // Adding Property Type
+    obj.propertyType = xss(data.propertyType);
+
+
+
+    // Checking Room Type
+    if (!data.roomType) {
+        return { "msg": "ERROR", "error": "Missing Room Type" };
+    }
+    // Adding Room Type
+    obj.roomType = xss(data.roomType);
+
+    if (data.roomType == "Sharing") {
+        // How many people can share this room
+        if (!data.roomShareCount) {
+            return { "msg": "ERROR", "error": "Missing How many people can share this room" };
+        }
+        obj.roomShareCount = xss(data.roomShareCount);
+    }
+
+
+
+    // Capacity and Availability (Optional)
+    if (data.totalBedsInPG) {
+        obj.totalBedsInPG = Number(xss(data.totalBedsInPG));
+    }
+
+    // Capacity and Availability (Optional)
+    if (data.totalBedsInPGAvailable) {
+        obj.totalBedsInPGAvailable = Number(xss(data.totalBedsInPGAvailable));
+    }
+
+    if (data.bedsInPGDetails) {
+        let bedsInPGDetails = [];
+
+        for (let a = 0; a < data.bedsInPGDetails.length; a++) {
+            bedsInPGDetails.push(xss(data.bedsInPGDetails[a]));
+        }
+        obj.bedsInPGDetails = bedsInPGDetails;
+    }
+
+
 
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
@@ -183,6 +220,9 @@ function independentHouse_villa_Rent(data) {
     if (data.builtupAreaUnit) {
         obj.builtupAreaUnit = xss(data.builtupAreaUnit);
     }
+
+
+
 
 
 
@@ -239,6 +279,40 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- FURNISHED LIST ARRAY ENDING ---------------------------------
 
 
+    // --------------------------------- COMMON FURNISHED LIST ARRAY STARTING ---------------------------------
+
+    if (data.commonFurnishedList) {
+
+        let commonFurnishedList = [];
+
+        if (data.commonFurnishedList.length) {
+            for (let a = 0; a < data.commonFurnishedList.length; a++) {
+                commonFurnishedList.push(xss(data.commonFurnishedList[a]));
+            }
+        }
+
+        obj.commonFurnishedList = commonFurnishedList;
+
+    }
+
+    if (data.commonFurnishedObj) {
+
+        let commonFurnishedObj = {};
+
+        commonFurnishedObj.light = Number(xss(data.commonFurnishedObj.light));
+        commonFurnishedObj.ac = Number(xss(data.commonFurnishedObj.ac));
+        commonFurnishedObj.tv = Number(xss(data.commonFurnishedObj.tv));
+        commonFurnishedObj.wardrobe = Number(xss(data.commonFurnishedObj.wardrobe));
+        commonFurnishedObj.washingMachine = Number(xss(data.commonFurnishedObj.washingMachine));
+
+        obj.commonFurnishedObj = commonFurnishedObj;
+    }
+
+
+
+
+    // --------------------------------- COMMON FURNISHED LIST ARRAY ENDING ---------------------------------
+
 
     // --------------------------------- PARKING OBJECT STARTING ---------------------------------
 
@@ -260,7 +334,7 @@ function independentHouse_villa_Rent(data) {
 
 
     // Checking Close Parking
-    if (data.parking.closeParking) {
+    if (!data.parking.closeParking) {
         parking.closeParking = Number(xss(data.parking.closeParking));
     }
 
@@ -271,13 +345,14 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- PARKING OBJECT ENDING ---------------------------------
 
 
-
     // Checking Missing Total Floors
     if (!data.totalFloors) {
         return { "msg": "ERROR", "error": "Missing Total Floors" };
     }
     // Adding Missing Total Floors
     obj.totalFloors = Number(xss(data.totalFloors));
+
+
 
 
     // Age of Property
@@ -294,40 +369,33 @@ function independentHouse_villa_Rent(data) {
     obj.availableFrom = xss(data.availableFrom);
 
 
+    // Available for
+    if (!data.availableFor) {
+        return { "msg": "ERROR", "error": "Missing Available For (Girls , Boys, Any)" };
+    }
+    obj.availableFor = xss(data.availableFor);
 
-    // --------------------------------- WILLING TO STARTING ---------------------------------
+
+    // --------------------------------- SUITABLE FOR STARTING ---------------------------------
 
 
-    let willingToRent = [];
+    let suitableFor = [];
 
-    if (data.willingToRent.length) {
-        for (let a = 0; a < data.willingToRent.length; a++) {
-            willingToRent.push(xss(data.willingToRent[a]));
+    if (data.suitableFor && data.suitableFor.length) {
+        for (let a = 0; a < data.suitableFor.length; a++) {
+            suitableFor.push(xss(data.suitableFor[a]));
         }
     }
 
-    obj.willingToRent = willingToRent;
+    obj.suitableFor = suitableFor;
 
 
-    // --------------------------------- WILLING TO ENDING ---------------------------------
-
-
-    //  Brokers Contacting You
-    if (!data.needBrokerHelp) {
-        return { "msg": "ERROR", "error": "Missing Brokers Contacting You" };
-    }
-    obj.needBrokerHelp = xss(data.needBrokerHelp);
+    // --------------------------------- SUITABLE FOR ENDING ---------------------------------
 
 
 
 
 
-
-    // Agreement type
-    if (!data.agreementType) {
-        return { "msg": "ERROR", "error": "Missing Agreement Type" };
-    }
-    obj.agreementType = xss(data.agreementType);
 
     // Checking Property Price
     if (!data.price) {
@@ -335,26 +403,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Property Price
     obj.price = Number(xss(data.price));
-
-
-
-    // --------------------------------- INCLUSIVE PRICE ARRAY STARTING ---------------------------------
-
-
-    let inclusivePrices = [];
-
-    if (data.inclusivePrices.length) {
-        for (let a = 0; a < data.inclusivePrices.length; a++) {
-            inclusivePrices.push(xss(data.inclusivePrices[a]));
-        }
-    }
-
-    obj.inclusivePrices = inclusivePrices;
-
-
-    // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
-
-
 
 
 
@@ -367,6 +415,8 @@ function independentHouse_villa_Rent(data) {
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
+
+
 
     // Security deposit (Optional)
     if (!data.securityDeposit) {
@@ -390,19 +440,177 @@ function independentHouse_villa_Rent(data) {
 
 
 
-    // Duration of Agreement (Optional)
-    if (!data.durationAgreement) {
-        return { "msg": "ERROR", "error": "Missing Duration of Agreement" };
+    // --------------------------------- TOTAL PRICE INCLUDES STARTING ---------------------------------
+
+
+    let totalPriceIncludesList = [];
+
+    if (data.totalPriceIncludesList.length) {
+        for (let a = 0; a < data.totalPriceIncludesList.length; a++) {
+            totalPriceIncludesList.push(xss(data.totalPriceIncludesList[a]));
+        }
     }
-    obj.durationAgreement = xss(data.durationAgreement);
+
+    obj.totalPriceIncludesList = totalPriceIncludesList;
+
+
+    // Services Excluding Price
+    if (data.servicesExcludingPrice) {
+        let servicesExcludingPrice = {};
+
+        if (!data.servicesExcludingPrice.laundry) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.laundry);
+        }
+        if (!data.servicesExcludingPrice.water) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.water);
+        }
+        if (!data.servicesExcludingPrice.wifi) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.wifi);
+        }
+        if (!data.servicesExcludingPrice.housekeeping) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.housekeeping);
+        }
+        if (!data.servicesExcludingPrice.dth) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.dth);
+        }
+        if (!data.servicesExcludingPrice.electricity) {
+            servicesExcludingPrice = xss(data.servicesExcludingPrice.electricity);
+        }
+        obj.servicesExcludingPrice = servicesExcludingPrice;
+    }
+
+
+
+
+    // --------------------------------- TOTAL PRICE INCLUDES ENDING ---------------------------------
+
+
+
+    // Food details
+    if (!data.foodAvailability) {
+        return { "msg": "ERROR", "error": "Missing Food Details Availability" };
+    }
+    obj.foodAvailability = xss(foodAvailability);
+
+    if (data.foodAvailability == "Available") {
+
+        let foodDetails = {};
+
+        // Meal type (Optional)
+        if (data.foodDetails.mealType) {
+            foodDetails.mealType = xss(data.foodDetails.mealType);
+        }
+
+        // Availability of meal on weekdays (Optional)
+        if (data.foodDetails.mealOnWeekdays) {
+            foodDetails.mealOnWeekdays = xss(data.foodDetails.mealOnWeekdays);
+        }
+
+        // Availability of meal on weekends (Optional)
+        if (data.foodDetails.mealOnWeekends) {
+            foodDetails.mealOnWeekends = xss(data.foodDetails.mealOnWeekends);
+        }
+
+        // Charges for Food (Optional)
+        if (data.foodDetails.chargesForFood) {
+            foodDetails.chargesForFood = xss(data.foodDetails.chargesForFood);
+        }
+
+
+        if (data.foodDetails.chargesForFood == "Per meal basis") {
+            let perMealBasis = {};
+            if (data.foodDetails.perMealBasis) {
+                if (data.foodDetails.perMealBasis.breakfast) {
+                    perMealBasis.breakfast = xss(data.foodDetails.perMealBasis.breakfast)
+                }
+                if (data.foodDetails.perMealBasis.lunch) {
+                    perMealBasis.lunch = xss(data.foodDetails.perMealBasis.lunch)
+                }
+                if (data.foodDetails.perMealBasis.dinner) {
+                    perMealBasis.dinner = xss(data.foodDetails.perMealBasis.dinner)
+                }
+                foodDetails.perMealBasis = perMealBasis;
+            }
+            foodDetails.perMealBasis = perMealBasis;
+
+        }
+
+        if (data.foodDetails.chargesForFood == "Fixed monthly amount") {
+            if (data.foodDetails.fixedMonthlyCharge) {
+                foodDetails.fixedMonthlyCharge = xss(data.foodDetails.fixedMonthlyCharge);
+            }
+        }
+
+        obj.foodDetails = foodDetails;
+
+    }
+
+
+
+    // Minimum contract duration(Optional)
+    if (data.minContractDuration) {
+        obj.minContractDuration = xss(data.minContractDuration);
+    }
+
 
 
     // Months of Notice (Optional)
-    if (!data.monthsOfNotice) {
-        return { "msg": "ERROR", "error": "Missing Months of Notice" };
+    if (data.monthsOfNotice) {
+        obj.monthsOfNotice = xss(data.monthsOfNotice);
     }
-    obj.monthsOfNotice = xss(data.monthsOfNotice);
 
+
+    // Early leaving charges (Optional)
+    if (data.earlyLeaveCharges) {
+        obj.earlyLeaveCharges = xss(data.earlyLeaveCharges);
+    }
+
+    if (data.earlyLeaveCharges == "Fixed") {
+        if (data.earlyLeaveChargesAmount) {
+            obj.earlyLeaveChargesAmount = Number(xss(data.earlyLeaveChargesAmount));
+        }
+    }
+
+    if (data.earlyLeaveCharges == "Multiple of Rent") {
+        if (data.earlyLeaveRentInMonths) {
+            obj.earlyLeaveRentInMonths = Number(xss(data.earlyLeaveRentInMonths));
+        }
+    }
+
+
+
+
+    // Some house rules(Optional)
+
+    if (data.houseRules) {
+        let houseRules = {};
+
+        if (data.houseRules.petsAllowed) {
+            obj.houseRules.petsAllowed = xss(data.houseRules.petsAllowed);
+        }
+        if (data.houseRules.visitorsAllowed) {
+            obj.houseRules.visitorsAllowed = xss(data.houseRules.visitorsAllowed);
+        }
+        if (data.houseRules.smokingAllowed) {
+            obj.houseRules.smokingAllowed = xss(data.houseRules.smokingAllowed);
+        }
+        if (data.houseRules.alcoholAllowed) {
+            obj.houseRules.alcoholAllowed = xss(data.houseRules.alcoholAllowed);
+        }
+        if (data.houseRules.partyEventAllowed) {
+            obj.houseRules.partyEventAllowed = xss(data.houseRules.partyEventAllowed);
+        }
+
+        obj.houseRules = houseRules;
+    }
+
+    if (data.lastEntryTime) {
+        obj.lastEntryTime = xss(data.lastEntryTime);
+    }
+
+    if (data.otherRules) {
+        obj.otherRules = xss(data.otherRules);
+    }
 
 
     // Checking Country Currency Code
@@ -419,7 +627,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Description
     obj.description = xss(data.description);
-
 
 
 
@@ -444,6 +651,8 @@ function independentHouse_villa_Rent(data) {
 
 
 
+
+
     // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -459,6 +668,10 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- PROPERTY FEATURES ARRAY ENDING ---------------------------------
+
+
+
+
 
 
 
@@ -479,6 +692,11 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
 
 
+
+
+
+
+
     // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -497,6 +715,11 @@ function independentHouse_villa_Rent(data) {
 
 
 
+
+
+
+
+
     // --------------------------------- OTHER FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -512,6 +735,13 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- OTHER FEATURES ARRAY ENDING ---------------------------------
+
+
+
+
+
+
+
 
 
 
@@ -576,8 +806,10 @@ function independentHouse_villa_Rent(data) {
 
 
 
+
+
     return { "msg": "SUCCESS", "data": obj };
 }
 
 
-module.exports = { independentHouse_villa_Rent };
+module.exports = { independentHouse_villa_PG };

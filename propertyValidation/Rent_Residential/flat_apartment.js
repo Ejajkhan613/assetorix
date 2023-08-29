@@ -343,13 +343,6 @@ function flat_apartment_Sell(data) {
     obj.price = Number(xss(data.price));
 
 
-    // Checking Price Per Unit
-    if (!data.priceUnit) {
-        return { "msg": "ERROR", "error": "Missing Price Per Unit" };
-    }
-    // Adding Price Per Unit
-    obj.priceUnit = Number(xss(data.priceUnit));
-
 
     // --------------------------------- INCLUSIVE PRICE ARRAY STARTING ---------------------------------
 

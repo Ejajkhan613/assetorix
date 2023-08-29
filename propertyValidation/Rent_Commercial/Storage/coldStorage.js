@@ -1,7 +1,7 @@
 const xss = require("xss");
 
 
-function independentHouse_villa_Rent(data) {
+function coldStorage_Rent(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
@@ -12,7 +12,7 @@ function independentHouse_villa_Rent(data) {
 
     // Checking Looking For
     if (!data.lookingFor) {
-        return { "msg": "ERROR", "error": "Missing looking For" };
+        return { "msg": "ERROR", "error": "Missing Looking For" };
     }
     // Adding Looking For
     obj.lookingFor = xss(data.lookingFor);
@@ -34,6 +34,14 @@ function independentHouse_villa_Rent(data) {
     obj.propertyType = xss(data.propertyType);
 
 
+    // Storage Type
+    if (!data.storageType) {
+        return { "msg": "ERROR", "error": "Missing Storage Type" };
+    }
+    // Adding Storage Type
+    obj.storageType = xss(data.storageType);
+
+
 
 
     // --------------------------------- ADDRESS STARTING ---------------------------------
@@ -45,21 +53,6 @@ function independentHouse_villa_Rent(data) {
 
     // if present then creating a new address object that will be added in Main Object
     let address = {};
-
-
-
-    // Checking House Number
-    if (data.address.houseNumber) {
-        // Adding House Number
-        address.houseNumber = xss(data.address.houseNumber);
-    }
-
-
-    // Checking Apartment Name
-    if (data.address.apartmentName) {
-        // Adding Apartment Name
-        address.apartmentName = xss(data.address.apartmentName);
-    }
 
 
     // Checking Pincode
@@ -107,79 +100,48 @@ function independentHouse_villa_Rent(data) {
 
     // --------------------------------- ADDRESS ENDING ---------------------------------
 
-
-
-    // --------------------------------- ROOM DETAILS STARTING ---------------------------------
-
-
-    // Checking if roomDetails Object is not present
-    if (!data.roomDetails) {
-        return { "msg": "ERROR", "error": "Room Details Data is not Present" }
+    if (!data.washrooms) {
+        return { "msg": "ERROR", "error": "Missing Washrooms" };
     }
 
-    // if present then creating a new roomDetails object that will be added in Main Object
-    let roomDetails = {};
-
-
-    // Checking Bedroom Counts
-    if (!data.roomDetails.bedroom) {
-        return { "msg": "ERROR", "error": "Missing Bedrooms Quantity" };
-    }
-    // Adding Bedroom Counts
-    roomDetails.bedroom = Number(xss(data.roomDetails.bedroom));
-
-
-    // Checking Bathroom Counts
-    if (!data.roomDetails.bathroom) {
-        return { "msg": "ERROR", "error": "Missing Bathrooms Quantity" };
-    }
-    // Adding Bathroom Counts
-    roomDetails.bathroom = Number(xss(data.roomDetails.bathroom));
-
-
-    // Checking Balcony Counts
-    if (!data.roomDetails.balcony) {
-        return { "msg": "ERROR", "error": "Missing Balconies Quantity" };
-    }
-    // Adding Balcony Counts
-    roomDetails.balcony = Number(xss(data.roomDetails.balcony));
-
-    obj.roomDetails = roomDetails;
-
-    // --------------------------------- ROOM DETAILS ENDING ---------------------------------
+    obj.washrooms = xss(data.washrooms);
 
 
 
-
-
+    // Checking Plot Area
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
+    // Adding Plot Area
     obj.plotArea = Number(xss(data.plotArea));
 
 
+    // Checking Plot Area Unit
     if (!data.plotAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
+    // Adding Plot Area Unit
     obj.plotAreaUnit = xss(data.plotAreaUnit);
 
 
-    // Adding Carpet Area
+
+    // Carpet Area
     if (data.carpetArea) {
         obj.carpetArea = Number(xss(data.carpetArea));
     }
 
-    // Adding Carpet Area Unit
+    // Carpet Area Unit
     if (data.carpetAreaUnit) {
         obj.carpetAreaUnit = xss(data.carpetAreaUnit);
     }
 
-    // Adding Builtup Area
+
+    // Checking Builtup Area
     if (data.builtupArea) {
         obj.builtupArea = Number(xss(data.builtupArea));
     }
 
-    // Adding Builtup Area Unit
+    // Checking Builtup Area Unit
     if (data.builtupAreaUnit) {
         obj.builtupAreaUnit = xss(data.builtupAreaUnit);
     }
@@ -187,147 +149,30 @@ function independentHouse_villa_Rent(data) {
 
 
 
-    // --------------------------------- OTHER ROOMS ARRAY STARTING ---------------------------------
+    // Checking availabilityStatus
+    if (!data.availabilityStatus) {
+        return { "msg": "ERROR", "error": "Missing Availability Status" };
+    }
+    // Adding availabilityStatus
+    obj.availabilityStatus = xss(data.availabilityStatus);
 
-
-    let otherRoom = [];
-
-    if (data.otherRoom.length) {
-        for (let a = 0; a < data.otherRoom.length; a++) {
-            otherRoom.push(xss(data.otherRoom[a]));
+    if (data.availabilityStatus == "Ready to move") {
+        if (data.propertyStatus) {
+            obj.propertyStatus = xss(data.propertyStatus);
+        } else {
+            return { "msg": "ERROR", "error": "Missing Property Year Status" };
         }
     }
 
-    obj.otherRoom = otherRoom;
-
-
-    // --------------------------------- OTHER ROOMS ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- FURNISHED LIST ARRAY STARTING ---------------------------------
-
-    obj.furnished = data.furnished;
-
-    if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
-
-        let furnishedList = [];
-
-        if (data.furnishedList.length) {
-            for (let a = 0; a < data.furnishedList.length; a++) {
-                furnishedList.push(xss(data.furnishedList[a]));
-            }
-        }
-
-        obj.furnishedList = furnishedList;
-
-        let furnishedObj = {};
-
-        furnishedObj.light = Number(xss(data.furnishedObj.light));
-        furnishedObj.fans = Number(xss(data.furnishedObj.fans));
-        furnishedObj.ac = Number(xss(data.furnishedObj.ac));
-        furnishedObj.tv = Number(xss(data.furnishedObj.tv));
-        furnishedObj.beds = Number(xss(data.furnishedObj.beds));
-        furnishedObj.wardrobe = Number(xss(data.furnishedObj.wardrobe));
-        furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
-
-        obj.furnishedObj = furnishedObj;
-    }
-
-
-
-    // --------------------------------- FURNISHED LIST ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- PARKING OBJECT STARTING ---------------------------------
-
-
-    // Checking if parking object is present in the input from frontend
-    if (!data.parking) {
-        return { "msg": "ERROR", "error": "Missing Parking Details" };
-    }
-
-    // if present then creating a new parking object that will be added in Main Object
-    let parking = {};
-
-
-    // Checking Open Parking
-    if (data.parking.openParking) {
-        parking.openParking = Number(xss(data.parking.openParking));
-    }
-
-
-
-    // Checking Close Parking
-    if (data.parking.closeParking) {
-        parking.closeParking = Number(xss(data.parking.closeParking));
-    }
-
-    obj.parking = parking;
-
-
-
-    // --------------------------------- PARKING OBJECT ENDING ---------------------------------
-
-
-
-    // Checking Missing Total Floors
-    if (!data.totalFloors) {
-        return { "msg": "ERROR", "error": "Missing Total Floors" };
-    }
-    // Adding Missing Total Floors
-    obj.totalFloors = Number(xss(data.totalFloors));
-
-
-    // Age of Property
-    if (!data.propertyStatus) {
-        return { "msg": "ERROR", "error": "Missing Property Age Detail" };
-    }
-    obj.propertyStatus = xss(data.propertyStatus);
-
-
-    // Available From
-    if (!data.availableFrom) {
-        return { "msg": "ERROR", "error": "Missing Available Date" };
-    }
-    obj.availableFrom = xss(data.availableFrom);
-
-
-
-    // --------------------------------- WILLING TO STARTING ---------------------------------
-
-
-    let willingToRent = [];
-
-    if (data.willingToRent.length) {
-        for (let a = 0; a < data.willingToRent.length; a++) {
-            willingToRent.push(xss(data.willingToRent[a]));
+    if (data.availabilityStatus == "Under construction") {
+        if (data.expectedByYear) {
+            obj.expectedByYear = xss(data.expectedByYear);
+        } else {
+            return { "msg": "ERROR", "error": "Missing Expected by Year" };
         }
     }
 
-    obj.willingToRent = willingToRent;
 
-
-    // --------------------------------- WILLING TO ENDING ---------------------------------
-
-
-    //  Brokers Contacting You
-    if (!data.needBrokerHelp) {
-        return { "msg": "ERROR", "error": "Missing Brokers Contacting You" };
-    }
-    obj.needBrokerHelp = xss(data.needBrokerHelp);
-
-
-
-
-
-
-    // Agreement type
-    if (!data.agreementType) {
-        return { "msg": "ERROR", "error": "Missing Agreement Type" };
-    }
-    obj.agreementType = xss(data.agreementType);
 
     // Checking Property Price
     if (!data.price) {
@@ -335,6 +180,18 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Property Price
     obj.price = Number(xss(data.price));
+
+
+    // Checking Price Per Unit
+    if (!data.priceUnit) {
+        return { "msg": "ERROR", "error": "Missing Price Per Unit" };
+    }
+    // Adding Price Per Unit
+    obj.priceUnit = Number(xss(data.priceUnit));
+
+
+
+
 
 
 
@@ -356,52 +213,16 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
-
     if (data.additionalPricingDetails) {
         let additionalPricingDetails = {};
 
         additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
         additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
         additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
+        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
-
-    // Security deposit (Optional)
-    if (!data.securityDeposit) {
-        return { "msg": "ERROR", "error": "Missing Security Deposit Detail" };
-    }
-    obj.securityDeposit = xss(data.securityDeposit);
-
-    if (data.securityDeposit == "Multiple of Rent") {
-        if (!data.multipleOfRent) {
-            return { "msg": "ERROR", "error": "Missing Security Deposit Value" };
-        }
-        obj.multipleOfRent = xss(data.multipleOfRent);
-    }
-
-    if (data.securityDeposit == "Fixed") {
-        if (!data.depositValue) {
-            return { "msg": "ERROR", "error": "Missing Security Deposit Value" };
-        }
-        obj.depositValue = xss(data.depositValue);
-    }
-
-
-
-    // Duration of Agreement (Optional)
-    if (!data.durationAgreement) {
-        return { "msg": "ERROR", "error": "Missing Duration of Agreement" };
-    }
-    obj.durationAgreement = xss(data.durationAgreement);
-
-
-    // Months of Notice (Optional)
-    if (!data.monthsOfNotice) {
-        return { "msg": "ERROR", "error": "Missing Months of Notice" };
-    }
-    obj.monthsOfNotice = xss(data.monthsOfNotice);
 
 
 
@@ -421,11 +242,6 @@ function independentHouse_villa_Rent(data) {
     obj.description = xss(data.description);
 
 
-
-
-
-
-
     // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
 
 
@@ -441,7 +257,6 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
-
 
 
     // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
@@ -479,6 +294,7 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
 
 
+
     // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -494,6 +310,7 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
+
 
 
 
@@ -515,14 +332,6 @@ function independentHouse_villa_Rent(data) {
 
 
 
-    // Checking Power Backup
-    if (!data.powerBackup) {
-        return { "msg": "ERROR", "error": "Missing Power Backup Details" };
-    }
-    // Adding Power Backup
-    obj.powerBackup = xss(data.powerBackup);
-
-
     // Checking Property Facing (Direction of Property)
     if (!data.propertyFacing) {
         return { "msg": "ERROR", "error": "Missing Property Facing Direction" };
@@ -538,22 +347,6 @@ function independentHouse_villa_Rent(data) {
     // Adding Property Flooring Type
     obj.flooring = xss(data.flooring);
 
-
-
-    // Checking Main Road Width
-    if (!data.roadFacingWidth) {
-        return { "msg": "ERROR", "error": "Missing Main Road Width" };
-    }
-    // Adding Main Road Width
-    obj.roadFacingWidth = xss(data.roadFacingWidth);
-
-
-    // Checking Main Road Width Type
-    if (!data.roadFacingWidthType) {
-        return { "msg": "ERROR", "error": "Missing Main Road Width Type" };
-    }
-    // Adding Main Road Width Type
-    obj.roadFacingWidthType = xss(data.roadFacingWidthType);
 
 
 
@@ -575,9 +368,7 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
     return { "msg": "SUCCESS", "data": obj };
 }
 
-
-module.exports = { independentHouse_villa_Rent };
+module.exports = { coldStorage_Rent };

@@ -1,13 +1,12 @@
 const xss = require("xss");
 
 
-function independentHouse_villa_Rent(data) {
+function farmHouse_Rent(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
     // Main Object that will be saved in DB
     let obj = {};
-
 
 
     // Checking Looking For
@@ -32,8 +31,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Property Type
     obj.propertyType = xss(data.propertyType);
-
-
 
 
     // --------------------------------- ADDRESS STARTING ---------------------------------
@@ -150,8 +147,6 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
-
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
@@ -183,7 +178,6 @@ function independentHouse_villa_Rent(data) {
     if (data.builtupAreaUnit) {
         obj.builtupAreaUnit = xss(data.builtupAreaUnit);
     }
-
 
 
 
@@ -321,8 +315,6 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
-
     // Agreement type
     if (!data.agreementType) {
         return { "msg": "ERROR", "error": "Missing Agreement Type" };
@@ -419,8 +411,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Description
     obj.description = xss(data.description);
-
-
 
 
 
@@ -575,9 +565,9 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
     return { "msg": "SUCCESS", "data": obj };
 }
 
 
-module.exports = { independentHouse_villa_Rent };
+
+module.exports = { farmHouse_Rent };

@@ -1,13 +1,12 @@
 const xss = require("xss");
 
 
-function independentHouse_villa_Rent(data) {
+function RK_Studio_Apartment_Sell(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
     // Main Object that will be saved in DB
     let obj = {};
-
 
 
     // Checking Looking For
@@ -32,8 +31,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Property Type
     obj.propertyType = xss(data.propertyType);
-
-
 
 
     // --------------------------------- ADDRESS STARTING ---------------------------------
@@ -108,13 +105,12 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- ADDRESS ENDING ---------------------------------
 
 
-
     // --------------------------------- ROOM DETAILS STARTING ---------------------------------
 
 
     // Checking if roomDetails Object is not present
     if (!data.roomDetails) {
-        return { "msg": "ERROR", "error": "Room Details Data is not Present" }
+        return { "msg": "ERROR", "error": "Room Details Data is not Present" };
     }
 
     // if present then creating a new roomDetails object that will be added in Main Object
@@ -150,29 +146,20 @@ function independentHouse_villa_Rent(data) {
 
 
 
-
-
-    if (!data.plotArea) {
-        return { "msg": "ERROR", "error": "Missing Plot Area" };
+    // Checking Carpet Area
+    if (!data.carpetArea) {
+        return { "msg": "ERROR", "error": "Missing Carpet Area" };
     }
-    obj.plotArea = Number(xss(data.plotArea));
-
-
-    if (!data.plotAreaUnit) {
-        return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
-    }
-    obj.plotAreaUnit = xss(data.plotAreaUnit);
-
-
     // Adding Carpet Area
-    if (data.carpetArea) {
-        obj.carpetArea = Number(xss(data.carpetArea));
-    }
+    obj.carpetArea = Number(xss(data.carpetArea));
 
-    // Adding Carpet Area Unit
-    if (data.carpetAreaUnit) {
-        obj.carpetAreaUnit = xss(data.carpetAreaUnit);
+    // Checking Carpet Area Unit
+    if (!data.carpetAreaUnit) {
+        return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
     }
+    // Adding Carpet Area Unit
+    obj.carpetAreaUnit = xss(data.carpetAreaUnit);
+
 
     // Adding Builtup Area
     if (data.builtupArea) {
@@ -185,6 +172,15 @@ function independentHouse_villa_Rent(data) {
     }
 
 
+    // Adding Super Builtup Area
+    if (data.superBuiltupArea) {
+        obj.superBuiltupArea = Number(xss(data.superBuiltupArea));
+    }
+
+    // Adding Super Builtup Area Unit
+    if (data.superBuiltupAreaUnit) {
+        obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
+    }
 
 
     // --------------------------------- OTHER ROOMS ARRAY STARTING ---------------------------------
@@ -204,10 +200,9 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- OTHER ROOMS ARRAY ENDING ---------------------------------
 
 
+    // --------------------------------- FURNISHED LIST ARRAY STARTING ----------------------------
 
-    // --------------------------------- FURNISHED LIST ARRAY STARTING ---------------------------------
-
-    obj.furnished = data.furnished;
+    obj.furnished = xss(data.furnished);
 
     if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
 
@@ -239,7 +234,6 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- FURNISHED LIST ARRAY ENDING ---------------------------------
 
 
-
     // --------------------------------- PARKING OBJECT STARTING ---------------------------------
 
 
@@ -260,7 +254,7 @@ function independentHouse_villa_Rent(data) {
 
 
     // Checking Close Parking
-    if (data.parking.closeParking) {
+    if (!data.parking.closeParking) {
         parking.closeParking = Number(xss(data.parking.closeParking));
     }
 
@@ -271,7 +265,6 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- PARKING OBJECT ENDING ---------------------------------
 
 
-
     // Checking Missing Total Floors
     if (!data.totalFloors) {
         return { "msg": "ERROR", "error": "Missing Total Floors" };
@@ -279,6 +272,13 @@ function independentHouse_villa_Rent(data) {
     // Adding Missing Total Floors
     obj.totalFloors = Number(xss(data.totalFloors));
 
+
+    // Checking which Floor Number is Going to sell
+    if (!data.floorOn) {
+        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
+    }
+    // Adding Floor Number
+    obj.floorOn = xss(data.floorOn);
 
     // Age of Property
     if (!data.propertyStatus) {
@@ -292,7 +292,6 @@ function independentHouse_villa_Rent(data) {
         return { "msg": "ERROR", "error": "Missing Available Date" };
     }
     obj.availableFrom = xss(data.availableFrom);
-
 
 
     // --------------------------------- WILLING TO STARTING ---------------------------------
@@ -317,10 +316,6 @@ function independentHouse_villa_Rent(data) {
         return { "msg": "ERROR", "error": "Missing Brokers Contacting You" };
     }
     obj.needBrokerHelp = xss(data.needBrokerHelp);
-
-
-
-
 
 
     // Agreement type
@@ -355,8 +350,7 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
 
-
-
+    // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
     if (data.additionalPricingDetails) {
         let additionalPricingDetails = {};
@@ -367,6 +361,7 @@ function independentHouse_villa_Rent(data) {
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
+
 
     // Security deposit (Optional)
     if (!data.securityDeposit) {
@@ -389,7 +384,6 @@ function independentHouse_villa_Rent(data) {
     }
 
 
-
     // Duration of Agreement (Optional)
     if (!data.durationAgreement) {
         return { "msg": "ERROR", "error": "Missing Duration of Agreement" };
@@ -402,7 +396,6 @@ function independentHouse_villa_Rent(data) {
         return { "msg": "ERROR", "error": "Missing Months of Notice" };
     }
     obj.monthsOfNotice = xss(data.monthsOfNotice);
-
 
 
     // Checking Country Currency Code
@@ -419,10 +412,6 @@ function independentHouse_villa_Rent(data) {
     }
     // Adding Description
     obj.description = xss(data.description);
-
-
-
-
 
 
 
@@ -443,7 +432,6 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
 
 
-
     // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -459,7 +447,6 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- PROPERTY FEATURES ARRAY ENDING ---------------------------------
-
 
 
     // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY STARTING ---------------------------------
@@ -496,7 +483,6 @@ function independentHouse_villa_Rent(data) {
     // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
 
 
-
     // --------------------------------- OTHER FEATURES ARRAY STARTING ---------------------------------
 
 
@@ -512,7 +498,6 @@ function independentHouse_villa_Rent(data) {
 
 
     // --------------------------------- OTHER FEATURES ARRAY ENDING ---------------------------------
-
 
 
     // Checking Power Backup
@@ -556,7 +541,6 @@ function independentHouse_villa_Rent(data) {
     obj.roadFacingWidthType = xss(data.roadFacingWidthType);
 
 
-
     // --------------------------------- LOCATION ADVANTAGES ARRAY STARTING ---------------------------------
 
 
@@ -576,8 +560,10 @@ function independentHouse_villa_Rent(data) {
 
 
 
+
     return { "msg": "SUCCESS", "data": obj };
 }
 
 
-module.exports = { independentHouse_villa_Rent };
+
+module.exports = { RK_Studio_Apartment_Sell };

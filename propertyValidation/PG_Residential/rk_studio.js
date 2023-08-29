@@ -1,7 +1,7 @@
 const xss = require("xss");
 
 
-function independent_builderFloor(data) {
+function rk_studio(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
@@ -89,7 +89,7 @@ function independent_builderFloor(data) {
 
     // Checking if roomDetails Object is not present
     if (!data.roomDetails) {
-        return { "msg": "ERROR", "error": "Room Details Data is not Present" };
+        return { "msg": "ERROR", "error": "Room Details Data is not Present" }
     }
 
     // if present then creating a new roomDetails object that will be added in Main Object
@@ -164,6 +164,14 @@ function independent_builderFloor(data) {
     }
     // Adding Property Price
     obj.price = Number(xss(data.price));
+
+
+    // Checking Price Per Unit
+    if (!data.priceUnit) {
+        return { "msg": "ERROR", "error": "Missing Price Per Unit" };
+    }
+    // Adding Price Per Unit
+    obj.priceUnit = Number(xss(data.priceUnit));
 
 
 
@@ -485,22 +493,26 @@ function independent_builderFloor(data) {
 
 
     // Checking which Floor Number is Going to sell
-    if (!data.floorOn) {
-        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
-    }
+    // if (!data.floorOn) {
+    //     return { "msg": "ERROR", "error": "Missing Property Floor Number" };
+    // }
     // Adding Floor Number
-    obj.floorOn = xss(data.floorOn);
+    // obj.floorOn = xss(data.floorOn);
 
 
+    // Checking Plot Area
     if (!data.plotArea) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
+    // Adding Plot Area
     obj.plotArea = Number(xss(data.plotArea));
 
 
+    // Checking Plot Area Unit
     if (!data.plotAreaUnit) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
+    // Adding Plot Area Unit
     obj.plotAreaUnit = xss(data.plotAreaUnit);
 
 
@@ -524,6 +536,7 @@ function independent_builderFloor(data) {
     if (data.superBuiltupAreaUnit) {
         obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
     }
+
 
     // Checking Country Currency Code
     if (!data.countryCurrency) {
@@ -570,9 +583,9 @@ function independent_builderFloor(data) {
 
         additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
         additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-        additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
         additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
         additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
+        additionalPricingDetails.membershipCharge = Number(xss(data.additionalPricingDetails.membershipCharge));
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
@@ -581,4 +594,4 @@ function independent_builderFloor(data) {
 }
 
 
-module.exports = { independent_builderFloor };
+module.exports = { rk_studio };
