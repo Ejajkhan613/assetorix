@@ -39,6 +39,8 @@ const { commercialShops } = require("./Sell_Commercial/Retail/commercialShops");
 const { commercialShowrooms } = require("./Sell_Commercial/Retail/commercialShowrooms");
 
 
+
+
 // Rent
 // Residential
 const { flat_apartment_Sell } = require("./Rent_Residential/flat_apartment");
@@ -76,6 +78,8 @@ const { commercialShops_Rent } = require("./Rent_Commercial/Retail/commercialSho
 const { commercialShowrooms_Rent } = require("./Rent_Commercial/Retail/commercialShowrooms");
 
 
+
+
 // PG
 // Flat / Apartment
 const { flat_apartment_PG } = require("./PG_Residential/flat_apartment");
@@ -85,7 +89,7 @@ const { rk_studio_PG } = require("./PG_Residential/rk_studio");
 const { servicedApartment_PG } = require("./PG_Residential/servicedApartment");
 
 
-// Function to send payload to dedicated property validators
+// Function to send payload to there dedicated property validators
 function spreader(payload) {
     if (payload.lookingFor == "Sell") {
         if (payload.propertyGroup == "Residential") {
