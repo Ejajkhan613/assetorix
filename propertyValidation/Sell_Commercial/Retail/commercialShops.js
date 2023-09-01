@@ -137,13 +137,6 @@ function commercialShops(data) {
     }
 
 
-    // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
-
-    if (!data.washrooms) {
-        return { "msg": "ERROR", "error": "Missing Washrooms" };
-    }
-
-    obj.washrooms = xss(data.washrooms);
 
 
     // Shop Faced Size
@@ -163,6 +156,15 @@ function commercialShops(data) {
             shopFacedSize.ceilingHeightUnit = xss(data.shopFacedSize.ceilingHeightUnit);
         }
     }
+
+    // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
+
+    if (!data.washrooms) {
+        return { "msg": "ERROR", "error": "Missing Washrooms" };
+    }
+
+    obj.washrooms = xss(data.washrooms);
+
 
 
     if (data.washrooms == "Available") {
