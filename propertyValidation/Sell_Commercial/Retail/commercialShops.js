@@ -137,7 +137,6 @@ function commercialShops(data) {
     }
 
 
-
     // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
 
     if (!data.washrooms) {
@@ -335,8 +334,6 @@ function commercialShops(data) {
     }
 
 
-
-
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
@@ -387,7 +384,6 @@ function commercialShops(data) {
 
 
     // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
-
 
     let amenities = [];
 
