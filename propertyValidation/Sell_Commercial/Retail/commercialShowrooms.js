@@ -137,6 +137,7 @@ function commercialShowrooms(data) {
     }
 
 
+
     // Shop Faced Size
     if (data.shopFacedSize) {
         let shopFacedSize = {};
@@ -157,6 +158,7 @@ function commercialShowrooms(data) {
 
 
 
+
     // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
 
     if (!data.washrooms) {
@@ -166,22 +168,22 @@ function commercialShowrooms(data) {
     obj.washrooms = xss(data.washrooms);
 
 
+
     if (data.washrooms == "Available") {
         let washroomDetails = {};
 
         if (!data.washroomDetails.privateWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
         }
-        washroomDetails.privateWashrooms = Number(xss(privateWashrooms));
+        washroomDetails.privateWashrooms = Number(xss(data.washrooms.privateWashrooms));
 
         if (!data.washroomDetails.sharedWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
         }
-        washroomDetails.sharedWashrooms = Number(xss(sharedWashrooms));
+        washroomDetails.sharedWashrooms = Number(xss(data.washrooms.sharedWashrooms));
     }
 
     // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
-
 
     // Checking Missing Total Floors
     if (!data.totalFloors) {
@@ -239,6 +241,7 @@ function commercialShowrooms(data) {
 
 
 
+
     // Checking availabilityStatus
     if (!data.availabilityStatus) {
         return { "msg": "ERROR", "error": "Missing Availability Status" };
@@ -261,6 +264,7 @@ function commercialShowrooms(data) {
             return { "msg": "ERROR", "error": "Missing Expected by Year" };
         }
     }
+
 
 
     if (data.suitableFor) {
@@ -338,6 +342,7 @@ function commercialShowrooms(data) {
 
 
 
+
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
@@ -369,7 +374,6 @@ function commercialShowrooms(data) {
         obj.investorLookFor = investorLookFor;
     }
 
-
     // Checking Country Currency Code
     if (!data.countryCurrency) {
         return { "msg": "ERROR", "error": "Missing Country Currency Code" };
@@ -388,7 +392,6 @@ function commercialShowrooms(data) {
 
 
     // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
-
 
     let amenities = [];
 
@@ -519,6 +522,7 @@ function commercialShowrooms(data) {
     }
     // Adding Main Road Width Type
     obj.roadFacingWidthType = xss(data.roadFacingWidthType);
+
 
 
 
