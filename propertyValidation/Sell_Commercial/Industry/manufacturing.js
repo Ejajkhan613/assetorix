@@ -54,6 +54,11 @@ function manufacturing(data) {
     let address = {};
 
 
+    // Checking address
+    if (data.address.address) {
+        address.address = xss(data.address.address);
+    }
+
     // Checking Pincode
     if (!data.address.pincode) {
         return { "msg": "ERROR", "error": "Missing Pincode" };
@@ -128,18 +133,15 @@ function manufacturing(data) {
 
 
     // Checking Carpet Area
-    if (!data.carpetArea) {
-        return { "msg": "ERROR", "error": "Missing Carpet Area" };
+    if (data.carpetArea) {
+        obj.carpetArea = Number(xss(data.carpetArea));
     }
-    // Adding Carpet Area
-    obj.carpetArea = Number(xss(data.carpetArea));
+
 
     // Checking Carpet Area Unit
-    if (!data.carpetAreaUnit) {
-        return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
+    if (data.carpetAreaUnit) {
+        obj.carpetAreaUnit = xss(data.carpetAreaUnit);
     }
-    // Adding Carpet Area Unit
-    obj.carpetAreaUnit = xss(data.carpetAreaUnit);
 
 
     // Checking Builtup Area
@@ -247,7 +249,7 @@ function manufacturing(data) {
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
-    obj.preLeased_Rented = xss(preLeased_Rented);
+    obj.preLeased_Rented = xss(data.preLeased_Rented);
 
 
     if (data.preLeased_Rented == "Yes") {

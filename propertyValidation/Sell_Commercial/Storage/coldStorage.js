@@ -106,7 +106,12 @@ function coldStorage(data) {
 
     obj.washrooms = xss(data.washrooms);
 
-
+    // Checking Plot Area
+    if (!data.plotArea) {
+        return { "msg": "ERROR", "error": "Missing Plot Area" };
+    }
+    // Adding Plot Area
+    obj.plotArea = Number(xss(data.plotArea));
 
     // Checking Plot Area Unit
     if (!data.plotAreaUnit) {
