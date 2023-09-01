@@ -463,23 +463,23 @@ function flat_apartment_PG(data) {
     if (data.servicesExcludingPrice) {
         let servicesExcludingPrice = {};
 
-        if (!data.servicesExcludingPrice.laundry) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.laundry);
+        if (data.servicesExcludingPrice.laundry) {
+            servicesExcludingPrice.laundry = xss(data.servicesExcludingPrice.laundry);
         }
-        if (!data.servicesExcludingPrice.water) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.water);
+        if (data.servicesExcludingPrice.water) {
+            servicesExcludingPrice.water = xss(data.servicesExcludingPrice.water);
         }
-        if (!data.servicesExcludingPrice.wifi) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.wifi);
+        if (data.servicesExcludingPrice.wifi) {
+            servicesExcludingPrice.wifi = xss(data.servicesExcludingPrice.wifi);
         }
-        if (!data.servicesExcludingPrice.housekeeping) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.housekeeping);
+        if (data.servicesExcludingPrice.housekeeping) {
+            servicesExcludingPrice.housekeeping = xss(data.servicesExcludingPrice.housekeeping);
         }
-        if (!data.servicesExcludingPrice.dth) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.dth);
+        if (data.servicesExcludingPrice.dth) {
+            servicesExcludingPrice.dth = xss(data.servicesExcludingPrice.dth);
         }
-        if (!data.servicesExcludingPrice.electricity) {
-            servicesExcludingPrice = xss(data.servicesExcludingPrice.electricity);
+        if (data.servicesExcludingPrice.electricity) {
+            servicesExcludingPrice.electricity = xss(data.servicesExcludingPrice.electricity);
         }
         obj.servicesExcludingPrice = servicesExcludingPrice;
     }

@@ -1,7 +1,7 @@
 const xss = require("xss");
 
 
-function rk_studio(data) {
+function rk_studio_PG(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
@@ -150,213 +150,104 @@ function rk_studio(data) {
     obj.propertyType = xss(data.propertyType);
 
 
-    // Checking OwnerShip Type
-    if (!data.ownership) {
-        return { "msg": "ERROR", "error": "Missing Ownership" };
+
+
+    // Checking Room Type
+    if (!data.roomType) {
+        return { "msg": "ERROR", "error": "Missing Room Type" };
     }
-    // Adding OwnerShip Type
-    obj.ownership = xss(data.ownership);
+    // Adding Room Type
+    obj.roomType = xss(data.roomType);
 
-
-    // Checking Property Price
-    if (!data.price) {
-        return { "msg": "ERROR", "error": "Missing Price" };
+    if (data.roomType == "Sharing") {
+        // How many people can share this room
+        if (!data.roomShareCount) {
+            return { "msg": "ERROR", "error": "Missing How many people can share this room" };
+        }
+        obj.roomShareCount = xss(data.roomShareCount);
     }
-    // Adding Property Price
-    obj.price = Number(xss(data.price));
 
 
-    // Checking Price Per Unit
-    if (!data.priceUnit) {
-        return { "msg": "ERROR", "error": "Missing Price Per Unit" };
+
+
+    // Capacity and Availability (Optional)
+    if (data.totalBedsInPG) {
+        obj.totalBedsInPG = Number(xss(data.totalBedsInPG));
     }
-    // Adding Price Per Unit
-    obj.priceUnit = Number(xss(data.priceUnit));
+
+    // Capacity and Availability (Optional)
+    if (data.totalBedsInPGAvailable) {
+        obj.totalBedsInPGAvailable = Number(xss(data.totalBedsInPGAvailable));
+    }
+
+    if (data.bedsInPGDetails) {
+        let bedsInPGDetails = [];
+
+        for (let a = 0; a < data.bedsInPGDetails.length; a++) {
+            bedsInPGDetails.push(xss(data.bedsInPGDetails[a]));
+        }
+        obj.bedsInPGDetails = bedsInPGDetails;
+    }
 
 
 
-    // --------------------------------- INCLUSIVE PRICE ARRAY STARTING ---------------------------------
+
+    // Checking Carpet Area
+    if (!data.carpetArea) {
+        return { "msg": "ERROR", "error": "Missing Carpet Area" };
+    }
+    // Adding Carpet Area
+    obj.carpetArea = Number(xss(data.carpetArea));
+
+    // Checking Carpet Area Unit
+    if (!data.carpetAreaUnit) {
+        return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
+    }
+    // Adding Carpet Area Unit
+    obj.carpetAreaUnit = xss(data.carpetAreaUnit);
 
 
-    let inclusivePrices = [];
+    // Adding Builtup Area
+    if (data.builtupArea) {
+        obj.builtupArea = Number(xss(data.builtupArea));
+    }
 
-    if (data.inclusivePrices.length) {
-        for (let a = 0; a < data.inclusivePrices.length; a++) {
-            inclusivePrices.push(xss(data.inclusivePrices[a]));
+    // Adding Builtup Area Unit
+    if (data.builtupAreaUnit) {
+        obj.builtupAreaUnit = xss(data.builtupAreaUnit);
+    }
+
+
+    // Adding Super Builtup Area
+    if (data.superBuiltupArea) {
+        obj.superBuiltupArea = Number(xss(data.superBuiltupArea));
+    }
+
+    // Adding Super Builtup Area Unit
+    if (data.superBuiltupAreaUnit) {
+        obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
+    }
+
+
+    // --------------------------------- OTHER ROOMS ARRAY STARTING ---------------------------------
+
+
+    let otherRoom = [];
+
+    if (data.otherRoom.length) {
+        for (let a = 0; a < data.otherRoom.length; a++) {
+            otherRoom.push(xss(data.otherRoom[a]));
         }
     }
 
-    obj.inclusivePrices = inclusivePrices;
+    obj.otherRoom = otherRoom;
 
 
-    // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
-
-
-    let amenities = [];
-
-    if (data.amenities.length) {
-        for (let a = 0; a < data.amenities.length; a++) {
-            amenities.push(xss(data.amenities[a]));
-        }
-    }
-
-    obj.amenities = amenities;
-
-
-    // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
-
-
-
-
-
-    // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
-
-
-    let propertyFeatures = [];
-
-    if (data.propertyFeatures.length) {
-        for (let a = 0; a < data.propertyFeatures.length; a++) {
-            propertyFeatures.push(xss(data.propertyFeatures[a]));
-        }
-    }
-
-    obj.propertyFeatures = propertyFeatures;
-
-
-    // --------------------------------- PROPERTY FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-
-    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY STARTING ---------------------------------
-
-
-    let society_buildingFeatures = [];
-
-    if (data.society_buildingFeatures.length) {
-        for (let a = 0; a < data.society_buildingFeatures.length; a++) {
-            society_buildingFeatures.push(xss(data.society_buildingFeatures[a]));
-        }
-    }
-
-    obj.society_buildingFeatures = society_buildingFeatures;
-
-
-    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-
-    // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
-
-
-    let additionalFeatures = [];
-
-    if (data.additionalFeatures.length) {
-        for (let a = 0; a < data.additionalFeatures.length; a++) {
-            additionalFeatures.push(xss(data.additionalFeatures[a]));
-        }
-    }
-
-    obj.additionalFeatures = additionalFeatures;
-
-
-    // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-
-    // --------------------------------- WATER SOURCES ARRAY STARTING ---------------------------------
-
-
-    let waterSources = [];
-
-    if (data.waterSources.length) {
-        for (let a = 0; a < data.waterSources.length; a++) {
-            waterSources.push(xss(data.waterSources[a]));
-        }
-    }
-
-    obj.waterSources = waterSources;
-
-
-    // --------------------------------- WATER SOURCES ARRAY ENDING ---------------------------------
-
-
-
-
-
-    // --------------------------------- OTHER FEATURES ARRAY STARTING ---------------------------------
-
-
-    let otherFeatures = [];
-
-    if (data.otherFeatures.length) {
-        for (let a = 0; a < data.otherFeatures.length; a++) {
-            otherFeatures.push(xss(data.otherFeatures[a]));
-        }
-    }
-
-    obj.otherFeatures = otherFeatures;
-
-
-    // --------------------------------- OTHER FEATURES ARRAY ENDING ---------------------------------
-
-
-
-
-
-    // --------------------------------- OVER LOOKINGS ARRAY STARTING ---------------------------------
-
-
-    let overLookings = [];
-
-    if (data.overLookings.length) {
-        for (let a = 0; a < data.overLookings.length; a++) {
-            overLookings.push(xss(data.overLookings[a]));
-        }
-    }
-
-    obj.overLookings = overLookings;
-
-
-    // --------------------------------- OVER LOOKINGS ARRAY ENDING ---------------------------------
-
-
-
-    // --------------------------------- LOCATION ADVANTAGES ARRAY STARTING ---------------------------------
-
-
-    let locationAdv = [];
-
-    if (data.locationAdv.length) {
-        for (let a = 0; a < data.locationAdv.length; a++) {
-            locationAdv.push(xss(data.locationAdv[a]));
-        }
-    }
-
-    obj.locationAdv = locationAdv;
-
-
-    // --------------------------------- LOCATION ADVANTAGES ARRAY ENDING ---------------------------------
-
-
+    // --------------------------------- OTHER ROOMS ARRAY ENDING ---------------------------------
 
     // --------------------------------- FURNISHED LIST ARRAY STARTING ---------------------------------
 
-    obj.furnished = data.furnished;
+    obj.furnished = xss(data.furnished);
 
     if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
 
@@ -378,7 +269,6 @@ function rk_studio(data) {
         furnishedObj.tv = Number(xss(data.furnishedObj.tv));
         furnishedObj.beds = Number(xss(data.furnishedObj.beds));
         furnishedObj.wardrobe = Number(xss(data.furnishedObj.wardrobe));
-        furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
 
         obj.furnishedObj = furnishedObj;
     }
@@ -388,23 +278,39 @@ function rk_studio(data) {
     // --------------------------------- FURNISHED LIST ARRAY ENDING ---------------------------------
 
 
+    // --------------------------------- COMMON FURNISHED LIST ARRAY STARTING ---------------------------------
 
-    // --------------------------------- OTHER ROOMS ARRAY STARTING ---------------------------------
+    if (data.commonFurnishedList) {
 
+        let commonFurnishedList = [];
 
-    let otherRoom = [];
-
-    if (data.otherRoom.length) {
-        for (let a = 0; a < data.otherRoom.length; a++) {
-            otherRoom.push(xss(data.otherRoom[a]));
+        if (data.commonFurnishedList.length) {
+            for (let a = 0; a < data.commonFurnishedList.length; a++) {
+                commonFurnishedList.push(xss(data.commonFurnishedList[a]));
+            }
         }
+
+        obj.commonFurnishedList = commonFurnishedList;
+
     }
 
-    obj.otherRoom = otherRoom;
+    if (data.commonFurnishedObj) {
+
+        let commonFurnishedObj = {};
+
+        commonFurnishedObj.light = Number(xss(data.commonFurnishedObj.light));
+        commonFurnishedObj.ac = Number(xss(data.commonFurnishedObj.ac));
+        commonFurnishedObj.tv = Number(xss(data.commonFurnishedObj.tv));
+        commonFurnishedObj.wardrobe = Number(xss(data.commonFurnishedObj.wardrobe));
+        commonFurnishedObj.washingMachine = Number(xss(data.commonFurnishedObj.washingMachine));
+
+        obj.commonFurnishedObj = commonFurnishedObj;
+    }
 
 
-    // --------------------------------- OTHER ROOMS ARRAY ENDING ---------------------------------
 
+
+    // --------------------------------- COMMON FURNISHED LIST ARRAY ENDING ---------------------------------
 
 
     // --------------------------------- PARKING OBJECT STARTING ---------------------------------
@@ -427,7 +333,7 @@ function rk_studio(data) {
 
 
     // Checking Close Parking
-    if (data.parking.closeParking) {
+    if (!data.parking.closeParking) {
         parking.closeParking = Number(xss(data.parking.closeParking));
     }
 
@@ -439,7 +345,377 @@ function rk_studio(data) {
 
 
 
+    // Checking Missing Total Floors
+    if (!data.totalFloors) {
+        return { "msg": "ERROR", "error": "Missing Total Floors" };
+    }
+    // Adding Missing Total Floors
+    obj.totalFloors = Number(xss(data.totalFloors));
 
+
+    // Checking which Floor Number is Going to sell
+    if (!data.floorOn) {
+        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
+    }
+    // Adding Floor Number
+    obj.floorOn = xss(data.floorOn);
+
+
+
+    // Age of Property
+    if (!data.propertyStatus) {
+        return { "msg": "ERROR", "error": "Missing Property Age Detail" };
+    }
+    obj.propertyStatus = xss(data.propertyStatus);
+
+
+    // Available From
+    if (!data.availableFrom) {
+        return { "msg": "ERROR", "error": "Missing Available Date" };
+    }
+    obj.availableFrom = xss(data.availableFrom);
+
+
+    // Available for
+    if (!data.availableFor) {
+        return { "msg": "ERROR", "error": "Missing Available For (Girls , Boys, Any)" };
+    }
+    obj.availableFor = xss(data.availableFor);
+
+
+    // --------------------------------- SUITABLE FOR STARTING ---------------------------------
+
+
+    let suitableFor = [];
+
+    if (data.suitableFor && data.suitableFor.length) {
+        for (let a = 0; a < data.suitableFor.length; a++) {
+            suitableFor.push(xss(data.suitableFor[a]));
+        }
+    }
+
+    obj.suitableFor = suitableFor;
+
+
+    // --------------------------------- SUITABLE FOR ENDING ---------------------------------
+
+
+
+    // Checking Property Price
+    if (!data.price) {
+        return { "msg": "ERROR", "error": "Missing Price" };
+    }
+    // Adding Property Price
+    obj.price = Number(xss(data.price));
+
+
+    if (data.additionalPricingDetails) {
+        let additionalPricingDetails = {};
+
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
+        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
+        additionalPricingDetails.bookingAmount = xss(data.additionalPricingDetails.bookingAmount);
+        additionalPricingDetails.membershipCharge = xss(data.additionalPricingDetails.membershipCharge);
+
+        obj.additionalPricingDetails = additionalPricingDetails;
+    }
+
+
+
+
+    // Security deposit (Optional)
+    if (!data.securityDeposit) {
+        return { "msg": "ERROR", "error": "Missing Security Deposit Detail" };
+    }
+    obj.securityDeposit = xss(data.securityDeposit);
+
+    if (data.securityDeposit == "Multiple of Rent") {
+        if (!data.multipleOfRent) {
+            return { "msg": "ERROR", "error": "Missing Security Deposit Value" };
+        }
+        obj.multipleOfRent = xss(data.multipleOfRent);
+    }
+
+    if (data.securityDeposit == "Fixed") {
+        if (!data.depositValue) {
+            return { "msg": "ERROR", "error": "Missing Security Deposit Value" };
+        }
+        obj.depositValue = xss(data.depositValue);
+    }
+
+
+    // --------------------------------- TOTAL PRICE INCLUDES STARTING ---------------------------------
+
+
+    let totalPriceIncludesList = [];
+
+    if (data.totalPriceIncludesList.length) {
+        for (let a = 0; a < data.totalPriceIncludesList.length; a++) {
+            totalPriceIncludesList.push(xss(data.totalPriceIncludesList[a]));
+        }
+    }
+
+    obj.totalPriceIncludesList = totalPriceIncludesList;
+
+
+    // Services Excluding Price
+    if (data.servicesExcludingPrice) {
+        let servicesExcludingPrice = {};
+
+        if (data.servicesExcludingPrice.laundry) {
+            servicesExcludingPrice.laundry = xss(data.servicesExcludingPrice.laundry);
+        }
+        if (data.servicesExcludingPrice.water) {
+            servicesExcludingPrice.water = xss(data.servicesExcludingPrice.water);
+        }
+        if (data.servicesExcludingPrice.wifi) {
+            servicesExcludingPrice.wifi = xss(data.servicesExcludingPrice.wifi);
+        }
+        if (data.servicesExcludingPrice.housekeeping) {
+            servicesExcludingPrice.housekeeping = xss(data.servicesExcludingPrice.housekeeping);
+        }
+        if (data.servicesExcludingPrice.dth) {
+            servicesExcludingPrice.dth = xss(data.servicesExcludingPrice.dth);
+        }
+        if (data.servicesExcludingPrice.electricity) {
+            servicesExcludingPrice.electricity = xss(data.servicesExcludingPrice.electricity);
+        }
+        obj.servicesExcludingPrice = servicesExcludingPrice;
+    }
+
+
+    // --------------------------------- TOTAL PRICE INCLUDES ENDING ---------------------------------
+
+
+
+    // Food details
+    if (!data.foodAvailability) {
+        return { "msg": "ERROR", "error": "Missing Food Details Availability" };
+    }
+    obj.foodAvailability = xss(foodAvailability);
+
+    if (data.foodAvailability == "Available") {
+
+        let foodDetails = {};
+
+        // Meal type (Optional)
+        if (data.foodDetails.mealType) {
+            foodDetails.mealType = xss(data.foodDetails.mealType);
+        }
+
+        // Availability of meal on weekdays (Optional)
+        if (data.foodDetails.mealOnWeekdays) {
+            foodDetails.mealOnWeekdays = xss(data.foodDetails.mealOnWeekdays);
+        }
+
+        // Availability of meal on weekends (Optional)
+        if (data.foodDetails.mealOnWeekends) {
+            foodDetails.mealOnWeekends = xss(data.foodDetails.mealOnWeekends);
+        }
+
+        // Charges for Food (Optional)
+        if (data.foodDetails.chargesForFood) {
+            foodDetails.chargesForFood = xss(data.foodDetails.chargesForFood);
+        }
+
+
+        if (data.foodDetails.chargesForFood == "Per meal basis") {
+            let perMealBasis = {};
+            if (data.foodDetails.perMealBasis) {
+
+                if (data.foodDetails.perMealBasis.breakfast) {
+                    perMealBasis.breakfast = xss(data.foodDetails.perMealBasis.breakfast)
+                }
+                if (data.foodDetails.perMealBasis.lunch) {
+                    perMealBasis.lunch = xss(data.foodDetails.perMealBasis.lunch)
+                }
+                if (data.foodDetails.perMealBasis.dinner) {
+                    perMealBasis.dinner = xss(data.foodDetails.perMealBasis.dinner)
+                }
+                foodDetails.perMealBasis = perMealBasis;
+            }
+            foodDetails.perMealBasis = perMealBasis;
+
+        }
+
+        if (data.foodDetails.chargesForFood == "Fixed monthly amount") {
+            if (data.foodDetails.fixedMonthlyCharge) {
+                foodDetails.fixedMonthlyCharge = xss(data.foodDetails.fixedMonthlyCharge);
+            }
+        }
+
+        obj.foodDetails = foodDetails;
+
+    }
+
+
+    // Minimum contract duration(Optional)
+    if (data.minContractDuration) {
+        obj.minContractDuration = xss(data.minContractDuration);
+    }
+
+
+
+    // Months of Notice (Optional)
+    if (data.monthsOfNotice) {
+        obj.monthsOfNotice = xss(data.monthsOfNotice);
+    }
+
+
+    // Early leaving charges (Optional)
+    if (data.earlyLeaveCharges) {
+        obj.earlyLeaveCharges = xss(data.earlyLeaveCharges);
+    }
+
+    if (data.earlyLeaveCharges == "Fixed") {
+        if (data.earlyLeaveChargesAmount) {
+            obj.earlyLeaveChargesAmount = Number(xss(data.earlyLeaveChargesAmount));
+        }
+    }
+
+    if (data.earlyLeaveCharges == "Multiple of Rent") {
+        if (data.earlyLeaveRentInMonths) {
+            obj.earlyLeaveRentInMonths = Number(xss(data.earlyLeaveRentInMonths));
+        }
+    }
+
+
+    // Some house rules(Optional)
+
+    if (data.houseRules) {
+        let houseRules = {};
+
+        if (data.houseRules.petsAllowed) {
+            obj.houseRules.petsAllowed = xss(data.houseRules.petsAllowed);
+        }
+        if (data.houseRules.visitorsAllowed) {
+            obj.houseRules.visitorsAllowed = xss(data.houseRules.visitorsAllowed);
+        }
+        if (data.houseRules.smokingAllowed) {
+            obj.houseRules.smokingAllowed = xss(data.houseRules.smokingAllowed);
+        }
+        if (data.houseRules.alcoholAllowed) {
+            obj.houseRules.alcoholAllowed = xss(data.houseRules.alcoholAllowed);
+        }
+        if (data.houseRules.partyEventAllowed) {
+            obj.houseRules.partyEventAllowed = xss(data.houseRules.partyEventAllowed);
+        }
+
+        obj.houseRules = houseRules;
+    }
+
+    if (data.lastEntryTime) {
+        obj.lastEntryTime = xss(data.lastEntryTime);
+    }
+
+    if (data.otherRules) {
+        obj.otherRules = xss(data.otherRules);
+    }
+
+
+
+    // Checking Country Currency Code
+    if (!data.countryCurrency) {
+        return { "msg": "ERROR", "error": "Missing Country Currency Code" };
+    }
+    // Adding Country Currency Code
+    obj.countryCurrency = xss(data.countryCurrency);
+
+
+    // Checking Description
+    if (!data.description) {
+        return { "msg": "ERROR", "error": "Missing Description" };
+    }
+    // Adding Description
+    obj.description = xss(data.description);
+
+
+
+    // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
+
+
+    let amenities = [];
+
+    if (data.amenities.length) {
+        for (let a = 0; a < data.amenities.length; a++) {
+            amenities.push(xss(data.amenities[a]));
+        }
+    }
+
+    obj.amenities = amenities;
+
+
+    // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
+
+
+
+    // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
+
+
+    let propertyFeatures = [];
+
+    if (data.propertyFeatures.length) {
+        for (let a = 0; a < data.propertyFeatures.length; a++) {
+            propertyFeatures.push(xss(data.propertyFeatures[a]));
+        }
+    }
+
+    obj.propertyFeatures = propertyFeatures;
+
+
+    // --------------------------------- PROPERTY FEATURES ARRAY ENDING ---------------------------------
+
+
+    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY STARTING ---------------------------------
+
+
+    let society_buildingFeatures = [];
+
+    if (data.society_buildingFeatures.length) {
+        for (let a = 0; a < data.society_buildingFeatures.length; a++) {
+            society_buildingFeatures.push(xss(data.society_buildingFeatures[a]));
+        }
+    }
+
+    obj.society_buildingFeatures = society_buildingFeatures;
+
+
+    // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
+
+
+    // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
+
+
+    let additionalFeatures = [];
+
+    if (data.additionalFeatures.length) {
+        for (let a = 0; a < data.additionalFeatures.length; a++) {
+            additionalFeatures.push(xss(data.additionalFeatures[a]));
+        }
+    }
+
+    obj.additionalFeatures = additionalFeatures;
+
+
+    // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
+
+
+
+    // --------------------------------- OTHER FEATURES ARRAY STARTING ---------------------------------
+
+
+    let otherFeatures = [];
+
+    if (data.otherFeatures.length) {
+        for (let a = 0; a < data.otherFeatures.length; a++) {
+            otherFeatures.push(xss(data.otherFeatures[a]));
+        }
+    }
+
+    obj.otherFeatures = otherFeatures;
+
+
+    // --------------------------------- OTHER FEATURES ARRAY ENDING ---------------------------------
 
 
 
@@ -484,114 +760,32 @@ function rk_studio(data) {
     obj.roadFacingWidthType = xss(data.roadFacingWidthType);
 
 
-    // Checking Missing Total Floors
-    if (!data.totalFloors) {
-        return { "msg": "ERROR", "error": "Missing Total Floors" };
-    }
-    // Adding Missing Total Floors
-    obj.totalFloors = Number(xss(data.totalFloors));
-
-
-    // Checking which Floor Number is Going to sell
-    // if (!data.floorOn) {
-    //     return { "msg": "ERROR", "error": "Missing Property Floor Number" };
-    // }
-    // Adding Floor Number
-    // obj.floorOn = xss(data.floorOn);
-
-
-    // Checking Plot Area
-    if (!data.plotArea) {
-        return { "msg": "ERROR", "error": "Missing Plot Area" };
-    }
-    // Adding Plot Area
-    obj.plotArea = Number(xss(data.plotArea));
-
-
-    // Checking Plot Area Unit
-    if (!data.plotAreaUnit) {
-        return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
-    }
-    // Adding Plot Area Unit
-    obj.plotAreaUnit = xss(data.plotAreaUnit);
-
-
-    // Adding Builtup Area
-    if (data.builtupArea) {
-        obj.builtupArea = Number(xss(data.builtupArea));
-    }
-
-    // Adding Builtup Area Unit
-    if (data.builtupAreaUnit) {
-        obj.builtupAreaUnit = xss(data.builtupAreaUnit);
-    }
-
-
-    // Adding Super Builtup Area
-    if (data.superBuiltupArea) {
-        obj.superBuiltupArea = Number(xss(data.superBuiltupArea));
-    }
-
-    // Adding Super Builtup Area Unit
-    if (data.superBuiltupAreaUnit) {
-        obj.superBuiltupAreaUnit = xss(data.superBuiltupAreaUnit);
-    }
-
-
-    // Checking Country Currency Code
-    if (!data.countryCurrency) {
-        return { "msg": "ERROR", "error": "Missing Country Currency Code" };
-    }
-    // Adding Country Currency Code
-    obj.countryCurrency = xss(data.countryCurrency);
-
-
-    // Checking Description
-    if (!data.description) {
-        return { "msg": "ERROR", "error": "Missing Description" };
-    }
-    // Adding Description
-    obj.description = xss(data.description);
 
 
 
-    // Checking availabilityStatus
-    if (!data.availabilityStatus) {
-        return { "msg": "ERROR", "error": "Missing Availability Status" };
-    }
-    // Adding availabilityStatus
-    obj.availabilityStatus = xss(data.availabilityStatus);
 
-    if (data.availabilityStatus == "Ready to move") {
-        if (data.propertyStatus) {
-            obj.propertyStatus = xss(data.propertyStatus);
-        } else {
-            return { "msg": "ERROR", "error": "Missing Property Year Status" };
+
+    // --------------------------------- LOCATION ADVANTAGES ARRAY STARTING ---------------------------------
+
+
+    let locationAdv = [];
+
+    if (data.locationAdv.length) {
+        for (let a = 0; a < data.locationAdv.length; a++) {
+            locationAdv.push(xss(data.locationAdv[a]));
         }
     }
 
-    if (data.availabilityStatus == "Under construction") {
-        if (data.expectedByYear) {
-            obj.expectedByYear = xss(data.expectedByYear);
-        } else {
-            return { "msg": "ERROR", "error": "Missing Expected by Year" };
-        }
-    }
+    obj.locationAdv = locationAdv;
 
-    if (data.additionalPricingDetails) {
-        let additionalPricingDetails = {};
 
-        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
-        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-        additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
-        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
-        additionalPricingDetails.membershipCharge = Number(xss(data.additionalPricingDetails.membershipCharge));
+    // --------------------------------- LOCATION ADVANTAGES ARRAY ENDING ---------------------------------
 
-        obj.additionalPricingDetails = additionalPricingDetails;
-    }
+
+
 
     return { "msg": "SUCCESS", "data": obj };
 }
 
 
-module.exports = { rk_studio };
+module.exports = { rk_studio_PG };

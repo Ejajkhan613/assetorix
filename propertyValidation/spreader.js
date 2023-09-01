@@ -76,6 +76,14 @@ const { commercialShops_Rent } = require("./Rent_Commercial/Retail/commercialSho
 const { commercialShowrooms_Rent } = require("./Rent_Commercial/Retail/commercialShowrooms");
 
 
+// PG
+// Flat / Apartment
+const { flat_apartment_PG } = require("./PG_Residential/flat_apartment");
+const { independentHouse_villa_PG } = require("./PG_Residential/independentHouse_villa");
+const { independent_builderFloor_PG } = require("./PG_Residential/independent_builderFloor");
+const { rk_studio_PG } = require("./PG_Residential/rk_studio");
+const { servicedApartment_PG } = require("./PG_Residential/servicedApartment");
+
 
 // Function to send payload to dedicated property validators
 function spreader(payload) {
@@ -234,7 +242,19 @@ function spreader(payload) {
             return { "msg": "ERROR", "error": `${payload.propertyGroup} is Wrong Property Group` }
         }
     } else if (payload.lookingFor == "PG") {
-        return { "msg": "ERROR", "error": `Data Validation Not Implemented for ${payload.lookingFor}` }
+        if (payload.propertyType == "Flat / Apartment") {
+            return flat_apartment_PG(payload);
+        } else if (payload.propertyType == "Independent House / Villa") {
+            return independentHouse_villa_PG(payload);
+        } else if (payload.propertyType == "Independent / Builder Floor") {
+            return independent_builderFloor_PG(payload);
+        } else if (payload.propertyType == "1RK / Studio Apartment") {
+            return rk_studio_PG(payload);
+        } else if (payload.propertyType == "Serviced Apartment") {
+            return servicedApartment_PG(payload);
+        } else {
+            return { "msg": "ERROR", "error": `${payload.propertyType} is Wrong Property Type` }
+        }
     } else {
         return { "msg": "ERROR", "error": "Wrong Looking For Type" };
     }
