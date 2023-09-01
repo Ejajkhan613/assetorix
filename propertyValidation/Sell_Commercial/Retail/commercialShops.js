@@ -213,35 +213,27 @@ function commercialShops(data) {
 
 
 
-    // --------------------------------- PARKING OBJECT STARTING ---------------------------------
+    // --------------------------------- PARKING STARTING ---------------------------------
 
 
-    // Checking if parking object is present in the input from frontend
+    // Checking if parking is present in the input from frontend
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing Parking Details" };
     }
+    obj.parking = xss(data.parking);
 
-    // if present then creating a new parking object that will be added in Main Object
-    let parking = {};
+    if (data.parking == "Available") {
+        let parkingType = [];
 
-
-    // Checking Open Parking
-    if (data.parking.openParking) {
-        parking.openParking = Number(xss(data.parking.openParking));
+        for (let a = 0; a < data.parkingType.length; a++) {
+            parkingType.push(xss(data.parkingType[a]));
+        }
+        obj.parkingType = parkingType;
     }
 
 
 
-    // Checking Close Parking
-    if (!data.parking.closeParking) {
-        parking.closeParking = Number(xss(data.parking.closeParking));
-    }
-
-    obj.parking = parking;
-
-
-
-    // --------------------------------- PARKING OBJECT ENDING ---------------------------------
+    // --------------------------------- PARKING ENDING ---------------------------------
 
 
 
