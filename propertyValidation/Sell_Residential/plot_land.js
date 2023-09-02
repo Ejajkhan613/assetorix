@@ -239,7 +239,7 @@ function plot_land(data) {
         return { "msg": "ERROR", "error": "Missing Main Road Width" };
     }
     // Adding Main Road Width
-    obj.roadFacingWidth = xss(data.roadFacingWidth);
+    obj.roadFacingWidth = Number(xss(data.roadFacingWidth));
 
 
     // Checking Main Road Width Type
