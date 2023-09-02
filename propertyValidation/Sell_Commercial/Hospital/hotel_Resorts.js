@@ -102,25 +102,46 @@ function hotel_Resorts(data) {
 
     // --------------------------------- ADDRESS ENDING ---------------------------------
 
-    if (!data.rooms) {
-        return { "msg": "ERROR", "error": "Missing Rooms Count" };
+
+    // --------------------------------- ROOM DETAILS STARTING ---------------------------------
+
+
+    // Checking if roomDetails Object is not present
+    if (!data.roomDetails) {
+        return { "msg": "ERROR", "error": "Room Details Data is not Present" }
     }
 
-    obj.rooms = xss(data.rooms);
+    // if present then creating a new roomDetails object that will be added in Main Object
+    let roomDetails = {};
+
+
+
+    // Checking Bathroom Counts
+    if (!data.roomDetails.rooms) {
+        return { "msg": "ERROR", "error": "Missing Rooms Quantity" };
+    }
+    // Adding Bathroom Counts
+    roomDetails.rooms = Number(xss(data.roomDetails.rooms));
+
+
+    // Checking Balcony Counts
+    if (!data.roomDetails.balcony) {
+        return { "msg": "ERROR", "error": "Missing Balconies Quantity" };
+    }
+    // Adding Balcony Counts
+    roomDetails.balcony = Number(xss(data.roomDetails.balcony));
+
+    obj.roomDetails = roomDetails;
+
+    // --------------------------------- ROOM DETAILS ENDING ---------------------------------
+
 
 
     if (!data.washrooms) {
-        return { "msg": "ERROR", "error": "Missing Washrooms" };
+        return { "msg": "ERROR", "error": "Missing Washroom Detail" };
     }
 
     obj.washrooms = xss(data.washrooms);
-
-    if (!data.balconies) {
-        return { "msg": "ERROR", "error": "Missing Balconies" };
-    }
-
-    obj.balconies = xss(data.balconies);
-
 
 
 

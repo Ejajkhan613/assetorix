@@ -684,7 +684,6 @@ let rkStudioApartment_Sell = {
 
 
 // Farmhouse
-
 let Farmhouse_Sell = {
     "address": {
         "locality": "Hauz Khas",
