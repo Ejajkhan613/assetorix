@@ -305,8 +305,8 @@ function commercial_InstitutionalLand(data) {
         let preLeased_RentedDetails = {};
 
         preLeased_RentedDetails.currentRentPerMonth = Number(xss(data.preLeased_RentedDetails.currentRentPerMonth));
-        preLeased_RentedDetails.leaseTenureInYear = xss(data.preLeased_RentedDetails.leaseTenureInYear);
-        preLeased_RentedDetails.annualRentIncrease = xss(data.preLeased_RentedDetails.annualRentIncrease);
+        preLeased_RentedDetails.leaseTenureInYear = Number(xss(data.preLeased_RentedDetails.leaseTenureInYear));
+        preLeased_RentedDetails.annualRentIncrease = Number(xss(data.preLeased_RentedDetails.annualRentIncrease));
         preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
 
         obj.preLeased_RentedDetails = preLeased_RentedDetails;
