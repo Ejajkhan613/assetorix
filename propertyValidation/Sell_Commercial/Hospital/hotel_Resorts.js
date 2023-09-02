@@ -52,6 +52,10 @@ function hotel_Resorts(data) {
     // if present then creating a new address object that will be added in Main Object
     let address = {};
 
+    // Checking address
+    if (data.address.address) {
+        address.address = xss(data.address.address);
+    }
 
     // Checking Pincode
     if (!data.address.pincode) {

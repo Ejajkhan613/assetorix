@@ -325,14 +325,14 @@ function plot_land(data) {
 
     // Adding Plot Length
     if (data.plotLength) {
-        obj.plotLength = xss(data.plotLength);
+        obj.plotLength = Number(xss(data.plotLength));
     }
 
 
 
     // Adding Plot Breadth
     if (data.plotBreadth) {
-        obj.plotBreadth = xss(data.plotBreadth);
+        obj.plotBreadth = Number(xss(data.plotBreadth));
     }
 
 
