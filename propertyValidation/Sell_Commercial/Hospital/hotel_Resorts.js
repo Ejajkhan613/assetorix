@@ -163,18 +163,14 @@ function hotel_Resorts(data) {
 
 
     // Checking Carpet Area
-    if (!data.carpetArea) {
-        return { "msg": "ERROR", "error": "Missing Carpet Area" };
+    if (data.carpetArea) {
+        obj.carpetArea = Number(xss(data.carpetArea));
     }
-    // Adding Carpet Area
-    obj.carpetArea = Number(xss(data.carpetArea));
 
     // Checking Carpet Area Unit
-    if (!data.carpetAreaUnit) {
-        return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
+    if (data.carpetAreaUnit) {
+        obj.carpetAreaUnit = xss(data.carpetAreaUnit);
     }
-    // Adding Carpet Area Unit
-    obj.carpetAreaUnit = xss(data.carpetAreaUnit);
 
 
     // Checking Builtup Area
