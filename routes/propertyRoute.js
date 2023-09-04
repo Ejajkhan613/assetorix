@@ -90,38 +90,6 @@ propertyRoute.get("/", async (req, res) => {
 
 
 
-// // Post Property
-// propertyRoute.post("/", tokenVerify, async (req, res) => {
-//     try {
-//         if (data.propertyType == "Flat / Apartment" && data.lookingFor == "Sell") {
-//             let obj = flat_apartment(req.body);
-//             if (obj.msg == "SUCCESS") {
-//                 obj.data.userID = xss(req.headers.id);
-//                 let newData = new PropertyModel(obj.data);
-//                 await newData.save();
-//                 res.status(201).send({ "msg": "Property Posted Successfully" });
-//             } else {
-//                 res.status(401).send({ "msg": obj.error });
-//             }
-//         } else if (data.propertyType == "Independent House / villa" && data.lookingFor == "Sell") {
-//             let obj = independentHouse_villa(req.body);
-//             if (obj.msg == "SUCCESS") {
-//                 obj.data.userID = xss(req.headers.id);
-//                 let newData = new PropertyModel(obj.data);
-//                 await newData.save();
-//                 res.status(201).send({ "msg": "Property Posted Successfully" });
-//             } else {
-//                 res.status(401).send({ "msg": obj.error });
-//             }
-//         } else {
-//             res.status(401).send({ "msg": "Data Validation Not Implemented for this property Type" });
-//         }
-//     } catch (error) {
-//         res.status(500).send({ "msg": "Server Error While Posting Property" });
-//     }
-// });
-
-
 // Post Property
 propertyRoute.post("/", tokenVerify, async (req, res) => {
     let payload = req.body;
@@ -157,24 +125,28 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
             return res.status(404).send({ "msg": "Property Not Found" });
         }
 
-        if (property.userID !== userID) {
+        if (property.userID != userID) {
             return res.status(400).send({ "msg": "Not Your Property" });
         }
 
-        const updateData = {
-            ...req.body,
-            userID: property.userID, // Ensuring the userID remains unchanged
-        };
+        let obj = spreader(req.body);
 
-        const updatedProperty = await PropertyModel.findByIdAndUpdate(propertyID, updateData);
+        if (obj.msg == "SUCCESS") {
+            obj.data.userID = xss(req.headers.id);
+            obj.data.lastUpdated = new Date().toISOString();
 
-        if (updatedProperty) {
-            res.status(201).send({ "msg": "Property Updated Successfully" });
+            const updatedProperty = await PropertyModel.findByIdAndUpdate(propertyID, obj.data);
+
+            if (updatedProperty) {
+                res.status(201).send({ "msg": `${obj.data.propertyType} Updated Successfully` });
+            } else {
+                res.status(400).send({ "msg": "Failed to Update Property" });
+            }
         } else {
-            res.status(400).send({ "msg": "Failed to Update Property" });
+            res.status(401).send({ "msg": obj.error });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Editing Property" });
+        res.status(500).send({ "msg": "Server Error While Updating Property" });
     }
 });
 
@@ -189,7 +161,7 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
         const property = await PropertyModel.findById(propertyID);
 
         if (!property) {
-            return res.status(404).send({ "msg": "Property Not Found" });
+            return res.status(404).send({ "msg": "Property Not Found or Already Deleted" });
         }
 
         if (property.userID !== userID) {

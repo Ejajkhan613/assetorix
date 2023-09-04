@@ -224,6 +224,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
     if (mobile) {
         obj.mobile = xss(mobile);
     }
+    obj.lastUpdated = new Date().toISOString();
 
     try {
         const role = res.getHeader("role");
@@ -232,14 +233,14 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             return;
         }
 
+
         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
         if (!updatedUser) {
             res.status(404).send({ "msg": "Not Found: User not found with the provided ID" });
             return;
         }
 
-        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
-        res.status(200).send(data);
+        res.status(201).send({ "msg": "Updated Successfully" });
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
     }
