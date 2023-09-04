@@ -378,15 +378,15 @@ function industrialLands_Plots(data) {
     // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
 
 
-    let additionalFeatures = [];
+    // let additionalFeatures = [];
 
-    if (data.additionalFeatures.length) {
-        for (let a = 0; a < data.additionalFeatures.length; a++) {
-            additionalFeatures.push(xss(data.additionalFeatures[a]));
-        }
-    }
+    // if (data.additionalFeatures.length) {
+    //     for (let a = 0; a < data.additionalFeatures.length; a++) {
+    //         additionalFeatures.push(xss(data.additionalFeatures[a]));
+    //     }
+    // }
 
-    obj.additionalFeatures = additionalFeatures;
+    // obj.additionalFeatures = additionalFeatures;
 
 
     // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
