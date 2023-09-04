@@ -305,7 +305,7 @@ function industrialLands_Plots(data) {
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
-    obj.preLeased_Rented = xss(preLeased_Rented);
+    obj.preLeased_Rented = xss(data.preLeased_Rented);
 
 
     if (data.preLeased_Rented == "Yes") {
