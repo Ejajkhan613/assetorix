@@ -340,30 +340,45 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
 
 
 
+// Add Property In Wishlist
+userRoute.patch("/wishlist", tokenVerify, async (req, res) => {
+    const id = xss(req.headers.id);
+    const propertyID = xss(req.body.propertyID);
+    const roles = new Set(["customer", "agent", "broker", "employee", "admin", "super_admin"]);
 
+    try {
+        const role = res.getHeader("role");
+        if (!roles.has(role)) {
+            return res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+        }
 
-// // User Wishlist
-// userRoute.get("/wishlist", tokenVerify, async (req, res) => {
-//     let id = xss(req.headers.id);
-//     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
-//     try {
-//         const role = res.getHeader("role");
-//         if (!roles.includes(role)) {
-//             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-//             return;
-//         }
-//         let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
-//         let array = [];
-//         for (let a = 0; a < listings.length; a++) {
-//             let data = {};
-//             let finding = await PropertyModel.findOne({ "_id": listings[a] });
-//             array.push(finding);
-//         }
-//         res.status(200).send(array);
-//     } catch (error) {
-//         res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
-//     }
-// });
+        // Find the user by their ID
+        const user = await UserModel.findById(id);
+
+        if (!user) {
+            res.status(404).send({ "msg": 'User not found' });
+            return;
+        }
+
+        // Check if the item is already in the wishlist
+        const itemExists = user.wishlist.includes(propertyID);
+
+        if (itemExists) {
+            return res.status(400).send({ "msg": 'Item already in wishlist' });
+        }
+
+        // Add the item to the wishlist
+
+        user.wishlist.push(propertyID);
+        await user.save();
+
+        res.status(200).send({ "msg": 'Item added to wishlist' });
+
+    } catch (error) {
+        res.status(500).send([{ "msg": "Internal Server Error: Error while Adding to Wishlist" }]);
+    }
+})
+
 
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
@@ -376,12 +391,12 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
         }
 
-        const listings = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
+        const wishlist = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
 
 
         const userWishlist = [];
 
-        for (const listing of listings.wishlist) {
+        for (const listing of wishlist.wishlist) {
             const list = await PropertyModel.findById(listing);
             userWishlist.push(list);
         }
