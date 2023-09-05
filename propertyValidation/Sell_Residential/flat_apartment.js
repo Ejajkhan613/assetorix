@@ -198,6 +198,19 @@ function flat_apartment(data) {
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
 
+    if (data.additionalPricingDetails) {
+        let additionalPricingDetails = {};
+
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
+        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
+        additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
+        additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
+        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
+        additionalPricingDetails.membershipCharge = Number(xss(data.additionalPricingDetails.membershipCharge));
+
+        obj.additionalPricingDetails = additionalPricingDetails;
+    }
+
 
     // --------------------------------- AMENITIES ARRAY STARTING ---------------------------------
 

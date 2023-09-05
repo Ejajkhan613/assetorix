@@ -312,11 +312,11 @@ function servicedApartment_Rent(data) {
     // --------------------------------- WILLING TO ENDING ---------------------------------
 
 
-    //  Brokers Contacting You
-    if (!data.needBrokerHelp) {
-        return { "msg": "ERROR", "error": "Missing Brokers Contacting You" };
+    //  Agent Contacting You
+    if (!data.needAgentHelp) {
+        return { "msg": "ERROR", "error": "Missing Agent Contacting You" };
     }
-    obj.needBrokerHelp = xss(data.needBrokerHelp);
+    obj.needAgentHelp = xss(data.needAgentHelp);
 
 
     // Agreement type

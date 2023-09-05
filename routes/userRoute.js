@@ -67,7 +67,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
-        let data = await UserModel.findOne({ "_id": id }, { name: 1, mobile: 1, email: 1, _id: 0 });
+        let data = await UserModel.findById({ "_id": id }, { name: 1, mobile: 1, email: 1, _id: 0 });
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
