@@ -8,7 +8,7 @@ const xss = require("xss");
 const { PropertyModel } = require("../models/propertyModel");
 const { tokenVerify } = require("../middlewares/token");
 const { spreader } = require("../propertyValidation/spreader");
-
+const { indianTime } = require("../services/indianTime");
 
 // Creating Route Variable
 const propertyRoute = express.Router();
@@ -133,7 +133,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 
         if (obj.msg == "SUCCESS") {
             obj.data.userID = xss(req.headers.id);
-            obj.data.lastUpdated = new Date().toISOString();
+            obj.data.lastUpdated = indianTime();
 
             const updatedProperty = await PropertyModel.findByIdAndUpdate(propertyID, obj.data);
 

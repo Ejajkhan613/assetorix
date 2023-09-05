@@ -14,6 +14,7 @@ const { tokenVerify } = require("../middlewares/token");
 const { otpService } = require("../services/otp");
 const { OtpModel } = require("../models/otpModel");
 const { PropertyModel } = require("../models/propertyModel");
+const { indianTime } = require("../services/indianTime");
 
 
 
@@ -61,7 +62,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
         }
         const role = res.getHeader("role");
         if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
         let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
@@ -224,12 +225,12 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
     if (mobile) {
         obj.mobile = xss(mobile);
     }
-    obj.lastUpdated = new Date().toISOString();
+    obj.lastUpdated = indianTime();
 
     try {
         const role = res.getHeader("role");
         if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
 
@@ -249,44 +250,108 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
 
 
 
+// Items Per Page
+const ITEMS_PER_PAGE = 10;
+
 
 
 // User Properties
 userRoute.get("/listings", tokenVerify, async (req, res) => {
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
-    let id = req.headers.id;
+    let id = xss(req.headers.id);
+
+    const { page } = req.query;
+
     try {
+        const currentPage = parseInt(page) || 1;
+
         const role = res.getHeader("role");
         if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
-        let listings = await PropertyModel.find({ "userID": id });
-        res.status(201).send(listings);
+
+
+        let totalCount = await PropertyModel.countDocuments({ "userID": id });
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+        const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
+        let data = await PropertyModel.find({ "userID": id })
+            .skip(skipItems)
+            .limit(ITEMS_PER_PAGE);
+
+
+        // // Adjust the data if it's the last page and there's not enough data for a full page
+        if (data.length === 0 && currentPage > 1) {
+            const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
+            data = await PropertyModel.find({ "userID": id })
+                .skip(lastPageSkipItems)
+                .limit(totalCount % ITEMS_PER_PAGE);
+        }
+
+        res.status(200).send({
+            data,
+            currentPage: data.length === 0 ? totalPages : currentPage,
+            totalPages,
+            totalCount,
+        });
+
     } catch (error) {
         res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
     }
 });
 
 
+
+
+
+// // User Wishlist
+// userRoute.get("/wishlist", tokenVerify, async (req, res) => {
+//     let id = xss(req.headers.id);
+//     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+//     try {
+//         const role = res.getHeader("role");
+//         if (!roles.includes(role)) {
+//             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+//             return;
+//         }
+//         let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
+//         let array = [];
+//         for (let a = 0; a < listings.length; a++) {
+//             let data = {};
+//             let finding = await PropertyModel.findOne({ "_id": listings[a] });
+//             array.push(finding);
+//         }
+//         res.status(200).send(array);
+//     } catch (error) {
+//         res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
+//     }
+// });
+
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
-    let id = req.headers.id;
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    const id = xss(req.headers.id);
+    const roles = new Set(["customer", "agent", "broker", "employee", "admin", "super_admin"]);
+
     try {
         const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
-            return;
+        if (!roles.has(role)) {
+            return res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
         }
-        let listings = await PropertyModel.find({ "userID": id }).select({ "wishlist": 1 });
-        let array = [];
-        for (let a = 0; a < listings.length; a++) {
-            let data = {};
-            let finding = await PropertyModel.findOne({ "_id": listings[a] });
-            array.push(finding);
+
+        const listings = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
+
+
+        const userWishlist = [];
+
+        for (const listing of listings.wishlist) {
+            const list = await PropertyModel.findById(listing);
+            userWishlist.push(list);
         }
-        res.status(200).send(array);
+
+
+
+        res.status(200).send(userWishlist);
     } catch (error) {
         res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
     }

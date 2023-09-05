@@ -1,6 +1,6 @@
 // Dependencies
 const mongoose = require("mongoose");
-
+const { indianTime } = require("../services/indianTime");
 
 
 // Schema
@@ -44,12 +44,12 @@ const userSchema = mongoose.Schema({
         default: false,
     },
     createdOn: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: indianTime
     },
     lastUpdated: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: indianTime
     }
 });
 
