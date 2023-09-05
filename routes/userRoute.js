@@ -15,6 +15,8 @@ const { otpService } = require("../services/otp");
 const { OtpModel } = require("../models/otpModel");
 const { PropertyModel } = require("../models/propertyModel");
 const { indianTime } = require("../services/indianTime");
+const { isValidName } = require("../services/nameValidation");
+const { isValidEmail } = require("../services/emailValidation");
 
 
 
@@ -65,7 +67,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
-        let data = await UserModel.findOne({ "_id": id }).select({ name: 1, mobile: 1, email: 1 });
+        let data = await UserModel.findOne({ "_id": id }, { name: 1, mobile: 1, email: 1, _id: 0 });
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
@@ -136,12 +138,32 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
                 res.status(500).send({ "msg": "Error Found while Securing your Password", "err": xss(err) });
                 return;
             }
+            let userData = {};
 
-            const token = jwt.sign({ mobile }, secretKey);
+            // Sanitize and validate input data
+            if (name) {
+                if (isValidName(xss(name))) {
+                    userData.name = xss(name);
+                } else {
+                    res.status(400).send({ "msg": "Bad Request: Name should not contain symbols or numbers" });
+                    return;
+                }
+            }
+            if (mobile) {
+                if (xss(mobile).length == 10) {
+                    userData.mobile = xss(mobile);
+                } else {
+                    res.status(400).send({ "msg": "Bad Request: mobile number does not have the correct length" });
+                    return;
+                }
+            }
+
 
             // Saving Data in Database
-            let savingData = new UserModel({ name: xss(name), mobile: xss(mobile), "password": hash });
+            let savingData = new UserModel({ name: userData.name, mobile: userData.mobile, "password": hash });
             await savingData.save();
+
+            const token = jwt.sign({ "userID": savingData._id }, secretKey);
 
             // Sending Response
             res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": xss(name), "id": savingData._id });
@@ -176,7 +198,7 @@ userRoute.post("/login", async (req, res) => {
             bcrypt.compare(password, finding[0].password, async (err, result) => {
                 if (result) {
                     // Generating Token
-                    const token = jwt.sign({ "mobile": finding[0].mobile }, secretKey);
+                    const token = jwt.sign({ "userID": finding[0]._id }, secretKey);
 
                     // Sanitize and escape output before sending response
                     const sanitizedResponse = {
@@ -215,24 +237,39 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
     let { name, email, mobile } = req.body;
     let obj = {};
 
-    // Sanitize and validate input data
-    if (name) {
-        obj.name = xss(name);
-    }
-    if (email) {
-        obj.email = xss(email);
-    }
-    if (mobile) {
-        obj.mobile = xss(mobile);
-    }
-    obj.lastUpdated = indianTime();
-
     try {
         const role = res.getHeader("role");
         if (!roles.includes(role)) {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+
+        // Sanitize and validate input data
+        if (name) {
+            if (isValidName(xss(name))) {
+                obj.name = xss(name);
+            } else {
+                res.status(400).send({ "msg": "Bad Request: Name should not contain symbols or numbers" });
+                return;
+            }
+        }
+        if (email) {
+            if (isValidEmail(xss(email))) {
+                obj.email = xss(email);
+            } else {
+                res.status(400).send({ "msg": "Bad Request: Email is wrong" });
+                return;
+            }
+        }
+        if (mobile) {
+            if (xss(mobile).length == 10) {
+                obj.mobile = xss(mobile);
+            } else {
+                res.status(400).send({ "msg": "Bad Request: mobile number does not have the correct length" });
+                return;
+            }
+        }
+        obj.lastUpdated = indianTime();
 
 
         const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);

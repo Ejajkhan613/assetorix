@@ -1,5 +1,8 @@
 // Dependencies
 const jwt = require("jsonwebtoken");
+const xss = require("xss");
+
+// Custom Modules
 const { UserModel } = require("../models/userModel");
 
 // Secret Key
@@ -8,8 +11,8 @@ const secretKey = process.env.secretKey;
 
 // Verification
 const tokenVerify = async (req, res, next) => {
-    const token = req.headers.authorization;
-    let id = req.headers.id;
+    const token = xss(req.headers.authorization);
+    let id = xss(req.headers.id);
     try {
         if (token && id) {
             jwt.verify(token, secretKey, async (err, decoded) => {
@@ -18,9 +21,10 @@ const tokenVerify = async (req, res, next) => {
                     return;
                 }
 
-                let checking = await UserModel.find({ "mobile": decoded.mobile });
-                if (checking.length >= 1 && checking[0]._id == id && checking[0].isBlocked == false) {
-                    res.setHeader("role", checking[0].role);
+
+                let checking = await UserModel.findById(decoded.userID);
+                if (checking._id == id && checking.isBlocked == false) {
+                    res.setHeader("role", checking.role);
                     next();
                 } else {
                     res.status(401).send({ "msg": "Unauthorized: User not found, please login again" });
