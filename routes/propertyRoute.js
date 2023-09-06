@@ -173,7 +173,7 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
         if (deletedProperty) {
             res.status(201).send({ "msg": "Property Deleted Successfully" });
         } else {
-            res.status(400).send({ "msg": "Failed to Delete Property" });
+            res.status(400).send({ "msg": "Property does not exist or failed to delete" });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Deleting Property" });

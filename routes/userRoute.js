@@ -11,6 +11,7 @@ const { UserModel } = require("../models/userModel");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
 const { userEmailDuplicateVerification } = require("../duplicateVerification/email");
 const { tokenVerify } = require("../middlewares/token");
+const { checkRequiredFields } = require("../services/requiredFields");
 const { otpService } = require("../services/otp");
 const { OtpModel } = require("../models/otpModel");
 const { PropertyModel } = require("../models/propertyModel");
@@ -40,18 +41,6 @@ userRoute.use(express.json());
 
 
 
-// Function to check if required fields exist and have non-empty values in the object
-const checkRequiredFields = (object, requiredFields) => {
-    const missingFields = [];
-    requiredFields.forEach((field) => {
-        if (!(field in object) || object[field] === "") {
-            missingFields.push(field);
-        }
-    });
-    return missingFields;
-};
-
-
 
 // Get User Details
 userRoute.get("/", tokenVerify, async (req, res) => {
@@ -67,6 +56,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+        res.removeHeader("role");
         let data = await UserModel.findById({ "_id": id }, { name: 1, mobile: 1, email: 1, _id: 0 });
         res.status(200).send(data);
     } catch (error) {
@@ -135,7 +125,7 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
     try {
         bcrypt.hash(password, saltRounds, async (err, hash) => {
             if (err) {
-                res.status(500).send({ "msg": "Error Found while Securing your Password", "err": xss(err) });
+                res.status(500).send({ "msg": "Error in Password Hashing", "err": xss(err) });
                 return;
             }
             let userData = {};
@@ -243,6 +233,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+        res.removeHeader("role");
 
         // Sanitize and validate input data
         if (name) {
@@ -353,6 +344,7 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+        res.removeHeader("role");
 
         const propertyIds = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
 
@@ -381,6 +373,7 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+        res.removeHeader("role");
 
         // Find the user by their ID
         const user = await UserModel.findById(id);
@@ -424,6 +417,7 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
             return;
         }
+        res.removeHeader("role");
 
         // Find the user by their ID
         const user = await UserModel.findById(id);
@@ -455,4 +449,4 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
 
 
 // Exporting Route Module
-module.exports = { userRoute, checkRequiredFields };
+module.exports = { userRoute };
