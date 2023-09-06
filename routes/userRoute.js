@@ -334,16 +334,45 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Getting Listings", "error": error });
     }
 });
 
 
 
-// Add Property In Wishlist
-userRoute.patch("/wishlist", tokenVerify, async (req, res) => {
+
+
+// User Wishlist
+userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
-    const propertyID = xss(req.body.propertyID);
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+
+    try {
+        const role = res.getHeader("role");
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+            return;
+        }
+
+        const propertyIds = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
+
+
+        // Use the $in operator to fetch all properties by their IDs
+        const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds.wishlist } });
+
+        res.status(200).send(userWishlist);
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Error while Getting your Wishlist", "error": error });
+    }
+});
+
+
+
+
+// Add Property In Wishlist
+userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
+    const id = xss(req.headers.id);
+    const propertyID = xss(req.params.propertyID);
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
 
     try {
@@ -376,14 +405,17 @@ userRoute.patch("/wishlist", tokenVerify, async (req, res) => {
         res.status(200).send({ "msg": 'Item added to wishlist' });
 
     } catch (error) {
-        res.status(500).send([{ "msg": "Internal Server Error: Error while Adding to Wishlist" }]);
+        res.status(500).send({ "msg": "Internal Server Error: Error while Adding to Wishlist", "error": error });
     }
 })
 
 
-// User Wishlist
-userRoute.get("/wishlist", tokenVerify, async (req, res) => {
+
+
+// Delete Property From Wishlist
+userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
+    const propertyID = xss(req.params.propertyID);
     let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
 
     try {
@@ -393,17 +425,32 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
             return;
         }
 
-        const propertyIds = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
+        // Find the user by their ID
+        const user = await UserModel.findById(id);
 
+        if (!user) {
+            res.status(404).send({ "msg": 'User not found' });
+            return;
+        }
 
-        // Use the $in operator to fetch all properties by their IDs
-        const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds.wishlist } });
+        // Check if the item exists in the wishlist
+        const itemIndex = user.wishlist.indexOf(propertyID);
 
-        res.status(200).send(userWishlist);
+        if (itemIndex === -1) {
+            return res.status(400).send({ "msg": 'Item not found in wishlist' });
+        }
+
+        // Remove the item from the wishlist
+        user.wishlist.splice(itemIndex, 1);
+        await user.save();
+
+        res.status(200).send({ "msg": 'Item removed from wishlist' });
+
     } catch (error) {
-        res.status(500).send([{ "msg": "Internal Server Error: Error while Getting your Wishlist" }]);
+        res.status(500).send({ "msg": "Internal Server Error: Error while Removing from Wishlist", "error": error });
     }
 });
+
 
 
 
