@@ -344,12 +344,13 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
 userRoute.patch("/wishlist", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
     const propertyID = xss(req.body.propertyID);
-    const roles = new Set(["customer", "agent", "broker", "employee", "admin", "super_admin"]);
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");
-        if (!roles.has(role)) {
-            return res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+            return;
         }
 
         // Find the user by their ID
@@ -383,29 +384,25 @@ userRoute.patch("/wishlist", tokenVerify, async (req, res) => {
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
-    const roles = new Set(["customer", "agent", "broker", "employee", "admin", "super_admin"]);
+    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");
-        if (!roles.has(role)) {
-            return res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+        if (!roles.includes(role)) {
+            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
+            return;
         }
 
-        const wishlist = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
+        const propertyIds = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
 
 
-        const userWishlist = [];
-
-        for (const listing of wishlist.wishlist) {
-            const list = await PropertyModel.findById(listing);
-            userWishlist.push(list);
-        }
-
+        // Use the $in operator to fetch all properties by their IDs
+        const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds.wishlist } });
 
 
         res.status(200).send(userWishlist);
     } catch (error) {
-        res.status(500).send([{ "msg": "Internal Server Error: Something Went Wrong while Getting Listings" }]);
+        res.status(500).send([{ "msg": "Internal Server Error: Error while Getting your Wishlist" }]);
     }
 });
 
