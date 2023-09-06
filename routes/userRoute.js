@@ -399,7 +399,6 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
         // Use the $in operator to fetch all properties by their IDs
         const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds.wishlist } });
 
-
         res.status(200).send(userWishlist);
     } catch (error) {
         res.status(500).send([{ "msg": "Internal Server Error: Error while Getting your Wishlist" }]);
