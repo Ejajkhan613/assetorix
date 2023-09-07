@@ -256,7 +256,7 @@ function independent_Builder_Sell(data) {
 
 
     // Checking Close Parking
-    if (!data.parking.closeParking) {
+    if (data.parking.closeParking) {
         parking.closeParking = Number(xss(data.parking.closeParking));
     }
 
