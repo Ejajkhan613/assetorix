@@ -1,7 +1,11 @@
 // Dependencies
 const express = require("express");
-const { PincodeModel } = require("../models/pincodeModel");
 const xss = require("xss");
+
+
+// Custom Modules
+const { tokenVerify } = require("../middlewares/token");
+const { PincodeModel } = require("../models/pincodeModel");
 
 
 
@@ -51,7 +55,7 @@ pincodeRoute.get("/", async (req, res) => {
 
 
 
-// pincodeRoute.post("/", async (req, res) => {
+// pincodeRoute.post("/", tokenVerify, async (req, res) => {
 //     let data = req.body;
 //     try {
 //         let adding = new PincodeModel.insertMany(data);
@@ -64,9 +68,20 @@ pincodeRoute.get("/", async (req, res) => {
 
 
 
-// pincodeRoute.patch("/", async (req, res) => {
+// pincodeRoute.patch("/", tokenVerify, async (req, res) => {
 //     try {
 //         const result = await PincodeModel.updateMany({}, { $rename: { "district": "city" } });
+//         res.status(200).send({ "msg": "Done", "result": result });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send({ "error": "An error occurred while processing the request." });
+//     }
+// });
+
+
+// pincodeRoute.patch("/", tokenVerify, async (req, res) => {
+//     try {
+//         const result = await PincodeModel.updateMany({}, { $rename: { "city": "locality" } });
 //         res.status(200).send({ "msg": "Done", "result": result });
 //     } catch (error) {
 //         console.error(error);

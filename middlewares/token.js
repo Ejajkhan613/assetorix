@@ -23,7 +23,8 @@ const tokenVerify = async (req, res, next) => {
 
 
                 let checking = await UserModel.findById(decoded.userID);
-                if (checking._id == id && checking.isBlocked == false) {
+
+                if (checking && checking._id == id && checking.isBlocked == false) {
                     res.setHeader("role", checking.role);
                     next();
                 } else {
