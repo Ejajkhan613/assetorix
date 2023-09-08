@@ -9,6 +9,8 @@ const { PropertyModel } = require("../models/propertyModel");
 const { tokenVerify } = require("../middlewares/token");
 const { spreader } = require("../propertyValidation/spreader");
 const { indianTime } = require("../services/indianTime");
+const { propertyPosted } = require("../mail/propertyPosting");
+const { UserModel } = require("../models/userModel");
 
 // Creating Route Variable
 const propertyRoute = express.Router();
@@ -98,8 +100,12 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 
         if (obj.msg == "SUCCESS") {
             obj.data.userID = xss(req.headers.id);
-            let newData = new PropertyModel(obj.data);
-            await newData.save();
+            let newProperty = new PropertyModel(obj.data);
+            await newProperty.save();
+
+            let user = await UserModel.findById(xss(req.headers.id));
+
+            propertyPosted(newProperty, user);
             res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully` });
         } else {
             res.status(401).send({ "msg": obj.error });

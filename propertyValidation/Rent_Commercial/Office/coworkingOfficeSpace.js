@@ -100,11 +100,34 @@ function coworkingOfficeSpace_Rent(data) {
     // --------------------------------- ADDRESS ENDING ---------------------------------
 
 
+
+    // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
+
     if (!data.washrooms) {
         return { "msg": "ERROR", "error": "Missing Washrooms" };
     }
 
     obj.washrooms = xss(data.washrooms);
+
+
+    if (data.washrooms == "Available") {
+        let washroomDetails = {};
+
+        if (!data.washroomDetails.privateWashrooms) {
+            return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
+        }
+        washroomDetails.privateWashrooms = Number(xss(data.washroomDetails.privateWashrooms));
+
+        if (!data.washroomDetails.sharedWashrooms) {
+            return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
+        }
+        washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
+
+        obj.washroomDetails = washroomDetails;
+    }
+
+    // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
+
 
     // Checking Carpet Area
     if (data.carpetArea) {

@@ -356,31 +356,34 @@ function servicedApartment(data) {
 
     // --------------------------------- FURNISHED LIST ARRAY STARTING ---------------------------------
 
-    obj.furnished = data.furnished;
+    if (data.furnished) {
+        obj.furnished = xss(data.furnished);
 
-    if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
 
-        let furnishedList = [];
+        if (obj.furnished == "Furnished" || obj.furnished == "Semi-Furnished") {
 
-        if (data.furnishedList.length) {
-            for (let a = 0; a < data.furnishedList.length; a++) {
-                furnishedList.push(xss(data.furnishedList[a]));
+            let furnishedList = [];
+
+            if (data.furnishedList.length) {
+                for (let a = 0; a < data.furnishedList.length; a++) {
+                    furnishedList.push(xss(data.furnishedList[a]));
+                }
             }
+
+            obj.furnishedList = furnishedList;
+
+            let furnishedObj = {};
+
+            furnishedObj.light = Number(xss(data.furnishedObj.light));
+            furnishedObj.fans = Number(xss(data.furnishedObj.fans));
+            furnishedObj.ac = Number(xss(data.furnishedObj.ac));
+            furnishedObj.tv = Number(xss(data.furnishedObj.tv));
+            furnishedObj.beds = Number(xss(data.furnishedObj.beds));
+            furnishedObj.wardrobe = Number(xss(data.furnishedObj.wardrobe));
+            furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
+
+            obj.furnishedObj = furnishedObj;
         }
-
-        obj.furnishedList = furnishedList;
-
-        let furnishedObj = {};
-
-        furnishedObj.light = Number(xss(data.furnishedObj.light));
-        furnishedObj.fans = Number(xss(data.furnishedObj.fans));
-        furnishedObj.ac = Number(xss(data.furnishedObj.ac));
-        furnishedObj.tv = Number(xss(data.furnishedObj.tv));
-        furnishedObj.beds = Number(xss(data.furnishedObj.beds));
-        furnishedObj.wardrobe = Number(xss(data.furnishedObj.wardrobe));
-        furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
-
-        obj.furnishedObj = furnishedObj;
     }
 
 
@@ -473,7 +476,7 @@ function servicedApartment(data) {
         return { "msg": "ERROR", "error": "Missing Main Road Width" };
     }
     // Adding Main Road Width
-    obj.roadFacingWidth = Number(xss(data.roadFacingWidth));
+    obj.roadFacingWidth = Number(Number(xss(data.roadFacingWidth)));
 
 
     // Checking Main Road Width Type

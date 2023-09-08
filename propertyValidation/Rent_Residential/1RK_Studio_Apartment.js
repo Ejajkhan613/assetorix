@@ -204,7 +204,7 @@ function RK_Studio_Apartment_Sell(data) {
 
     obj.furnished = xss(data.furnished);
 
-    if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
+    if (obj.furnished == "Furnished" || obj.furnished == "Semi-Furnished") {
 
         let furnishedList = [];
 
@@ -530,7 +530,7 @@ function RK_Studio_Apartment_Sell(data) {
         return { "msg": "ERROR", "error": "Missing Main Road Width" };
     }
     // Adding Main Road Width
-    obj.roadFacingWidth = xss(data.roadFacingWidth);
+    obj.roadFacingWidth = Number(xss(data.roadFacingWidth));
 
 
     // Checking Main Road Width Type

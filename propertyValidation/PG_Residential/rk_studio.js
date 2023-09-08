@@ -249,7 +249,7 @@ function rk_studio_PG(data) {
 
     obj.furnished = xss(data.furnished);
 
-    if (data.furnished == "Furnished" || data.furnished == "Semi-Furnished") {
+    if (obj.furnished == "Furnished" || obj.furnished == "Semi-Furnished") {
 
         let furnishedList = [];
 
@@ -749,7 +749,7 @@ function rk_studio_PG(data) {
         return { "msg": "ERROR", "error": "Missing Main Road Width" };
     }
     // Adding Main Road Width
-    obj.roadFacingWidth = xss(data.roadFacingWidth);
+    obj.roadFacingWidth = Number(xss(data.roadFacingWidth));
 
 
     // Checking Main Road Width Type
