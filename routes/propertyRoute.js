@@ -106,7 +106,6 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 
             let user = await UserModel.findById(xss(req.headers.id));
 
-            // Assuming propertyPosted returns a Promise, use await to get the email response
             let emailResponse = await propertyPosted(newProperty, user);
 
             res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "emailStatus": emailResponse });
@@ -180,7 +179,6 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
 
         let user = await UserModel.findById(xss(req.headers.id));
 
-        // Assuming propertyPosted returns a Promise, use await to get the email response
         let emailResponse = await propertyDeletion(property, user);
 
         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
