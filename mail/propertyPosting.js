@@ -18,6 +18,7 @@ async function propertyPosted(property, user) {
         const mailOptions = {
             from: process.env.EMAIL_USERNAME,
             to: "it@unifie.in",
+            cc: "gks@ametheus.com",
             subject: "Property Posted Successfully",
             html: `
             <!DOCTYPE html>
