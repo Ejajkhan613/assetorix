@@ -108,7 +108,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             // Assuming propertyPosted returns a Promise, use await to get the email response
             let emailResponse = await propertyPosted(newProperty, user);
 
-            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully, ${emailResponse}` });
+            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "emailStatus": emailResponse });
         } else {
             res.status(401).send({ "msg": obj.error });
         }
