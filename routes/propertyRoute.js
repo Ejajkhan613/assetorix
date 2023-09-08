@@ -105,8 +105,10 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 
             let user = await UserModel.findById(xss(req.headers.id));
 
-            propertyPosted(newProperty, user);
-            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully` });
+            // Assuming propertyPosted returns a Promise, use await to get the email response
+            let emailResponse = await propertyPosted(newProperty, user);
+
+            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully, ${emailResponse}` });
         } else {
             res.status(401).send({ "msg": obj.error });
         }
@@ -114,6 +116,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Server Error While Posting Property" });
     }
 });
+
 
 
 

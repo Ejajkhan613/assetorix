@@ -60,8 +60,10 @@ async function propertyPosted(property, user) {
 
         const info = await transporter.sendMail(mailOptions);
         console.log(`Email sent: Property ID: ${property._id} / User ID ${user._id}` + info.response);
+        return `Email sent: Property ID: ${property._id} / User ID ${user._id} / ${info.response}`
     } catch (error) {
         console.error(`Email Sending Error: Property ID: ${property._id} / User ID ${user._id}`, error);
+        return `Email Sending Error: Property ID: ${property._id} / User ID ${user._id} / ${error}`
     }
 }
 
