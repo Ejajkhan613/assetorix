@@ -47,6 +47,7 @@ async function propertyPosted(property, user) {
                         <li>City: ${property.address.city}</li>
                         <li>State: ${property.address.state}</li>
                         <li>Country: ${property.address.country}</li>
+                        <li>Time :  ${property.createdOn}</li>
                     </ul>
 
                     <p><b>Assetorix</b></p>
