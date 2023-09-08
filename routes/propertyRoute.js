@@ -6,11 +6,12 @@ const xss = require("xss");
 
 // Custom Modules
 const { PropertyModel } = require("../models/propertyModel");
+const { UserModel } = require("../models/userModel");
 const { tokenVerify } = require("../middlewares/token");
 const { spreader } = require("../propertyValidation/spreader");
 const { indianTime } = require("../services/indianTime");
 const { propertyPosted } = require("../mail/propertyPosting");
-const { UserModel } = require("../models/userModel");
+const { propertyDeletion } = require("../mail/propertyDelete");
 
 // Creating Route Variable
 const propertyRoute = express.Router();
@@ -177,10 +178,15 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Not Your Property" });
         }
 
+        let user = await UserModel.findById(xss(req.headers.id));
+
+        // Assuming propertyPosted returns a Promise, use await to get the email response
+        let emailResponse = await propertyDeletion(property, user);
+
         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
 
         if (deletedProperty) {
-            res.status(201).send({ "msg": "Property Deleted Successfully" });
+            res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
         } else {
             res.status(400).send({ "msg": "Property does not exist or failed to delete" });
         }

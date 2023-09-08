@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 require('dotenv').config();
 
-async function propertyPosted(property, user) {
+async function propertyDeletion(property, user) {
 
     try {
         // Create a Nodemailer transporter
@@ -19,23 +19,23 @@ async function propertyPosted(property, user) {
             from: process.env.EMAIL_USERNAME,
             to: "it@unifie.in",
             cc: "gks@ametheus.com",
-            subject: `New Property Posted`,
+            subject: `Property Deleted`,
             html: `
             <!DOCTYPE html>
             <html lang="en">
                 <head>
                     <meta charset="UTF-8">
-                    <title>New Property Posted</title>
+                    <title>Property Deleted</title>
                 </head>
                 <body>
-                    <h1>New Property Posted by ${user.name}</h1>
+                    <h1>Property Deleted By ${user.name}</h1>
 
                     <p>UserID - ${user._id}</p>
                     <p>Username - ${user.name}</p>
                     <p>Mobile No - ${user.mobile}</p>
                     <p>User Role - ${user.role}</p>
                     
-                    <p>New Property Posted in '${property.lookingFor} -> ${property.propertyGroup} -> ${property.propertyType}'.</p>
+                    <p>Property Deleted in '${property.lookingFor} -> ${property.propertyGroup} -> ${property.propertyType}'.</p>
                     
                     <p>Property Details:</p>
                     <ul>
@@ -48,7 +48,7 @@ async function propertyPosted(property, user) {
                         <li>City: ${property.address.city}</li>
                         <li>State: ${property.address.state}</li>
                         <li>Country: ${property.address.country}</li>
-                        <li>Time :  ${property.createdOn}</li>
+                        <li>Property Posted On :  ${property.createdOn}</li>
                     </ul>
 
                     <p><b>Assetorix</b></p>
@@ -59,12 +59,12 @@ async function propertyPosted(property, user) {
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log(`Property Posting Email sent: Property ID: ${property._id} / User ID ${user._id}` + info.response);
-        return `Property Posting Email sent: Property ID: ${property._id} / User ID ${user._id} / ${info.response}`
+        console.log(`Property Deletion Email sent: Property ID: ${property._id} / User ID ${user._id}` + info.response);
+        return `Property Deletion Email sent: Property ID: ${property._id} / User ID ${user._id} / ${info.response}`
     } catch (error) {
-        console.error(`Property Posting Email Sending Error: Property ID: ${property._id} / User ID ${user._id}`, error);
-        return `Property Posting Email Sending Error: Property ID: ${property._id} / User ID ${user._id} / ${error}`
+        console.error(`Property Deletion Email Sending Error: Property ID: ${property._id} / User ID ${user._id}`, error);
+        return `Property Deletion Email Sending Error: Property ID: ${property._id} / User ID ${user._id} / ${error}`
     }
 }
 
-module.exports = { propertyPosted };
+module.exports = { propertyDeletion };
