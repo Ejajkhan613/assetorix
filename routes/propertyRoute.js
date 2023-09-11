@@ -104,7 +104,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             let newProperty = new PropertyModel(obj.data);
             await newProperty.save();
 
-            let user = await UserModel.findById(xss(req.headers.id));
+            // let user = await UserModel.findById(xss(req.headers.id));
 
             // let emailResponse = await propertyPosted(newProperty, user);
             let emailResponse = "Closed";
@@ -178,7 +178,7 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Not Your Property" });
         }
 
-        let user = await UserModel.findById(xss(req.headers.id));
+        // let user = await UserModel.findById(xss(req.headers.id));
 
         // let emailResponse = await propertyPosted(newProperty, user);
         let emailResponse = "Closed";
