@@ -216,10 +216,8 @@ function commercialShops_Rent(data) {
 
 
 
-    // --------------------------------- PARKING OBJECT STARTING ---------------------------------
+    // --------------------------------- PARKING STARTING ---------------------------------
 
-
-    // Checking if parking object is present in the input from frontend
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing Parking Details" };
     }
@@ -239,9 +237,7 @@ function commercialShops_Rent(data) {
         obj.parkingTypeList = parkingTypeList;
     }
 
-
-
-    // --------------------------------- PARKING OBJECT ENDING ---------------------------------
+    // --------------------------------- PARKING ENDING ---------------------------------
 
 
 
