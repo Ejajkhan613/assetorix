@@ -60,6 +60,10 @@ function commercialShowrooms_Rent(data) {
     // if present then creating a new address object that will be added in Main Object
     let address = {};
 
+    if (data.address.address) {
+        address.address = xs(data.address.address)
+    }
+
     if (data.address.type) {
         address.type = xss(data.address.type);
     }

@@ -54,6 +54,11 @@ function manufacturing_Rent(data) {
     let address = {};
 
 
+    if (data.address.address) {
+        address.address = xs(data.address.address)
+    }
+
+
     // Checking Pincode
     if (!data.address.pincode) {
         return { "msg": "ERROR", "error": "Missing Pincode" };

@@ -58,6 +58,10 @@ function industrialLands_Plots_Rent(data) {
     let address = {};
 
 
+    if (data.address.address) {
+        address.address = xs(data.address.address)
+    }
+
 
     // Checking Plot Number
     if (!data.address.plotNumber) {

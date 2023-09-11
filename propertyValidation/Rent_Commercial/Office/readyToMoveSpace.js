@@ -82,6 +82,9 @@ function readyToMoveSpace_Rent(data) {
     // if present then creating a new address object that will be added in Main Object
     let address = {};
 
+    if (data.address.address) {
+        address.address = xs(data.address.address)
+    }
 
     // Checking Zone Type
     if (!data.address.zoneType) {
