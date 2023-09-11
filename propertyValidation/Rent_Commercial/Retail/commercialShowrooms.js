@@ -224,7 +224,7 @@ function commercialShowrooms_Rent(data) {
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing Parking Details" };
     }
-    obj.parking = xss(parking);
+    obj.parking = xss(data.parking);
 
 
     if (obj.parking == "Available") {
