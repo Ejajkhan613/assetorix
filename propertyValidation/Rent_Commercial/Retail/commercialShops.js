@@ -175,12 +175,12 @@ function commercialShops_Rent(data) {
         if (!data.washroomDetails.privateWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
         }
-        washroomDetails.privateWashrooms = Number(xss(privateWashrooms));
+        washroomDetails.privateWashrooms = Number(xss(data.washroomDetails.privateWashrooms));
 
         if (!data.washroomDetails.sharedWashrooms) {
             return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
         }
-        washroomDetails.sharedWashrooms = Number(xss(sharedWashrooms));
+        washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
     }
 
     // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
