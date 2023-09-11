@@ -302,25 +302,6 @@ function industrialLands_Plots_Rent(data) {
 
 
 
-    if (!data.preLeased_Rented) {
-        return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
-    }
-    obj.preLeased_Rented = xss(preLeased_Rented);
-
-
-    if (data.preLeased_Rented == "Yes") {
-        let preLeased_RentedDetails = {};
-
-        preLeased_RentedDetails.currentRentPerMonth = Number(xss(data.preLeased_RentedDetails.currentRentPerMonth));
-        preLeased_RentedDetails.leaseTenureInYear = Number(xss(data.preLeased_RentedDetails.leaseTenureInYear));
-        preLeased_RentedDetails.annualRentIncrease = Number(xss(data.preLeased_RentedDetails.annualRentIncrease));
-        preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
-
-        obj.preLeased_RentedDetails = preLeased_RentedDetails;
-    }
-
-
-
 
     // Checking Country Currency Code
     if (!data.countryCurrency) {
@@ -375,21 +356,22 @@ function industrialLands_Plots_Rent(data) {
 
 
 
-    // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
+    // --------------------------------- OTHER FEATURES ARRAY STARTING ---------------------------------
 
 
-    let additionalFeatures = [];
+    let otherFeatures = [];
 
-    if (data.additionalFeatures.length) {
-        for (let a = 0; a < data.additionalFeatures.length; a++) {
-            additionalFeatures.push(xss(data.additionalFeatures[a]));
+    if (data.otherFeatures.length) {
+        for (let a = 0; a < data.otherFeatures.length; a++) {
+            otherFeatures.push(xss(data.otherFeatures[a]));
         }
     }
 
-    obj.additionalFeatures = additionalFeatures;
+    obj.otherFeatures = otherFeatures;
 
 
-    // --------------------------------- ADDITIONAL FEATURES ARRAY ENDING ---------------------------------
+    // --------------------------------- OTHER FEATURES ARRAY ENDING ---------------------------------
+
 
 
 
