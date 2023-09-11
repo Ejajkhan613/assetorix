@@ -55,7 +55,7 @@ function manufacturing_Rent(data) {
 
 
     if (data.address.address) {
-        address.address = xs(data.address.address)
+        address.address = xss(data.address.address)
     }
 
 

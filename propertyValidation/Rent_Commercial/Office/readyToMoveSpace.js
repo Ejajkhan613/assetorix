@@ -83,7 +83,7 @@ function readyToMoveSpace_Rent(data) {
     let address = {};
 
     if (data.address.address) {
-        address.address = xs(data.address.address)
+        address.address = xss(data.address.address)
     }
 
     // Checking Zone Type

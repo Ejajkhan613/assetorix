@@ -53,7 +53,7 @@ function guestHouse_BanquetHall_Rent(data) {
     let address = {};
 
     if (data.address.address) {
-        address.address = xs(data.address.address)
+        address.address = xss(data.address.address)
     }
 
 
