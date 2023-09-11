@@ -223,24 +223,21 @@ function commercialShops_Rent(data) {
     if (!data.parking) {
         return { "msg": "ERROR", "error": "Missing Parking Details" };
     }
-
-    // if present then creating a new parking object that will be added in Main Object
-    let parking = {};
+    obj.parking = xss(parking);
 
 
-    // Checking Open Parking
-    if (data.parking.openParking) {
-        parking.openParking = Number(xss(data.parking.openParking));
+    if (obj.parking == "Available") {
+
+        let parkingTypeList = [];
+
+        if (data.parkingTypeList.length) {
+            for (let a = 0; a < data.parkingTypeList.length; a++) {
+                parkingTypeList.push(xss(data.parkingTypeList[a]));
+            }
+        }
+
+        obj.parkingTypeList = parkingTypeList;
     }
-
-
-
-    // Checking Close Parking
-    if (!data.parking.closeParking) {
-        parking.closeParking = Number(xss(data.parking.closeParking));
-    }
-
-    obj.parking = parking;
 
 
 
