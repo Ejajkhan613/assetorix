@@ -50,6 +50,7 @@ function commercialShowrooms_Rent(data) {
     obj.locatedInside = xss(data.locatedInside);
 
 
+
     // --------------------------------- ADDRESS STARTING ---------------------------------
 
     // Checking if address object is present in the input from frontend
@@ -115,6 +116,7 @@ function commercialShowrooms_Rent(data) {
     // --------------------------------- ADDRESS ENDING ---------------------------------
 
 
+
     // Checking Carpet Area
     if (!data.carpetArea) {
         return { "msg": "ERROR", "error": "Missing Carpet Area" };
@@ -139,6 +141,7 @@ function commercialShowrooms_Rent(data) {
     if (data.builtupAreaUnit) {
         obj.builtupAreaUnit = xss(data.builtupAreaUnit);
     }
+
 
 
     // Shop Faced Size
@@ -309,9 +312,6 @@ function commercialShowrooms_Rent(data) {
 
 
 
-
-
-
     // --------------------------------- INCLUSIVE PRICE ARRAY STARTING ---------------------------------
 
 
@@ -329,7 +329,6 @@ function commercialShowrooms_Rent(data) {
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
 
-
     if (data.additionalPricingDetails) {
         let additionalPricingDetails = {};
 
@@ -339,6 +338,7 @@ function commercialShowrooms_Rent(data) {
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
+
 
 
 
@@ -379,7 +379,6 @@ function commercialShowrooms_Rent(data) {
 
 
 
-
     // Checking Country Currency Code
     if (!data.countryCurrency) {
         return { "msg": "ERROR", "error": "Missing Country Currency Code" };
@@ -394,6 +393,7 @@ function commercialShowrooms_Rent(data) {
     }
     // Adding Description
     obj.description = xss(data.description);
+
 
 
 
@@ -412,7 +412,6 @@ function commercialShowrooms_Rent(data) {
 
 
     // --------------------------------- AMENITIES ARRAY ENDING ---------------------------------
-
 
     // --------------------------------- PROPERTY FEATURES ARRAY STARTING ---------------------------------
 
@@ -447,6 +446,7 @@ function commercialShowrooms_Rent(data) {
 
 
     // --------------------------------- SOCIETY / BUILDING FEATURES ARRAY ENDING ---------------------------------
+
 
 
     // --------------------------------- ADDITIONAL FEATURES ARRAY STARTING ---------------------------------
@@ -547,6 +547,7 @@ function commercialShowrooms_Rent(data) {
 
 
     // --------------------------------- LOCATION ADVANTAGES ARRAY ENDING ---------------------------------
+
 
 
 
