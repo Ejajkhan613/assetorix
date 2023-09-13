@@ -21,7 +21,6 @@ const tokenVerify = async (req, res, next) => {
                     return;
                 }
 
-
                 let checking = await UserModel.findById(decoded.userID);
 
                 if (checking && checking._id == id && checking.isBlocked == false) {
@@ -35,7 +34,7 @@ const tokenVerify = async (req, res, next) => {
             res.status(401).send({ "msg": "Unauthorized: Please Login to access this resource" });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong While Authorization" });
+        res.status(500).send({ "msg": "Internal Server Error: While Authorization" });
     }
 };
 

@@ -27,6 +27,20 @@ propertyRoute.use(express.json());
 const ITEMS_PER_PAGE = 10;
 
 
+propertyRoute.get("/single/:id", async (req, res) => {
+    try {
+        let id = xss(req.params.id);
+        let property = await PropertyModel.findById(id);
+        if (property) {
+            res.send({ "msg": "Successful", "data": property });
+        } else {
+            res.status(404).send({ "msg": "Property Not Found" })
+        }
+    } catch (error) {
+        res.status(500).send({ "msg": "Error", "error": error })
+    }
+})
+
 
 // get Property Details
 propertyRoute.get("/", async (req, res) => {

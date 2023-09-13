@@ -18,6 +18,8 @@ const { PropertyModel } = require("../models/propertyModel");
 const { indianTime } = require("../services/indianTime");
 const { isValidName } = require("../services/nameValidation");
 const { isValidEmail } = require("../services/emailValidation");
+const { EmailOTPModel } = require("../models/emailOTPModel");
+const { email_OTP_sending } = require("../mail/emailOTP");
 
 
 
@@ -45,7 +47,7 @@ userRoute.use(express.json());
 // Get User Details
 userRoute.get("/", tokenVerify, async (req, res) => {
     let id = req.headers.id;
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
     try {
         if (!id) {
             res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
@@ -215,16 +217,67 @@ userRoute.post("/login", async (req, res) => {
 
 
 
+// Sending OTP to Email and Saving in DB
+userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
+    try {
+        const email = xss(req.body.email);
+        const sending = await email_OTP_sending(email);
+
+        if (!sending.status) {
+            return res.status(400).send({ "msg": "Error: Try again later", "error": sending.msg });
+        }
+
+        const otp = sending.otp;
+        const existingOTP = await EmailOTPModel.findOne({ "email": email });
+
+        if (existingOTP) {
+            existingOTP.otp = otp;
+            await existingOTP.save();
+        } else {
+            const newOTP = new EmailOTPModel({ "email": email, "otp": otp });
+            await newOTP.save();
+        }
+
+        res.status(201).send({ "msg": "OTP Sent Successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong While Sending OTP" });
+    }
+});
+
+
+
+// Verifying OTP and Updating Email
+userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
+    try {
+        let email = xss(req.body.email);
+        let otp = xss(req.body.otp);
+        let id = xss(req.headers.id);
+
+        let matching = await EmailOTPModel.findOne({ "email": email });
+        if (matching && matching.otp == otp) {
+            await UserModel.findByIdAndUpdate({ "_id": id }, { "email": email });
+            await EmailOTPModel.findByIdAndDelete({ "_id": matching._id })
+            res.status(201).send({ "msg": "Email Updated" });
+        } else {
+            res.status(400).send({ "msg": "OTP is wrong or Expired" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "msg": "Internal Server Error:  Something Went Wrong While Verifying OTP" });
+    }
+})
+
 
 
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
 
     // accepted roles
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     let id = req.headers.id;
-    let { name, email, mobile } = req.body;
+    let { name, mobile } = req.body;
     let obj = {};
 
     try {
@@ -244,14 +297,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
                 return;
             }
         }
-        if (email) {
-            if (isValidEmail(xss(email))) {
-                obj.email = xss(email);
-            } else {
-                res.status(400).send({ "msg": "Bad Request: Email is wrong" });
-                return;
-            }
-        }
+
         if (mobile) {
             if (xss(mobile).length == 10) {
                 obj.mobile = xss(mobile);
@@ -285,7 +331,7 @@ const ITEMS_PER_PAGE = 10;
 
 // User Properties
 userRoute.get("/listings", tokenVerify, async (req, res) => {
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
     let id = xss(req.headers.id);
 
     const { page } = req.query;
@@ -336,7 +382,7 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");
@@ -365,7 +411,7 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
 userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
     const propertyID = xss(req.params.propertyID);
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");
@@ -409,7 +455,7 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
 userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
     const id = xss(req.headers.id);
     const propertyID = xss(req.params.propertyID);
-    let roles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");

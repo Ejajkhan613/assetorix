@@ -206,7 +206,7 @@ const ITEMS_PER_PAGE = 10;
 // get all details except password
 adminRoute.get("/all", tokenVerify, async (req, res) => {
     let roles = ["admin", "super_admin"];
-    let allRoles = ["customer", "agent", "broker", "employee", "admin", "super_admin"];
+    let allRoles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     try {
         const role = res.getHeader("role");

@@ -10,12 +10,13 @@ const userSchema = mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     role: {
         type: String,
         default: "customer",
-        enum: ["customer", "agent", "broker", "employee", "admin", "super_admin"]
+        enum: ["customer", "agent", "employee", "admin", "super_admin"]
     },
     mobile: {
         type: String,
