@@ -309,7 +309,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             return;
         }
 
-        res.status(201).send({ "msg": "Updated Successfully", "name": updatedUser.name, "email": updatedUser.email, "mobile": updatedUser.mobile });
+        res.status(201).send({ "msg": "Updated Successfully", "name": name, "email": updatedUser.email ? updatedUser.email : "", "mobile": mobile ? mobile : updatedUser.mobile });
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
     }
