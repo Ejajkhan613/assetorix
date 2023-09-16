@@ -59,7 +59,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
             return;
         }
         res.removeHeader("role");
-        let data = await UserModel.findById({ "_id": id }, { name: 1, mobile: 1, email: 1, _id: 0 });
+        let data = await UserModel.findById({ "_id": id }, { name: 1, mobile: 1, email: 1 });
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data" });
