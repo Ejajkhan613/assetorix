@@ -221,10 +221,13 @@ userRoute.post("/login", async (req, res) => {
 userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
     try {
         const email = xss(req.body.email);
+        if (await userEmailDuplicateVerification(email)) {
+            return res.status(400).send({ "msg": "Email Already Registered" });
+        }
         const sending = await email_OTP_sending(email);
 
         if (!sending.status) {
-            return res.status(400).send({ "msg": "Error: Try again later", "error": sending.msg });
+            return res.status(400).send({ "msg": "Error: Could not send OTP", "error": sending.msg });
         }
 
         const otp = sending.otp;
@@ -241,7 +244,7 @@ userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
         res.status(201).send({ "msg": "OTP Sent Successfully" });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong While Sending OTP" });
+        res.status(500).send({ "msg": "Internal Server Error: While Sending OTP" });
     }
 });
 
@@ -256,7 +259,7 @@ userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
 
         let matching = await EmailOTPModel.findOne({ "email": email });
         if (matching && matching.otp == otp) {
-            await UserModel.findByIdAndUpdate({ "_id": id }, { "email": email });
+            await UserModel.findByIdAndUpdate({ "_id": id }, { "email": matching.email });
             await EmailOTPModel.findByIdAndDelete({ "_id": matching._id })
             res.status(201).send({ "msg": "Email Updated" });
         } else {
@@ -273,20 +276,11 @@ userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
 
-    // accepted roles
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
-
     let id = req.headers.id;
     let { name, mobile } = req.body;
     let obj = {};
 
     try {
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
-        }
-        res.removeHeader("role");
 
         // Sanitize and validate input data
         if (name) {
@@ -490,6 +484,8 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Internal Server Error: Error while Removing from Wishlist", "error": error });
     }
 });
+
+
 
 
 

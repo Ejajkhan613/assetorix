@@ -4,19 +4,18 @@ const { UserModel } = require("../models/userModel");
 
 
 // Middleware
-const userEmailDuplicateVerification = async (req, res, next) => {
-    let { email } = req.body;
+async function userEmailDuplicateVerification(email) {
     try {
-        const checking = await UserModel.find({ "email": email });
-        if (checking.length == 0) {
-            next();
+        const checking = await UserModel.findOne({ "email": email });
+        if (checking) {
+            return true
         } else {
-            res.status(409).send({ "msg": "Email is already Registered" });
+            return false
         }
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While checking Email" });
     }
-};
+}
 
 
 
