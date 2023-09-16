@@ -221,9 +221,18 @@ userRoute.post("/login", async (req, res) => {
 userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
     try {
         const email = xss(req.body.email);
+        if (!email) {
+            return res.status(400).send({ "msg": "Please Provide new Email" });
+        }
+
+        if (!isValidEmail(email)) {
+            return res.status(400).send({ "msg": "Please Provide Correct Email" });
+        }
+
         if (await userEmailDuplicateVerification(email)) {
             return res.status(400).send({ "msg": "Email Already Registered" });
         }
+
         const sending = await email_OTP_sending(email);
 
         if (!sending.status) {
