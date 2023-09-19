@@ -50,7 +50,7 @@ propertyRoute.get("/", async (req, res) => {
 
         const currentPage = parseInt(page) || 1;
 
-        bedroom = xss(bedroom);
+        bedroom = parseInt(xss(bedroom));
         furnished = xss(furnished);
         propertyType = xss(propertyType);
         propertyGroup = xss(propertyGroup);
@@ -69,7 +69,7 @@ propertyRoute.get("/", async (req, res) => {
         let checker = {};
 
         if (bedroom) {
-            filter.$or.push({ "roomDetails.bedroom": bedroom });
+            filter.$or.push({ 'roomDetails.bedroom': bedroom });
             checker.bedroom = bedroom;
         }
 
@@ -172,7 +172,6 @@ propertyRoute.get("/", async (req, res) => {
                     .skip(lastPageSkipItems)
                     .limit(totalCount % ITEMS_PER_PAGE);
             }
-
         }
 
         res.status(200).send({

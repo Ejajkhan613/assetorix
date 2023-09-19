@@ -375,6 +375,8 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
     }
 });
 
+
+
 // User Wishlist
 userRoute.get("/wishlistIDs", tokenVerify, async (req, res) => {
     try {
@@ -395,14 +397,12 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
     try {
         let user = req.userDetail;
 
-        // Check if the item is already in the wishlist
+        // Checking if the item is already in the wishlist
         const itemExists = user.wishlist.includes(propertyID);
 
         if (itemExists) {
             return res.status(400).send({ "msg": 'Item already in wishlist' });
         }
-
-        // Add the item to the wishlist
 
         user.wishlist.push(propertyID);
         await user.save();
@@ -424,14 +424,13 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
     try {
         let user = req.userDetail;
 
-        // Check if the item exists in the wishlist
+        // Checking if the item exists in the wishlist
         const itemIndex = user.wishlist.indexOf(propertyID);
 
         if (itemIndex === -1) {
             return res.status(400).send({ "msg": 'Item not found in wishlist' });
         }
 
-        // Remove the item from the wishlist
         user.wishlist.splice(itemIndex, 1);
         await user.save();
 
