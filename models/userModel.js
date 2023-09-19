@@ -51,6 +51,10 @@ const userSchema = mongoose.Schema({
     lastUpdated: {
         type: String,
         default: indianTime
+    },
+    lastLogin: {
+        type: String,
+        default: indianTime
     }
 });
 

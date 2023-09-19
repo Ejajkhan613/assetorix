@@ -42,54 +42,137 @@ propertyRoute.get("/single/:id", async (req, res) => {
 })
 
 
+
 // get Property Details
 propertyRoute.get("/", async (req, res) => {
     try {
-        const { locality, pincode, city, state, country, page } = req.query;
+        let { minPrice, maxPrice, furnished, propertyType, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
 
         const currentPage = parseInt(page) || 1;
 
-        const sanitizedLocality = xss(locality);
-        const sanitizedCity = xss(city);
-        const sanitizedState = xss(state);
-        const sanitizedCountry = xss(country);
+        bedroom = xss(bedroom);
+        furnished = xss(furnished);
+        propertyType = xss(propertyType);
+        propertyGroup = xss(propertyGroup);
 
-        let addressFilters = {};
+        locality = xss(locality);
+        pincode = xss(pincode);
+        city = xss(city);
+        state = xss(state);
+        country = xss(country);
 
-        if (sanitizedLocality) {
-            addressFilters["address.locality"] = { $regex: new RegExp(sanitizedLocality, "i") };
+        minPrice = xss(minPrice);
+        maxPrice = xss(maxPrice);
+
+
+        let filter = { $or: [] };
+        let checker = {};
+
+        if (bedroom) {
+            filter.$or.push({ "roomDetails.bedroom": bedroom });
+            checker.bedroom = bedroom;
+        }
+
+        if (furnished) {
+            filter.$or.push({ "furnished": furnished });
+            checker.furnished = furnished;
+        }
+
+        if (propertyType) {
+            filter.$or.push({ "propertyType": propertyType });
+            checker.propertyType = propertyType;
+        }
+
+        if (propertyGroup) {
+            filter.$or.push({ "propertyGroup": propertyGroup });
+            checker.propertyGroup = propertyGroup;
+        }
+
+        if (locality) {
+            filter.$or.push({ "address.locality": { $regex: new RegExp(locality, "i") } });
+            checker.locality = locality;
         }
 
         if (pincode) {
-            addressFilters["address.pincode"] = xss(pincode);
+            filter.$or.push({ "address.pincode": pincode });
+            checker.pincode = pincode;
         }
 
-        if (sanitizedCity) {
-            addressFilters["address.city"] = { $regex: new RegExp(sanitizedCity, "i") };
+        if (city) {
+            filter.$or.push({ "address.city": { $regex: new RegExp(city, "i") } });
+            checker.city = city;
         }
 
-        if (sanitizedState) {
-            addressFilters["address.state"] = { $regex: new RegExp(sanitizedState, "i") };
+        if (state) {
+            filter.$or.push({ "address.state": { $regex: new RegExp(state, "i") } });
+            checker.state = state;
         }
 
-        if (sanitizedCountry) {
-            addressFilters["address.country"] = { $regex: new RegExp(sanitizedCountry, "i") };
+        if (country) {
+            filter.$or.push({ "address.country": { $regex: new RegExp(country, "i") } });
+            checker.country = country;
         }
 
-        const totalCount = await PropertyModel.countDocuments(addressFilters);
+        if (minPrice || maxPrice) {
+            filter.$or.push({
+                price: {}
+            });
+            if (minPrice) {
+                filter.$or[filter.$or.length - 1].price.$gte = parseFloat(minPrice);
+                checker.minPrice = minPrice;
+            }
+            if (maxPrice) {
+                filter.$or[filter.$or.length - 1].price.$lte = parseFloat(maxPrice);
+                checker.maxPrice = maxPrice;
+            }
+        }
+
+        let totalCount;
+        if (Object.keys(checker).length) {
+            totalCount = await PropertyModel.countDocuments(filter);
+        } else {
+            totalCount = await PropertyModel.countDocuments();
+        }
+
+
+
+        if (!totalCount) {
+            return res.status(200).send({
+                data: [],
+                currentPage,
+                totalPages: 0,
+                totalCount: 0
+            });
+        }
+
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
-        let data = await PropertyModel.find(addressFilters)
-            .skip(skipItems)
-            .limit(ITEMS_PER_PAGE);
+        let data;
+        if (Object.keys(checker).length) {
+            data = await PropertyModel.find(filter)
+                .skip(skipItems)
+                .limit(ITEMS_PER_PAGE);
+        } else {
+            data = await PropertyModel.find()
+                .skip(skipItems)
+                .limit(ITEMS_PER_PAGE);
+        }
+
 
         // Adjust the data if it's the last page and there's not enough data for a full page
         if (data.length === 0 && currentPage > 1) {
             const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
-            data = await PropertyModel.find(addressFilters)
-                .skip(lastPageSkipItems)
-                .limit(totalCount % ITEMS_PER_PAGE);
+            if (Object.keys(checker).length) {
+                data = await PropertyModel.find(filter)
+                    .skip(lastPageSkipItems)
+                    .limit(totalCount % ITEMS_PER_PAGE);
+            } else {
+                data = await PropertyModel.find()
+                    .skip(lastPageSkipItems)
+                    .limit(totalCount % ITEMS_PER_PAGE);
+            }
+
         }
 
         res.status(200).send({
@@ -102,6 +185,8 @@ propertyRoute.get("/", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
+
+
 
 
 

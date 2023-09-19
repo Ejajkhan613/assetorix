@@ -46,23 +46,14 @@ userRoute.use(express.json());
 
 // Get User Details
 userRoute.get("/", tokenVerify, async (req, res) => {
-    let id = req.headers.id;
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
     try {
-        if (!id) {
-            res.status(400).send({ "msg": "Bad Request: ID is not Provided" });
-            return;
-        }
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
-        }
-        res.removeHeader("role");
-        let data = await UserModel.findById({ "_id": id }, { name: 1, mobile: 1, email: 1 });
-        res.status(200).send(data);
+        let obj = {};
+        obj.name = req.userDetail.name || "";
+        obj.email = req.userDetail.email || "";
+        obj.mobile = req.userDetail.mobile || "";
+        res.status(200).send(obj);
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Getting User Data" });
+        res.status(500).send({ "msg": "Server Error While Getting User Data", "error": error });
     }
 });
 
@@ -101,7 +92,7 @@ userRoute.post("/otp", async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Sending OTP" });
+        res.status(500).send({ "msg": "Server Error While Sending OTP", "error": error });
     }
 });
 
@@ -113,55 +104,39 @@ userRoute.post("/otp", async (req, res) => {
 userRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
     let { name, mobile, password } = req.body;
 
-    // Define the required fields
-    const requiredFields = ["name", "mobile", "password"];
+    if (!name) {
+        return res.status(400).send({ "msg": "Name is Missing" });
+    }
+    if (!isValidName(name)) {
+        return res.status(400).send({ "msg": "Name can't contain number or symbols" });
+    }
 
-    // Check if required fields exist and have non-empty values in the request body
-    const missingFields = checkRequiredFields(req.body, requiredFields);
-    if (missingFields.length > 0) {
-        const errorMsg = `Following Fields are Missing: ${missingFields.join(", ")}`;
-        res.status(400).send({ "msg": xss(errorMsg) });
-        return;
+    if (!mobile) {
+        return res.status(400).send({ "msg": "Mobile Number is Missing" });
+    }
+    if (mobile.length != 10) {
+        return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
+    }
+
+    if (!password) {
+        return res.status(400).send({ "msg": "Password is Missing" });
     }
 
     try {
-        bcrypt.hash(password, saltRounds, async (err, hash) => {
-            if (err) {
-                res.status(500).send({ "msg": "Error in Password Hashing", "err": xss(err) });
-                return;
-            }
-            let userData = {};
 
-            // Sanitize and validate input data
-            if (name) {
-                if (isValidName(xss(name))) {
-                    userData.name = xss(name);
-                } else {
-                    res.status(400).send({ "msg": "Bad Request: Name should not contain symbols or numbers" });
-                    return;
-                }
-            }
-            if (mobile) {
-                if (xss(mobile).length == 10) {
-                    userData.mobile = xss(mobile);
-                } else {
-                    res.status(400).send({ "msg": "Bad Request: mobile number does not have the correct length" });
-                    return;
-                }
-            }
+        let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
+        // Saving Data in Database
+        let savingData = new UserModel({ name, mobile, "password": hashedPassword });
+        await savingData.save();
 
-            // Saving Data in Database
-            let savingData = new UserModel({ name: userData.name, mobile: userData.mobile, "password": hash });
-            await savingData.save();
+        const token = jwt.sign({ "userID": savingData._id }, secretKey);
 
-            const token = jwt.sign({ "userID": savingData._id }, secretKey);
+        // Sending Response
+        res.status(201).send({ "msg": "Successfully Registered", token, name, "id": savingData._id });
 
-            // Sending Response
-            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": xss(name), "id": savingData._id });
-        });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Registration" });
+        res.status(500).send({ "msg": "Internal Server Error while Registration", "error": error });
     }
 });
 
@@ -173,87 +148,88 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
 userRoute.post("/login", async (req, res) => {
     let { mobile, password } = req.body;
 
-    // Validate and sanitize input
-    if (!mobile || !password) {
-        res.status(400).send({ "msg": "Please provide valid credentials" });
-        return;
+    if (!mobile) {
+        return res.status(400).send({ "msg": "Mobile Number is Missing" });
+    }
+    if (mobile.length != 10) {
+        return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
+    }
+
+    if (!password) {
+        return res.status(400).send({ "msg": "Password is Missing" });
     }
 
     try {
-        // Sanitize input before querying the database
-        mobile = xss(mobile);
 
         // Matching input from Database
-        let finding = await UserModel.find({ mobile });
+        let finding = await UserModel.findOne({ mobile });
 
-        if (finding.length === 1) {
-            bcrypt.compare(password, finding[0].password, async (err, result) => {
-                if (result) {
-                    // Generating Token
-                    const token = jwt.sign({ "userID": finding[0]._id }, secretKey);
-
-                    // Sanitize and escape output before sending response
-                    const sanitizedResponse = {
-                        msg: "Login Successful",
-                        token: token,
-                        name: xss(finding[0].name),
-                        id: xss(finding[0]._id)
-                    };
-
-                    // Sending Response
-                    res.status(200).send(sanitizedResponse);
-                } else {
-                    res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
-                    return;
-                }
-            });
-        } else {
-            res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
+        if (!finding) {
+            return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
         }
+
+        let isPasswordMatching = bcrypt.compareSync(password, finding.password);
+
+        if (!isPasswordMatching) {
+            return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
+        }
+
+        const token = jwt.sign({ "userID": finding._id }, secretKey);
+
+        finding.lastLogin = indianTime();
+        await finding.save();
+
+        // Sending Response
+        res.status(201).send({ "msg": "Login Successful", token, "name": finding.name, "id": finding._id });
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Login" });
+        res.status(500).send({ "msg": "Internal Server Error while Login", "error": error });
     }
 });
+
+
 
 
 
 // Sending OTP to Email and Saving in DB
 userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
     try {
-        const email = xss(req.body.email);
+        const email = req.body.email;
+
         if (!email) {
-            return res.status(400).send({ "msg": "Please Provide new Email" });
+            return res.status(400).send({ "msg": "Please Provide Valid Email" });
         }
 
-        if (!isValidEmail(email)) {
-            return res.status(400).send({ "msg": "Please Provide Correct Email" });
+        if (req.userDetail.email == email) {
+            return res.status(400).send({ "msg": "Email Already Registered, Provide Another" });
         }
 
         if (await userEmailDuplicateVerification(email)) {
-            return res.status(400).send({ "msg": "Email Already Registered" });
+            return res.status(400).send({ "msg": "Email Already Registered, Provide Another" });
         }
 
         const sending = await email_OTP_sending(email);
 
         if (!sending.status) {
-            return res.status(400).send({ "msg": "Error: Could not send OTP", "error": sending.msg });
+            return res.status(400).send({ "msg": "Error: Could not send OTP, Try Again Later", "error": sending.msg });
         }
 
-        const otp = sending.otp;
-        const existingOTP = await EmailOTPModel.findOne({ "email": email });
 
-        if (existingOTP) {
-            existingOTP.otp = otp;
-            await existingOTP.save();
+        const filter = { email };
+        const update = { "otp": sending.otp, "createdAt": Date.now() };
+
+        const result = await EmailOTPModel.findOneAndUpdate(filter, update, {
+            upsert: true,
+            new: true
+        });
+
+        if (result) {
+            return res.status(200).json({ "msg": "OTP Sent Successfully" });
         } else {
-            const newOTP = new EmailOTPModel({ "email": email, "otp": otp });
-            await newOTP.save();
+            return res.status(500).json({ "error": "Failed to update new OTP" });
         }
-
-        res.status(201).send({ "msg": "OTP Sent Successfully" });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "msg": "Internal Server Error: While Sending OTP" });
+        res.status(500).send({ "msg": "Internal Server Error: While Sending OTP", "error": error });
     }
 });
 
@@ -262,21 +238,38 @@ userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
 // Verifying OTP and Updating Email
 userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
     try {
-        let email = xss(req.body.email);
-        let otp = xss(req.body.otp);
-        let id = xss(req.headers.id);
+        let { email, otp } = req.body;
 
-        let matching = await EmailOTPModel.findOne({ "email": email });
-        if (matching && matching.otp == otp) {
-            await UserModel.findByIdAndUpdate({ "_id": id }, { "email": matching.email });
-            await EmailOTPModel.findByIdAndDelete({ "_id": matching._id })
-            res.status(201).send({ "msg": "Email Updated" });
-        } else {
-            res.status(400).send({ "msg": "OTP is wrong or Expired" });
+        if (!email) {
+            return res.status(400).send({ "msg": "Email Not Provided" });
+
         }
+
+        if (!otp) {
+            return res.status(400).send({ "msg": "OTP Not Provided" });
+
+        }
+
+        let findInDB = await EmailOTPModel.findOne({ "email": email });
+
+        if (!findInDB) {
+            return res.status(400).send({ "msg": "Invalid OTP" });
+
+        }
+        if (findInDB.otp != otp) {
+            return res.status(400).send({ "msg": "Invalid OTP" });
+
+        }
+        await EmailOTPModel.findByIdAndDelete({ "_id": findInDB._id });
+
+        let user = req.userDetail;
+        user.email = email;
+        user.lastUpdated = indianTime();
+        await user.save();
+
+        res.status(201).send({ "msg": "Email Updated" });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ "msg": "Internal Server Error:  Something Went Wrong While Verifying OTP" });
+        res.status(500).send({ "msg": "Internal Server Error While Verifying OTP", "error": error });
     }
 })
 
@@ -284,43 +277,33 @@ userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
 
 // Update User Detail
 userRoute.patch("/update", tokenVerify, async (req, res) => {
-
-    let id = req.headers.id;
-    let { name, mobile } = req.body;
-    let obj = {};
-
     try {
 
-        // Sanitize and validate input data
+        let user = req.userDetail;
+
+        let { name, mobile } = req.body;
+
         if (name) {
-            if (isValidName(xss(name))) {
-                obj.name = xss(name);
+            if (!isValidName(name)) {
+                return res.status(400).send({ "msg": "Name can't contain number or symbols" });
             } else {
-                res.status(400).send({ "msg": "Bad Request: Name should not contain symbols or numbers" });
-                return;
+                user.name = name;
             }
         }
 
         if (mobile) {
-            if (xss(mobile).length == 10) {
-                obj.mobile = xss(mobile);
+            if (mobile.length != 10) {
+                return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
             } else {
-                res.status(400).send({ "msg": "Bad Request: mobile number does not have the correct length" });
-                return;
+                user.mobile = mobile;
             }
         }
-        obj.lastUpdated = indianTime();
 
+        await user.save();
 
-        const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
-        if (!updatedUser) {
-            res.status(404).send({ "msg": "Not Found: User not found with the provided ID" });
-            return;
-        }
-
-        res.status(201).send({ "msg": "Updated Successfully", "name": name ? name : updatedUser.name, "email": updatedUser.email ? updatedUser.email : "", "mobile": mobile ? mobile : updatedUser.mobile });
+        res.status(200).send({ "msg": "Profile Updated" });
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
+        res.status(500).send({ "msg": "Internal Server Error while Updating", "error": error });
     }
 });
 
@@ -334,22 +317,15 @@ const ITEMS_PER_PAGE = 10;
 
 // User Properties
 userRoute.get("/listings", tokenVerify, async (req, res) => {
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
-    let id = xss(req.headers.id);
-
-    const { page } = req.query;
-
     try {
+        const id = req.header.id;
+
+        const { page } = req.query;
+
         const currentPage = parseInt(page) || 1;
 
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
-        }
-
-
         let totalCount = await PropertyModel.countDocuments({ "userID": id });
+
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -374,7 +350,7 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Getting Listings", "error": error });
+        res.status(500).send({ "msg": "Internal Server Error while Getting Listings", "error": error });
     }
 });
 
@@ -384,26 +360,28 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
 
 // User Wishlist
 userRoute.get("/wishlist", tokenVerify, async (req, res) => {
-    const id = xss(req.headers.id);
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
-
     try {
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
+        const propertyIds = req.userDetail.wishlist;
+        if (!propertyIds.length) {
+            return res.status(400).send({ "msg": "Wishlist is Empty" });
         }
-        res.removeHeader("role");
 
-        const propertyIds = await UserModel.findById(id, { "wishlist": 1, "_id": 0 });
-
-
-        // Use the $in operator to fetch all properties by their IDs
-        const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds.wishlist } });
+        // Using the $in operator to fetch all properties by their IDs
+        const userWishlist = await PropertyModel.find({ "_id": { $in: propertyIds } });
 
         res.status(200).send(userWishlist);
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Error while Getting your Wishlist", "error": error });
+        res.status(500).send({ "msg": "Internal Server Error while Getting your Wishlist", "error": error });
+    }
+});
+
+// User Wishlist
+userRoute.get("/wishlistIDs", tokenVerify, async (req, res) => {
+    try {
+        const propertyIds = req.userDetail.wishlist;
+        res.status(200).send(propertyIds);
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error while Getting your Wishlist", "error": error });
     }
 });
 
@@ -412,25 +390,10 @@ userRoute.get("/wishlist", tokenVerify, async (req, res) => {
 
 // Add Property In Wishlist
 userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
-    const id = xss(req.headers.id);
-    const propertyID = xss(req.params.propertyID);
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
+    const propertyID = req.params.propertyID;
 
     try {
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
-        }
-        res.removeHeader("role");
-
-        // Find the user by their ID
-        const user = await UserModel.findById(id);
-
-        if (!user) {
-            res.status(404).send({ "msg": 'User not found' });
-            return;
-        }
+        let user = req.userDetail;
 
         // Check if the item is already in the wishlist
         const itemExists = user.wishlist.includes(propertyID);
@@ -447,7 +410,7 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         res.status(200).send({ "msg": 'Item added to wishlist' });
 
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Error while Adding to Wishlist", "error": error });
+        res.status(500).send({ "msg": "Internal Server Error while Adding to Wishlist", "error": error });
     }
 })
 
@@ -456,25 +419,10 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
 
 // Delete Property From Wishlist
 userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
-    const id = xss(req.headers.id);
     const propertyID = xss(req.params.propertyID);
-    let roles = ["customer", "agent", "employee", "admin", "super_admin"];
 
     try {
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Role Access Denied" });
-            return;
-        }
-        res.removeHeader("role");
-
-        // Find the user by their ID
-        const user = await UserModel.findById(id);
-
-        if (!user) {
-            res.status(404).send({ "msg": 'User not found' });
-            return;
-        }
+        let user = req.userDetail;
 
         // Check if the item exists in the wishlist
         const itemIndex = user.wishlist.indexOf(propertyID);
