@@ -44,6 +44,156 @@ propertyRoute.get("/single/:id", async (req, res) => {
 
 
 // get Property Details
+// propertyRoute.get("/", async (req, res) => {
+//     try {
+//         let { minPrice, maxPrice, furnished, propertyType, lookingFor, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
+
+//         const currentPage = parseInt(page) || 1;
+
+//         bedroom = parseInt(xss(bedroom));
+//         furnished = xss(furnished);
+//         propertyType = xss(propertyType);
+//         propertyGroup = xss(propertyGroup);
+
+//         locality = xss(locality);
+//         pincode = xss(pincode);
+//         city = xss(city);
+//         state = xss(state);
+//         country = xss(country);
+//         lookingFor = xss(lookingFor)
+
+//         minPrice = xss(minPrice);
+//         maxPrice = xss(maxPrice);
+
+
+//         let filter = { $or: [] };
+//         let checker = {};
+
+//         if (bedroom) {
+//             filter.$or.push({ 'roomDetails.bedroom': bedroom });
+//             checker.bedroom = bedroom;
+//         }
+
+//         if (furnished) {
+//             filter.$or.push({ "furnished": furnished });
+//             checker.furnished = furnished;
+//         }
+
+//         if (lookingFor) {
+//             filter.$or.push({ "lookingFor": lookingFor });
+//             checker.lookingFor = lookingFor;
+//         }
+
+//         if (propertyType) {
+//             filter.$or.push({ "propertyType": propertyType });
+//             checker.propertyType = propertyType;
+//         }
+
+//         if (propertyGroup) {
+//             filter.$or.push({ "propertyGroup": propertyGroup });
+//             checker.propertyGroup = propertyGroup;
+//         }
+
+//         if (locality) {
+//             filter.$or.push({ "address.locality": { $regex: new RegExp(locality, "i") } });
+//             checker.locality = locality;
+//         }
+
+//         if (pincode) {
+//             filter.$or.push({ "address.pincode": pincode });
+//             checker.pincode = pincode;
+//         }
+
+//         if (city) {
+//             filter.$or.push({ "address.city": { $regex: new RegExp(city, "i") } });
+//             checker.city = city;
+//         }
+
+//         if (state) {
+//             filter.$or.push({ "address.state": { $regex: new RegExp(state, "i") } });
+//             checker.state = state;
+//         }
+
+//         if (country) {
+//             filter.$or.push({ "address.country": { $regex: new RegExp(country, "i") } });
+//             checker.country = country;
+//         }
+
+//         if (minPrice || maxPrice) {
+//             filter.$or.push({
+//                 price: {}
+//             });
+//             if (minPrice) {
+//                 filter.$or[filter.$or.length - 1].price.$gte = parseFloat(minPrice);
+//                 checker.minPrice = minPrice;
+//             }
+//             if (maxPrice) {
+//                 filter.$or[filter.$or.length - 1].price.$lte = parseFloat(maxPrice);
+//                 checker.maxPrice = maxPrice;
+//             }
+//         }
+
+//         let totalCount;
+//         if (Object.keys(checker).length) {
+//             totalCount = await PropertyModel.countDocuments(filter);
+//         } else {
+//             totalCount = await PropertyModel.countDocuments();
+//         }
+
+
+
+//         if (!totalCount) {
+//             return res.status(200).send({
+//                 data: [],
+//                 currentPage,
+//                 totalPages: 0,
+//                 totalCount: 0
+//             });
+//         }
+
+//         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+//         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
+//         let data;
+//         if (Object.keys(checker).length) {
+//             data = await PropertyModel.find(filter)
+//                 .skip(skipItems)
+//                 .limit(ITEMS_PER_PAGE);
+//         } else {
+//             data = await PropertyModel.find()
+//                 .skip(skipItems)
+//                 .limit(ITEMS_PER_PAGE);
+//         }
+
+
+//         // Adjust the data if it's the last page and there's not enough data for a full page
+//         if (data.length === 0 && currentPage > 1) {
+//             const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
+//             if (Object.keys(checker).length) {
+//                 data = await PropertyModel.find(filter)
+//                     .skip(lastPageSkipItems)
+//                     .limit(totalCount % ITEMS_PER_PAGE);
+//             } else {
+//                 data = await PropertyModel.find()
+//                     .skip(lastPageSkipItems)
+//                     .limit(totalCount % ITEMS_PER_PAGE);
+//             }
+//         }
+
+//         res.status(200).send({
+//             data,
+//             currentPage: data.length === 0 ? totalPages : currentPage,
+//             totalPages,
+//             totalCount,
+//         });
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
+
+
+
+// get Property Details
 propertyRoute.get("/", async (req, res) => {
     try {
         let { minPrice, maxPrice, furnished, propertyType, lookingFor, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
@@ -62,125 +212,71 @@ propertyRoute.get("/", async (req, res) => {
         country = xss(country);
         lookingFor = xss(lookingFor)
 
-        minPrice = xss(minPrice);
-        maxPrice = xss(maxPrice);
+        minPrice = Number(xss(minPrice));
+        maxPrice = Number(xss(maxPrice));
 
 
-        let filter = { $or: [] };
-        let checker = {};
+        // Create an array to hold your $or conditions
+        const orConditions = [];
 
-        if (bedroom) {
-            filter.$or.push({ 'roomDetails.bedroom': bedroom });
-            checker.bedroom = bedroom;
-        }
+        // Helper function to add conditions to the orConditions array
+        const addToOrConditions = (field, value) => {
+            if (value) {
+                const condition = {};
+                condition[field] = value;
+                orConditions.push(condition);
+            }
+        };
 
-        if (furnished) {
-            filter.$or.push({ "furnished": furnished });
-            checker.furnished = furnished;
-        }
-
-        if (lookingFor) {
-            filter.$or.push({ "lookingFor": lookingFor });
-            checker.lookingFor = lookingFor;
-        }
-
-        if (propertyType) {
-            filter.$or.push({ "propertyType": propertyType });
-            checker.propertyType = propertyType;
-        }
-
-        if (propertyGroup) {
-            filter.$or.push({ "propertyGroup": propertyGroup });
-            checker.propertyGroup = propertyGroup;
-        }
-
-        if (locality) {
-            filter.$or.push({ "address.locality": { $regex: new RegExp(locality, "i") } });
-            checker.locality = locality;
-        }
-
-        if (pincode) {
-            filter.$or.push({ "address.pincode": pincode });
-            checker.pincode = pincode;
-        }
-
-        if (city) {
-            filter.$or.push({ "address.city": { $regex: new RegExp(city, "i") } });
-            checker.city = city;
-        }
-
-        if (state) {
-            filter.$or.push({ "address.state": { $regex: new RegExp(state, "i") } });
-            checker.state = state;
-        }
-
-        if (country) {
-            filter.$or.push({ "address.country": { $regex: new RegExp(country, "i") } });
-            checker.country = country;
-        }
+        // Add conditions for each query parameter
+        addToOrConditions('roomDetails.bedroom', bedroom);
+        addToOrConditions('furnished', furnished);
+        addToOrConditions('lookingFor', lookingFor);
+        addToOrConditions('propertyType', propertyType);
+        addToOrConditions('propertyGroup', propertyGroup);
+        addToOrConditions('address.pincode', pincode);
+        addToOrConditions('address.locality', { $regex: new RegExp(locality, 'i') });
+        addToOrConditions('address.city', { $regex: new RegExp(city, 'i') });
+        addToOrConditions('address.state', { $regex: new RegExp(state, 'i') });
+        addToOrConditions('address.country', { $regex: new RegExp(country, 'i') });
 
         if (minPrice || maxPrice) {
-            filter.$or.push({
-                price: {}
-            });
+            const priceCondition = {};
+
             if (minPrice) {
-                filter.$or[filter.$or.length - 1].price.$gte = parseFloat(minPrice);
-                checker.minPrice = minPrice;
+                priceCondition.$gte = parseFloat(minPrice);
             }
             if (maxPrice) {
-                filter.$or[filter.$or.length - 1].price.$lte = parseFloat(maxPrice);
-                checker.maxPrice = maxPrice;
+                priceCondition.$lte = parseFloat(maxPrice);
             }
+
+            orConditions.push({ price: priceCondition });
         }
 
-        let totalCount;
-        if (Object.keys(checker).length) {
-            totalCount = await PropertyModel.countDocuments(filter);
-        } else {
-            totalCount = await PropertyModel.countDocuments();
-        }
+        // Build the final filter using $or
+        const filter = orConditions.length > 0 ? { $or: orConditions } : {};
 
+        // Get total count based on the filter
+        const totalCount = await PropertyModel.countDocuments(filter);
 
-
-        if (!totalCount) {
-            return res.status(200).send({
+        if (totalCount === 0) {
+            return res.status(200).json({
                 data: [],
                 currentPage,
                 totalPages: 0,
-                totalCount: 0
+                totalCount: 0,
             });
         }
 
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-
         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
-        let data;
-        if (Object.keys(checker).length) {
-            data = await PropertyModel.find(filter)
-                .skip(skipItems)
-                .limit(ITEMS_PER_PAGE);
-        } else {
-            data = await PropertyModel.find()
-                .skip(skipItems)
-                .limit(ITEMS_PER_PAGE);
-        }
 
+        // Retrieve data based on the filter and pagination
+        const data = await PropertyModel.find(filter)
+            .skip(skipItems)
+            .limit(ITEMS_PER_PAGE);
 
-        // Adjust the data if it's the last page and there's not enough data for a full page
-        if (data.length === 0 && currentPage > 1) {
-            const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
-            if (Object.keys(checker).length) {
-                data = await PropertyModel.find(filter)
-                    .skip(lastPageSkipItems)
-                    .limit(totalCount % ITEMS_PER_PAGE);
-            } else {
-                data = await PropertyModel.find()
-                    .skip(lastPageSkipItems)
-                    .limit(totalCount % ITEMS_PER_PAGE);
-            }
-        }
-
-        res.status(200).send({
+        res.status(200).json({
             data,
             currentPage: data.length === 0 ? totalPages : currentPage,
             totalPages,
@@ -190,6 +286,125 @@ propertyRoute.get("/", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
+
+
+// const ITEMS_PER_PAGE = 10; // Adjust to your desired value
+
+// propertyRoute.get("/", async (req, res) => {
+//     try {
+//         const {
+//             minPrice = 0,
+//             maxPrice = Number.MAX_VALUE,
+//             furnished,
+//             propertyType,
+//             lookingFor,
+//             propertyGroup,
+//             bedroom,
+//             locality,
+//             pincode,
+//             city,
+//             state,
+//             country,
+//             page = 1,
+//         } = req.query;
+
+//         const currentPage = parseInt(page);
+
+//         const filter = {};
+//         const checker = {};
+
+//         if (bedroom) {
+//             filter['roomDetails.bedroom'] = parseInt(bedroom);
+//             checker.bedroom = bedroom;
+//         }
+
+//         if (furnished) {
+//             filter.furnished = furnished;
+//             checker.furnished = furnished;
+//         }
+
+//         if (lookingFor) {
+//             filter.lookingFor = lookingFor;
+//             checker.lookingFor = lookingFor;
+//         }
+
+//         if (propertyType) {
+//             filter.propertyType = propertyType;
+//             checker.propertyType = propertyType;
+//         }
+
+//         if (propertyGroup) {
+//             filter.propertyGroup = propertyGroup;
+//             checker.propertyGroup = propertyGroup;
+//         }
+
+//         if (locality) {
+//             filter['address.locality'] = { $regex: new RegExp(locality, "i") };
+//             checker.locality = locality;
+//         }
+
+//         if (pincode) {
+//             filter['address.pincode'] = pincode;
+//             checker.pincode = pincode;
+//         }
+
+//         if (city) {
+//             filter['address.city'] = { $regex: new RegExp(city, "i") };
+//             checker.city = city;
+//         }
+
+//         if (state) {
+//             filter['address.state'] = { $regex: new RegExp(state, "i") };
+//             checker.state = state;
+//         }
+
+//         if (country) {
+//             filter['address.country'] = { $regex: new RegExp(country, "i") };
+//             checker.country = country;
+//         }
+
+//         if (minPrice || maxPrice) {
+//             filter.price = {};
+//             if (minPrice) {
+//                 filter.price.$gte = parseFloat(minPrice);
+//                 checker.minPrice = minPrice;
+//             }
+//             if (maxPrice) {
+//                 filter.price.$lte = parseFloat(maxPrice);
+//                 checker.maxPrice = maxPrice;
+//             }
+//         }
+
+//         const totalCount = await PropertyModel.countDocuments(filter);
+
+//         if (totalCount === 0) {
+//             return res.status(200).send({
+//                 data: [],
+//                 currentPage,
+//                 totalPages: 0,
+//                 totalCount: 0,
+//             });
+//         }
+
+//         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+//         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
+
+//         const data = await PropertyModel.find(filter)
+//             .skip(skipItems)
+//             .limit(ITEMS_PER_PAGE);
+
+//         res.status(200).send({
+//             data,
+//             currentPage: data.length === 0 ? totalPages : currentPage,
+//             totalPages,
+//             totalCount,
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send({ msg: "Server Error While getting Properties" });
+//     }
+// });
+
 
 
 
