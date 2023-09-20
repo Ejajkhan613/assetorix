@@ -46,7 +46,7 @@ propertyRoute.get("/single/:id", async (req, res) => {
 // get Property Details
 propertyRoute.get("/", async (req, res) => {
     try {
-        let { minPrice, maxPrice, furnished, propertyType, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
+        let { minPrice, maxPrice, furnished, propertyType, lookingFor, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
 
         const currentPage = parseInt(page) || 1;
 
@@ -60,6 +60,7 @@ propertyRoute.get("/", async (req, res) => {
         city = xss(city);
         state = xss(state);
         country = xss(country);
+        lookingFor = xss(lookingFor)
 
         minPrice = xss(minPrice);
         maxPrice = xss(maxPrice);
@@ -76,6 +77,11 @@ propertyRoute.get("/", async (req, res) => {
         if (furnished) {
             filter.$or.push({ "furnished": furnished });
             checker.furnished = furnished;
+        }
+
+        if (lookingFor) {
+            filter.$or.push({ "lookingFor": lookingFor });
+            checker.lookingFor = lookingFor;
         }
 
         if (propertyType) {
