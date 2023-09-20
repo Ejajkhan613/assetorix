@@ -222,7 +222,7 @@ propertyRoute.get("/rent", async (req, res) => {
 
 
 // Sell
-propertyRoute.get("/sell", async (req, res) => {
+propertyRoute.get("/buy", async (req, res) => {
     try {
         // const currentPage = parseInt(page) || 1;
 
@@ -264,7 +264,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
 
 // Sell Residential
-propertyRoute.get("/sell/residential", async (req, res) => {
+propertyRoute.get("/buy/residential", async (req, res) => {
     try {
         // const currentPage = parseInt(page) || 1;
 
@@ -278,7 +278,7 @@ propertyRoute.get("/sell/residential", async (req, res) => {
 
 
 // Sell Commercial
-propertyRoute.get("/sell/commercial", async (req, res) => {
+propertyRoute.get("/buy/commercial", async (req, res) => {
     try {
         // const currentPage = parseInt(page) || 1;
 
