@@ -223,17 +223,38 @@ propertyRoute.get("/rent", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
@@ -260,17 +281,38 @@ propertyRoute.get("/buy", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
@@ -297,17 +339,38 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
@@ -334,17 +397,38 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
@@ -354,8 +438,6 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
     }
 });
 
-
-// Sell Residential
 propertyRoute.get("/buy/residential", async (req, res) => {
     try {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
@@ -375,13 +457,34 @@ propertyRoute.get("/buy/residential", async (req, res) => {
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
@@ -390,6 +493,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
+
 
 
 
@@ -413,13 +517,34 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
                 : Number(bedroom);
         }
 
-        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+        if (furnished) {
+            filter["furnished"] = Array.isArray(furnished)
+                ? { $in: furnished }
+                : furnished;
+        }
+
+        if (minPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$gte"] = parseFloat(minPrice);
+        }
+
+        if (maxPrice) {
+            filter["price"] = filter["price"] || {};
+            filter["price"]["$lte"] = parseFloat(maxPrice);
+        }
+
+        if (amenities) {
+            filter["amenities"] = Array.isArray(amenities)
+                ? { $in: amenities }
+                : amenities;
+        }
+
+        console.log(filter);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
         };
-        console.log(filter)
 
         const data = await PropertyModel.find(filter, null, options);
 
