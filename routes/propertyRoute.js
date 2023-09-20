@@ -361,7 +361,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "lookingFor": "Sell", "propertyGroup": "Residential" };
+        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
 
         if (propertyType) {
             filter["propertyType"] = Array.isArray(propertyType)
@@ -371,7 +371,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
@@ -409,7 +409,7 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
 
         if (bedroom) {
             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: Number(bedroom) }
+                ? { $in: bedroom.map((item) => Number(item)) }
                 : Number(bedroom);
         }
 
