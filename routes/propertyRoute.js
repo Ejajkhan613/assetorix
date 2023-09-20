@@ -210,9 +210,32 @@ propertyRoute.get("/", async (req, res) => {
 // Rent
 propertyRoute.get("/rent", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ "lookingFor": "Rent" });
+        let filter = { "lookingFor": "Rent" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
@@ -224,9 +247,32 @@ propertyRoute.get("/rent", async (req, res) => {
 // Sell
 propertyRoute.get("/buy", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ "lookingFor": "Sell" });
+        let filter = { "lookingFor": "Sell" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
@@ -238,9 +284,32 @@ propertyRoute.get("/buy", async (req, res) => {
 // Rent Residential
 propertyRoute.get("/rent/residential", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] });
+        let filter = { "lookingFor": "Rent", "propertyGroup": "Residential" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
@@ -252,9 +321,32 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 // Rent Commercial
 propertyRoute.get("/rent/commercial", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] });
+        let filter = { "lookingFor": "Rent", "propertyGroup": "Commercial" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
@@ -266,23 +358,70 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 // Sell Residential
 propertyRoute.get("/buy/residential", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] });
+        let filter = { "lookingFor": "Sell", "propertyGroup": "Residential" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
-})
+});
+
 
 
 // Sell Commercial
 propertyRoute.get("/buy/commercial", async (req, res) => {
     try {
-        // const currentPage = parseInt(page) || 1;
+        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        const currentPage = parseInt(page) || 1;
 
-        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] });
+        let filter = { "lookingFor": "Sell", "propertyGroup": "commercial" };
+
+        if (propertyType) {
+            filter["propertyType"] = Array.isArray(propertyType)
+                ? { $in: propertyType }
+                : propertyType;
+        }
+
+        if (bedroom) {
+            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+                ? { $in: Number(bedroom) }
+                : Number(bedroom);
+        }
+
+        // Add other filters as needed (e.g., furnished, minPrice, maxPrice, amenities)
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, null, options);
 
         res.status(200).send(data);
     } catch (error) {
