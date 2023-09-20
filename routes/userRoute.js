@@ -407,8 +407,7 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         user.wishlist.push(propertyID);
         await user.save();
 
-        res.status(200).send({ "msg": 'Item added to wishlist' });
-
+        res.status(200).send({ "msg": 'Item added to wishlist', "wishlistIDs": user.wishlist });
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error while Adding to Wishlist", "error": error });
     }
@@ -434,7 +433,7 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         user.wishlist.splice(itemIndex, 1);
         await user.save();
 
-        res.status(200).send({ "msg": 'Item removed from wishlist' });
+        res.status(200).send({ "msg": 'Item removed from wishlist', "wishlistIDs": user.wishlist });
 
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Error while Removing from Wishlist", "error": error });
