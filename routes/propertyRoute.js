@@ -207,6 +207,93 @@ propertyRoute.get("/", async (req, res) => {
 
 
 
+// Rent
+propertyRoute.get("/rent", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ "lookingFor": "Rent" });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+});
+
+
+// Sell
+propertyRoute.get("/sell", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ "lookingFor": "Sell" });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+});
+
+
+// Rent Residential
+propertyRoute.get("/rent/residential", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+});
+
+
+// Rent Commercial
+propertyRoute.get("/rent/commercial", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+});
+
+
+// Sell Residential
+propertyRoute.get("/sell/residential", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+})
+
+
+// Sell Commercial
+propertyRoute.get("/sell/commercial", async (req, res) => {
+    try {
+        const currentPage = parseInt(page) || 1;
+
+        let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] });
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+})
+
+
+
+
+
 // get Property Details
 // propertyRoute.get("/", async (req, res) => {
 //     try {
