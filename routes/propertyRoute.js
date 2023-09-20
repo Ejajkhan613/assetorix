@@ -210,7 +210,7 @@ propertyRoute.get("/", async (req, res) => {
 // Rent
 propertyRoute.get("/rent", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ "lookingFor": "Rent" });
 
@@ -224,7 +224,7 @@ propertyRoute.get("/rent", async (req, res) => {
 // Sell
 propertyRoute.get("/sell", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ "lookingFor": "Sell" });
 
@@ -238,7 +238,7 @@ propertyRoute.get("/sell", async (req, res) => {
 // Rent Residential
 propertyRoute.get("/rent/residential", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] });
 
@@ -252,7 +252,7 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 // Rent Commercial
 propertyRoute.get("/rent/commercial", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] });
 
@@ -266,7 +266,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 // Sell Residential
 propertyRoute.get("/sell/residential", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] });
 
@@ -280,7 +280,7 @@ propertyRoute.get("/sell/residential", async (req, res) => {
 // Sell Commercial
 propertyRoute.get("/sell/commercial", async (req, res) => {
     try {
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
         let data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] });
 
