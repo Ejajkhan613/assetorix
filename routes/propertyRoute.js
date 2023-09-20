@@ -66,18 +66,18 @@ propertyRoute.get("/", async (req, res) => {
         maxPrice = xss(maxPrice);
 
         // Decoding URL-encoded query parameters
-        minPrice = decodeURIComponent(minPrice);
-        maxPrice = decodeURIComponent(maxPrice);
-        furnished = decodeURIComponent(furnished);
-        propertyType = decodeURIComponent(propertyType);
-        lookingFor = decodeURIComponent(lookingFor);
-        propertyGroup = decodeURIComponent(propertyGroup);
-        bedroom = parseInt(decodeURIComponent(bedroom));
-        locality = decodeURIComponent(locality);
-        pincode = decodeURIComponent(pincode);
-        city = decodeURIComponent(city);
-        state = decodeURIComponent(state);
-        country = decodeURIComponent(country);
+        // minPrice = decodeURIComponent(minPrice);
+        // maxPrice = decodeURIComponent(maxPrice);
+        // furnished = decodeURIComponent(furnished);
+        // propertyType = decodeURIComponent(propertyType);
+        // lookingFor = decodeURIComponent(lookingFor);
+        // propertyGroup = decodeURIComponent(propertyGroup);
+        // bedroom = parseInt(decodeURIComponent(bedroom));
+        // locality = decodeURIComponent(locality);
+        // pincode = decodeURIComponent(pincode);
+        // city = decodeURIComponent(city);
+        // state = decodeURIComponent(state);
+        // country = decodeURIComponent(country);
 
 
         let filter = { $or: [] };
