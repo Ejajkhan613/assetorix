@@ -214,42 +214,53 @@ propertyRoute.get("/rent", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { "lookingFor": "Rent" };
+        filter["$or"] = []; ``
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -272,42 +283,53 @@ propertyRoute.get("/buy", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { "lookingFor": "Sell" };
+        filter["$or"] = [];
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -329,43 +351,54 @@ propertyRoute.get("/rent/residential", async (req, res) => {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "lookingFor": "Rent", "propertyGroup": "Residential" };
+        let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] };
+        filter["$or"] = [];
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -387,43 +420,54 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "lookingFor": "Rent", "propertyGroup": "Commercial" };
+        let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] };
+        filter["$or"] = [];
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -438,48 +482,181 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
     }
 });
 
+
+// Sell Residential
+// propertyRoute.get("/buy/residential", async (req, res) => {
+//     try {
+//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
+
+//         if (propertyType) {
+//             filter["propertyType"] = Array.isArray(propertyType)
+//                 ? { $in: propertyType }
+//                 : propertyType;
+//         }
+
+//         if (bedroom) {
+//             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
+//                 ? { $in: bedroom.map((item) => Number(item)) }
+//                 : Number(bedroom);
+//         }
+
+//         if (furnished) {
+//             filter["furnished"] = Array.isArray(furnished)
+//                 ? { $in: furnished }
+//                 : furnished;
+//         }
+
+//         if (minPrice) {
+//             filter["price"] = filter["price"] || {};
+//             filter["price"]["$gte"] = parseFloat(minPrice);
+//         }
+
+//         if (maxPrice) {
+//             filter["price"] = filter["price"] || {};
+//             filter["price"]["$lte"] = parseFloat(maxPrice);
+//         }
+
+//         if (amenities) {
+//             filter["amenities"] = Array.isArray(amenities)
+//                 ? { $in: amenities }
+//                 : amenities;
+//         }
+
+//         
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
+
+
+// Sell Residential
+// propertyRoute.get("/buy/residential", async (req, res) => {
+//     try {
+//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
+
+//         if (propertyType) {
+//             filter["$or"] = Array.isArray(propertyType)
+//                 ? propertyType.map(type => ({ "propertyType": type }))
+//                 : [{ "propertyType": propertyType }];
+//         }
+
+//         if (bedroom) {
+//             filter["$or"] = (filter["$or"] || []).concat(
+//                 Array.isArray(bedroom)
+//                     ? bedroom.map(item => ({ "roomDetails.bedroom": Number(item) }))
+//                     : [{ "roomDetails.bedroom": Number(bedroom) }]
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"] = Array.isArray(furnished)
+//                 ? furnished.map(furn => ({ "furnished": furn }))
+//                 : [{ "furnished": furnished }];
+//         }
+
+//         if (minPrice) {
+//             filter["$or"] = (filter["$or"] || []).concat(
+//                 [{ "price": { "$gte": parseFloat(minPrice) } }]
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"] = (filter["$or"] || []).concat(
+//                 [{ "price": { "$lte": parseFloat(maxPrice) } }]
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"] = Array.isArray(amenities)
+//                 ? amenities.map(amenity => ({ "amenities": amenity }))
+//                 : [{ "amenities": amenities }];
+//         }
+
+//         
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
+
+
+// Sell Residential
 propertyRoute.get("/buy/residential", async (req, res) => {
     try {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
+        filter["$or"] = [];
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -493,6 +670,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
+
 
 
 
@@ -503,43 +681,54 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "lookingFor": "Sell", "propertyGroup": "commercial" };
+        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] };
+        filter["$or"] = [];
 
         if (propertyType) {
-            filter["propertyType"] = Array.isArray(propertyType)
-                ? { $in: propertyType }
-                : propertyType;
+            filter["$or"].push(
+                Array.isArray(propertyType)
+                    ? { "propertyType": { $in: propertyType } }
+                    : { "propertyType": propertyType }
+            );
         }
 
         if (bedroom) {
-            filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-                ? { $in: bedroom.map((item) => Number(item)) }
-                : Number(bedroom);
+            filter["$or"].push(
+                Array.isArray(bedroom)
+                    ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+                    : { "roomDetails.bedroom": Number(bedroom) }
+            );
         }
 
         if (furnished) {
-            filter["furnished"] = Array.isArray(furnished)
-                ? { $in: furnished }
-                : furnished;
+            filter["$or"].push(
+                Array.isArray(furnished)
+                    ? { "furnished": { $in: furnished } }
+                    : { "furnished": furnished }
+            );
         }
 
         if (minPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$gte"] = parseFloat(minPrice);
+            filter["$or"].push(
+                { "price": { "$gte": parseFloat(minPrice) } }
+            );
         }
 
         if (maxPrice) {
-            filter["price"] = filter["price"] || {};
-            filter["price"]["$lte"] = parseFloat(maxPrice);
+            filter["$or"].push(
+                { "price": { "$lte": parseFloat(maxPrice) } }
+            );
         }
 
         if (amenities) {
-            filter["amenities"] = Array.isArray(amenities)
-                ? { $in: amenities }
-                : amenities;
+            filter["$or"].push(
+                Array.isArray(amenities)
+                    ? { "amenities": { $in: amenities } }
+                    : { "amenities": amenities }
+            );
         }
 
-        console.log(filter);
+
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
@@ -547,6 +736,8 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         };
 
         const data = await PropertyModel.find(filter, null, options);
+
+        res.status(200).send(data);
 
         res.status(200).send(data);
     } catch (error) {
