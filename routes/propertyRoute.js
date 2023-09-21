@@ -218,6 +218,7 @@ propertyRoute.get("/rent", async (req, res) => {
             filter["$or"] = [];
         }
 
+
         if (propertyType) {
             filter["$or"].push(
                 Array.isArray(propertyType)
@@ -233,6 +234,7 @@ propertyRoute.get("/rent", async (req, res) => {
                     : { "roomDetails.bedroom": Number(bedroom) }
             );
         }
+
 
         if (furnished) {
             filter["$or"].push(
@@ -261,6 +263,7 @@ propertyRoute.get("/rent", async (req, res) => {
                     : { "amenities": amenities }
             );
         }
+        console.log(filter)
 
 
 
@@ -281,12 +284,20 @@ propertyRoute.get("/rent", async (req, res) => {
 // Sell
 propertyRoute.get("/buy", async (req, res) => {
     try {
-        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        let filter = { "lookingFor": "Sell" };
+        let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "lookingFor": "Sell" };
-        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+        if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
             filter["$or"] = [];
+        }
+
+        if (constructionStatus) {
+            filter["$or"].push(
+                Array.isArray(constructionStatus)
+                    ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+                    : { "availabilityStatus": constructionStatus }
+            );
         }
 
         if (propertyType) {
@@ -354,8 +365,8 @@ propertyRoute.get("/rent/residential", async (req, res) => {
     try {
         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
-
         let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] };
+
         if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
             filter["$or"] = [];
         }
@@ -614,12 +625,20 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 // Sell Residential
 propertyRoute.get("/buy/residential", async (req, res) => {
     try {
-        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
+        let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
-        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+        if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
             filter["$or"] = [];
+        }
+
+        if (constructionStatus) {
+            filter["$or"].push(
+                Array.isArray(constructionStatus)
+                    ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+                    : { "availabilityStatus": constructionStatus }
+            );
         }
 
         if (propertyType) {
@@ -688,12 +707,20 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 // Sell Commercial
 propertyRoute.get("/buy/commercial", async (req, res) => {
     try {
-        let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] };
+        let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] };
-        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+        if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
             filter["$or"] = [];
+        }
+
+        if (constructionStatus) {
+            filter["$or"].push(
+                Array.isArray(constructionStatus)
+                    ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+                    : { "availabilityStatus": constructionStatus }
+            );
         }
 
         if (propertyType) {
