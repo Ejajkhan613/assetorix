@@ -214,7 +214,9 @@ propertyRoute.get("/rent", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { "lookingFor": "Rent" };
-        filter["$or"] = []; ``
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -283,7 +285,9 @@ propertyRoute.get("/buy", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { "lookingFor": "Sell" };
-        filter["$or"] = [];
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -352,7 +356,9 @@ propertyRoute.get("/rent/residential", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] };
-        filter["$or"] = [];
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -421,7 +427,9 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] };
-        filter["$or"] = [];
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -610,7 +618,9 @@ propertyRoute.get("/buy/residential", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
-        filter["$or"] = [];
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -682,7 +692,9 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         const currentPage = parseInt(page) || 1;
 
         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] };
-        filter["$or"] = [];
+        if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+            filter["$or"] = [];
+        }
 
         if (propertyType) {
             filter["$or"].push(
@@ -736,8 +748,6 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         };
 
         const data = await PropertyModel.find(filter, null, options);
-
-        res.status(200).send(data);
 
         res.status(200).send(data);
     } catch (error) {
