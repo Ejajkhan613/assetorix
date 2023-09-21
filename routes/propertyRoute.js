@@ -274,6 +274,11 @@ propertyRoute.get("/rent", async (req, res) => {
 
         const data = await PropertyModel.find(filter, null, options);
 
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+        }
+
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
@@ -353,6 +358,11 @@ propertyRoute.get("/buy", async (req, res) => {
 
         const data = await PropertyModel.find(filter, null, options);
 
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+        }
+
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
@@ -424,6 +434,11 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
         const data = await PropertyModel.find(filter, null, options);
 
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+        }
+
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
@@ -494,6 +509,11 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
         };
 
         const data = await PropertyModel.find(filter, null, options);
+
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+        }
 
         res.status(200).send(data);
     } catch (error) {
@@ -694,6 +714,11 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
         const data = await PropertyModel.find(filter, null, options);
 
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+        }
+
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
@@ -775,6 +800,11 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         };
 
         const data = await PropertyModel.find(filter, null, options);
+
+        if (!data.length) {
+            const data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties" }, data);
+        }
 
         res.status(200).send(data);
     } catch (error) {
