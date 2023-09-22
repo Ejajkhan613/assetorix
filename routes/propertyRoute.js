@@ -240,11 +240,7 @@ propertyRoute.get("/search", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -327,11 +323,7 @@ propertyRoute.get("/rent", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -415,11 +407,7 @@ propertyRoute.get("/buy", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -495,11 +483,7 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -575,11 +559,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -663,11 +643,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
@@ -754,11 +730,7 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
-            if (relatedData.length) {
-                return res.status(200).send(relatedData);
-            } else {
-                res.status(200).send([]);
-            }
+            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
         }
 
         res.status(200).send(data);
