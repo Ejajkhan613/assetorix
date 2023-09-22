@@ -206,6 +206,57 @@ propertyRoute.get("/", async (req, res) => {
 });
 
 
+// Modify the /buy route to include full-text search
+propertyRoute.get("/search", async (req, res) => {
+    try {
+        const { search, page } = req.query;
+        const currentPage = parseInt(page) || 1;
+
+        // Define your filter based on the "lookingFor" value and optionally add text search
+        let filter = {};
+
+        if (search) {
+            // Add the text search query here with the specified index
+            filter["$text"] = {
+                $search: {
+                    index: "default", // Specify the index name here
+                    text: {
+                        query: search,
+                    }
+                }
+            };
+        }
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE,
+        };
+        console.log(filter)
+
+        const data = await PropertyModel.find(filter, { score: { $meta: 'textScore' } })
+            .sort({ score: { $meta: 'textScore' } })
+            .skip(options.skip)
+            .limit(options.limit);
+
+        if (!data.length) {
+            const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
+        }
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties" });
+    }
+});
+
+
+
+
+
 
 // Rent
 propertyRoute.get("/rent", async (req, res) => {
@@ -276,7 +327,11 @@ propertyRoute.get("/rent", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -360,7 +415,11 @@ propertyRoute.get("/buy", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -436,7 +495,11 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -512,7 +575,11 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -520,126 +587,6 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
-
-
-// Sell Residential
-// propertyRoute.get("/buy/residential", async (req, res) => {
-//     try {
-//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
-//         const currentPage = parseInt(page) || 1;
-
-//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
-
-//         if (propertyType) {
-//             filter["propertyType"] = Array.isArray(propertyType)
-//                 ? { $in: propertyType }
-//                 : propertyType;
-//         }
-
-//         if (bedroom) {
-//             filter["roomDetails.bedroom"] = Array.isArray(bedroom)
-//                 ? { $in: bedroom.map((item) => Number(item)) }
-//                 : Number(bedroom);
-//         }
-
-//         if (furnished) {
-//             filter["furnished"] = Array.isArray(furnished)
-//                 ? { $in: furnished }
-//                 : furnished;
-//         }
-
-//         if (minPrice) {
-//             filter["price"] = filter["price"] || {};
-//             filter["price"]["$gte"] = parseFloat(minPrice);
-//         }
-
-//         if (maxPrice) {
-//             filter["price"] = filter["price"] || {};
-//             filter["price"]["$lte"] = parseFloat(maxPrice);
-//         }
-
-//         if (amenities) {
-//             filter["amenities"] = Array.isArray(amenities)
-//                 ? { $in: amenities }
-//                 : amenities;
-//         }
-
-//         
-
-//         const options = {
-//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
-//         };
-
-//         const data = await PropertyModel.find(filter, null, options);
-
-//         res.status(200).send(data);
-//     } catch (error) {
-//         res.status(500).send({ "msg": "Server Error While getting Properties" });
-//     }
-// });
-
-
-// Sell Residential
-// propertyRoute.get("/buy/residential", async (req, res) => {
-//     try {
-//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
-//         const currentPage = parseInt(page) || 1;
-
-//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
-
-//         if (propertyType) {
-//             filter["$or"] = Array.isArray(propertyType)
-//                 ? propertyType.map(type => ({ "propertyType": type }))
-//                 : [{ "propertyType": propertyType }];
-//         }
-
-//         if (bedroom) {
-//             filter["$or"] = (filter["$or"] || []).concat(
-//                 Array.isArray(bedroom)
-//                     ? bedroom.map(item => ({ "roomDetails.bedroom": Number(item) }))
-//                     : [{ "roomDetails.bedroom": Number(bedroom) }]
-//             );
-//         }
-
-//         if (furnished) {
-//             filter["$or"] = Array.isArray(furnished)
-//                 ? furnished.map(furn => ({ "furnished": furn }))
-//                 : [{ "furnished": furnished }];
-//         }
-
-//         if (minPrice) {
-//             filter["$or"] = (filter["$or"] || []).concat(
-//                 [{ "price": { "$gte": parseFloat(minPrice) } }]
-//             );
-//         }
-
-//         if (maxPrice) {
-//             filter["$or"] = (filter["$or"] || []).concat(
-//                 [{ "price": { "$lte": parseFloat(maxPrice) } }]
-//             );
-//         }
-
-//         if (amenities) {
-//             filter["$or"] = Array.isArray(amenities)
-//                 ? amenities.map(amenity => ({ "amenities": amenity }))
-//                 : [{ "amenities": amenities }];
-//         }
-
-//         
-
-//         const options = {
-//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
-//         };
-
-//         const data = await PropertyModel.find(filter, null, options);
-
-//         res.status(200).send(data);
-//     } catch (error) {
-//         res.status(500).send({ "msg": "Server Error While getting Properties" });
-//     }
-// });
 
 
 // Sell Residential
@@ -716,7 +663,11 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
         if (!data.length) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties", relatedData });
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -802,8 +753,12 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         const data = await PropertyModel.find(filter, null, options);
 
         if (!data.length) {
-            const data = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Property Not Found, Here are some related properties" }, data);
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
+            if (relatedData.length) {
+                return res.status(200).send(relatedData);
+            } else {
+                res.status(200).send([]);
+            }
         }
 
         res.status(200).send(data);
@@ -811,227 +766,6 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 })
-
-
-
-
-
-// get Property Details
-// propertyRoute.get("/", async (req, res) => {
-//     try {
-//         let { minPrice, maxPrice, furnished, propertyType, lookingFor, propertyGroup, bedroom, locality, pincode, city, state, country, page } = req.query;
-
-//         const currentPage = parseInt(page) || 1;
-
-//         bedroom = parseInt(xss(bedroom));
-//         furnished = xss(furnished);
-//         propertyType = xss(propertyType);
-//         propertyGroup = xss(propertyGroup);
-
-//         locality = xss(locality);
-//         pincode = xss(pincode);
-//         city = xss(city);
-//         state = xss(state);
-//         country = xss(country);
-//         lookingFor = xss(lookingFor)
-
-//         minPrice = Number(xss(minPrice));
-//         maxPrice = Number(xss(maxPrice));
-
-
-//         // Create an array to hold your $or conditions
-//         const orConditions = [];
-
-//         // Helper function to add conditions to the orConditions array
-//         const addToOrConditions = (field, value) => {
-//             if (value) {
-//                 const condition = {};
-//                 condition[field] = value;
-//                 orConditions.push(condition);
-//             }
-//         };
-
-//         // Add conditions for each query parameter
-//         addToOrConditions('roomDetails.bedroom', bedroom);
-//         addToOrConditions('furnished', furnished);
-//         addToOrConditions('lookingFor', lookingFor);
-//         addToOrConditions('propertyType', propertyType);
-//         addToOrConditions('propertyGroup', propertyGroup);
-//         addToOrConditions('address.pincode', pincode);
-//         addToOrConditions('address.locality', { $regex: new RegExp(locality, 'i') });
-//         addToOrConditions('address.city', { $regex: new RegExp(city, 'i') });
-//         addToOrConditions('address.state', { $regex: new RegExp(state, 'i') });
-//         addToOrConditions('address.country', { $regex: new RegExp(country, 'i') });
-
-//         if (minPrice || maxPrice) {
-//             const priceCondition = {};
-
-//             if (minPrice) {
-//                 priceCondition.$gte = parseFloat(minPrice);
-//             }
-//             if (maxPrice) {
-//                 priceCondition.$lte = parseFloat(maxPrice);
-//             }
-
-//             orConditions.push({ price: priceCondition });
-//         }
-
-//         // Build the final filter using $or
-//         const filter = orConditions.length > 0 ? { $or: orConditions } : {};
-
-//         // Get total count based on the filter
-//         const totalCount = await PropertyModel.countDocuments(filter);
-
-//         if (totalCount === 0) {
-//             return res.status(200).json({
-//                 data: [],
-//                 currentPage,
-//                 totalPages: 0,
-//                 totalCount: 0,
-//             });
-//         }
-
-//         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-//         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
-
-//         // Retrieve data based on the filter and pagination
-//         const data = await PropertyModel.find(filter)
-//             .skip(skipItems)
-//             .limit(ITEMS_PER_PAGE);
-
-//         res.status(200).json({
-//             data,
-//             currentPage: data.length === 0 ? totalPages : currentPage,
-//             totalPages,
-//             totalCount,
-//         });
-//     } catch (error) {
-//         res.status(500).send({ "msg": "Server Error While getting Properties" });
-//     }
-// });
-
-
-// const ITEMS_PER_PAGE = 10; // Adjust to your desired value
-
-// propertyRoute.get("/", async (req, res) => {
-//     try {
-//         const {
-//             minPrice = 0,
-//             maxPrice = Number.MAX_VALUE,
-//             furnished,
-//             propertyType,
-//             lookingFor,
-//             propertyGroup,
-//             bedroom,
-//             locality,
-//             pincode,
-//             city,
-//             state,
-//             country,
-//             page = 1,
-//         } = req.query;
-
-//         const currentPage = parseInt(page);
-
-//         const filter = {};
-//         const checker = {};
-
-//         if (bedroom) {
-//             filter['roomDetails.bedroom'] = parseInt(bedroom);
-//             checker.bedroom = bedroom;
-//         }
-
-//         if (furnished) {
-//             filter.furnished = furnished;
-//             checker.furnished = furnished;
-//         }
-
-//         if (lookingFor) {
-//             filter.lookingFor = lookingFor;
-//             checker.lookingFor = lookingFor;
-//         }
-
-//         if (propertyType) {
-//             filter.propertyType = propertyType;
-//             checker.propertyType = propertyType;
-//         }
-
-//         if (propertyGroup) {
-//             filter.propertyGroup = propertyGroup;
-//             checker.propertyGroup = propertyGroup;
-//         }
-
-//         if (locality) {
-//             filter['address.locality'] = { $regex: new RegExp(locality, "i") };
-//             checker.locality = locality;
-//         }
-
-//         if (pincode) {
-//             filter['address.pincode'] = pincode;
-//             checker.pincode = pincode;
-//         }
-
-//         if (city) {
-//             filter['address.city'] = { $regex: new RegExp(city, "i") };
-//             checker.city = city;
-//         }
-
-//         if (state) {
-//             filter['address.state'] = { $regex: new RegExp(state, "i") };
-//             checker.state = state;
-//         }
-
-//         if (country) {
-//             filter['address.country'] = { $regex: new RegExp(country, "i") };
-//             checker.country = country;
-//         }
-
-//         if (minPrice || maxPrice) {
-//             filter.price = {};
-//             if (minPrice) {
-//                 filter.price.$gte = parseFloat(minPrice);
-//                 checker.minPrice = minPrice;
-//             }
-//             if (maxPrice) {
-//                 filter.price.$lte = parseFloat(maxPrice);
-//                 checker.maxPrice = maxPrice;
-//             }
-//         }
-
-//         const totalCount = await PropertyModel.countDocuments(filter);
-
-//         if (totalCount === 0) {
-//             return res.status(200).send({
-//                 data: [],
-//                 currentPage,
-//                 totalPages: 0,
-//                 totalCount: 0,
-//             });
-//         }
-
-//         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-//         const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
-
-//         const data = await PropertyModel.find(filter)
-//             .skip(skipItems)
-//             .limit(ITEMS_PER_PAGE);
-
-//         res.status(200).send({
-//             data,
-//             currentPage: data.length === 0 ? totalPages : currentPage,
-//             totalPages,
-//             totalCount,
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send({ msg: "Server Error While getting Properties" });
-//     }
-// });
-
-
-
-
-
 
 
 
