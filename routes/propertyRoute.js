@@ -206,24 +206,28 @@ propertyRoute.get("/", async (req, res) => {
 });
 
 
-// Modify the /buy route to include full-text search
-propertyRoute.get("/search", async (req, res) => {
+// Search based on address
+propertyRoute.get("/search/", async (req, res) => {
     try {
         const { search, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        // Define your filter based on the "lookingFor" value and optionally add text search
         let filter = {};
 
         if (search) {
-            // Add the text search query here with the specified index
-            filter["$text"] = {
-                $search: {
-                    index: "default", // Specify the index name here
-                    text: {
-                        query: search,
-                    }
-                }
+            const regexSearch = new RegExp(search, "i");
+            filter = {
+                $or: [
+                    { "address.pincode": regexSearch },
+                    { "address.city": regexSearch },
+                    { "address.state": regexSearch },
+                    { "address.country": regexSearch },
+                    { "address.houseNumber": regexSearch },
+                    { "address.apartmentName": regexSearch },
+                    { "address.zoneType": regexSearch },
+                    { "address.locatedInside": regexSearch },
+                    { "address.type": regexSearch }
+                ]
             };
         }
 
@@ -231,25 +235,17 @@ propertyRoute.get("/search", async (req, res) => {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE,
         };
-        console.log(filter)
 
-        const data = await PropertyModel.find(filter, { score: { $meta: 'textScore' } })
-            .sort({ score: { $meta: 'textScore' } })
+        const data = await PropertyModel.find(filter)
             .skip(options.skip)
             .limit(options.limit);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
         res.status(200).send(data);
     } catch (error) {
+        console.error(error);
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
-
-
 
 
 

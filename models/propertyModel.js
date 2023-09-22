@@ -26,7 +26,7 @@ const propertySchema = mongoose.Schema({
     },
     address: {
         locality: String,
-        pincode: Number,
+        pincode: String,
         city: String,
         state: String,
         country: String
