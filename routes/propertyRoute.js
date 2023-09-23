@@ -369,7 +369,7 @@ propertyRoute.get("/search/", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -442,7 +442,7 @@ propertyRoute.get("/rent", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
 
@@ -536,7 +536,7 @@ propertyRoute.get("/rent", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -618,7 +618,7 @@ propertyRoute.get("/buy", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
         const data = await PropertyModel.find(filter, null, options);
@@ -702,7 +702,7 @@ propertyRoute.get("/buy", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -775,7 +775,7 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
         const data = await PropertyModel.find(filter, null, options);
@@ -859,7 +859,7 @@ propertyRoute.get("/rent/residential", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -932,7 +932,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
         const data = await PropertyModel.find(filter, null, options);
@@ -1024,7 +1024,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -1105,7 +1105,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
         const data = await PropertyModel.find(filter, null, options);
@@ -1200,7 +1200,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
 //         if (!data.length) {
 //             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
-//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//             res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData });
 //         }
 
 //         res.status(200).send(data);
@@ -1281,7 +1281,7 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
 
         if (!totalCount) {
             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
-            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+            return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
         }
 
         const data = await PropertyModel.find(filter, null, options);
