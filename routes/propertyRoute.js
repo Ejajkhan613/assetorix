@@ -206,6 +206,47 @@ propertyRoute.get("/", async (req, res) => {
 });
 
 
+// // Search based on address
+// propertyRoute.get("/search/", async (req, res) => {
+//     try {
+//         const { search, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = {};
+
+//         if (search) {
+//             const regexSearch = new RegExp(search, "i");
+//             filter = {
+//                 $or: [
+//                     { "address.pincode": regexSearch },
+//                     { "address.city": regexSearch },
+//                     { "address.state": regexSearch },
+//                     { "address.country": regexSearch },
+//                     { "address.houseNumber": regexSearch },
+//                     { "address.apartmentName": regexSearch },
+//                     { "address.zoneType": regexSearch },
+//                     { "address.locatedInside": regexSearch },
+//                     { "address.type": regexSearch }
+//                 ]
+//             };
+//         }
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE,
+//         };
+
+//         const data = await PropertyModel.find(filter)
+//             .skip(options.skip)
+//             .limit(options.limit);
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
+
 // Search based on address
 propertyRoute.get("/search/", async (req, res) => {
     try {
@@ -231,6 +272,9 @@ propertyRoute.get("/search/", async (req, res) => {
             };
         }
 
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE,
@@ -240,7 +284,12 @@ propertyRoute.get("/search/", async (req, res) => {
             .skip(options.skip)
             .limit(options.limit);
 
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).send({ "msg": "Server Error While getting Properties" });
@@ -249,6 +298,85 @@ propertyRoute.get("/search/", async (req, res) => {
 
 
 
+
+
+// // Rent
+// propertyRoute.get("/rent", async (req, res) => {
+//     try {
+//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = { "lookingFor": "Rent" };
+//         if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+//         console.log(filter)
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
 
 // Rent
 propertyRoute.get("/rent", async (req, res) => {
@@ -260,7 +388,6 @@ propertyRoute.get("/rent", async (req, res) => {
         if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
             filter["$or"] = [];
         }
-
 
         if (propertyType) {
             filter["$or"].push(
@@ -277,7 +404,6 @@ propertyRoute.get("/rent", async (req, res) => {
                     : { "roomDetails.bedroom": Number(bedroom) }
             );
         }
-
 
         if (furnished) {
             filter["$or"].push(
@@ -306,28 +432,118 @@ propertyRoute.get("/rent", async (req, res) => {
                     : { "amenities": amenities }
             );
         }
-        console.log(filter)
 
-
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
+
+
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ "lookingFor": "Rent" }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
 
+
+
+// // Sell
+// propertyRoute.get("/buy", async (req, res) => {
+//     try {
+//         let filter = { "lookingFor": "Sell" };
+//         let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+//         if (constructionStatus) {
+//             filter["$or"].push(
+//                 Array.isArray(constructionStatus)
+//                     ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+//                     : { "availabilityStatus": constructionStatus }
+//             );
+//         }
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
 
 // Sell
 propertyRoute.get("/buy", async (req, res) => {
@@ -392,26 +608,108 @@ propertyRoute.get("/buy", async (req, res) => {
             );
         }
 
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ "lookingFor": "Sell" }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
 
+
+
+// // Rent Residential
+// propertyRoute.get("/rent/residential", async (req, res) => {
+//     try {
+//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+//         let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] };
+
+//         if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
 
 // Rent Residential
 propertyRoute.get("/rent/residential", async (req, res) => {
@@ -468,26 +766,107 @@ propertyRoute.get("/rent/residential", async (req, res) => {
             );
         }
 
-
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Residential" }] }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
 
+
+
+// // Rent Commercial
+// propertyRoute.get("/rent/commercial", async (req, res) => {
+//     try {
+//         let { bedroom, propertyType, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = { $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] };
+//         if (propertyType || bedroom || furnished || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
 
 // Rent Commercial
 propertyRoute.get("/rent/commercial", async (req, res) => {
@@ -544,26 +923,115 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
             );
         }
 
-
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Rent" }, { "propertyGroup": "Commercial" }] }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
 });
 
+
+
+// // Sell Residential
+// propertyRoute.get("/buy/residential", async (req, res) => {
+//     try {
+//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] };
+//         let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+//         if (constructionStatus) {
+//             filter["$or"].push(
+//                 Array.isArray(constructionStatus)
+//                     ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+//                     : { "availabilityStatus": constructionStatus }
+//             );
+//         }
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// });
 
 // Sell Residential
 propertyRoute.get("/buy/residential", async (req, res) => {
@@ -628,21 +1096,26 @@ propertyRoute.get("/buy/residential", async (req, res) => {
             );
         }
 
-
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Residential" }] }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
@@ -651,6 +1124,90 @@ propertyRoute.get("/buy/residential", async (req, res) => {
 
 
 
+
+
+// // Sell Commercial
+// propertyRoute.get("/buy/commercial", async (req, res) => {
+//     try {
+//         let filter = { $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] };
+//         let { bedroom, propertyType, constructionStatus, furnished, minPrice, maxPrice, amenities, page } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         if (propertyType || bedroom || furnished || constructionStatus || minPrice || maxPrice || amenities) {
+//             filter["$or"] = [];
+//         }
+
+//         if (constructionStatus) {
+//             filter["$or"].push(
+//                 Array.isArray(constructionStatus)
+//                     ? { "availabilityStatus": { $in: constructionStatus.map(item => item) } }
+//                     : { "availabilityStatus": constructionStatus }
+//             );
+//         }
+
+//         if (propertyType) {
+//             filter["$or"].push(
+//                 Array.isArray(propertyType)
+//                     ? { "propertyType": { $in: propertyType } }
+//                     : { "propertyType": propertyType }
+//             );
+//         }
+
+//         if (bedroom) {
+//             filter["$or"].push(
+//                 Array.isArray(bedroom)
+//                     ? { "roomDetails.bedroom": { $in: bedroom.map(item => Number(item)) } }
+//                     : { "roomDetails.bedroom": Number(bedroom) }
+//             );
+//         }
+
+//         if (furnished) {
+//             filter["$or"].push(
+//                 Array.isArray(furnished)
+//                     ? { "furnished": { $in: furnished } }
+//                     : { "furnished": furnished }
+//             );
+//         }
+
+//         if (minPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$gte": parseFloat(minPrice) } }
+//             );
+//         }
+
+//         if (maxPrice) {
+//             filter["$or"].push(
+//                 { "price": { "$lte": parseFloat(maxPrice) } }
+//             );
+//         }
+
+//         if (amenities) {
+//             filter["$or"].push(
+//                 Array.isArray(amenities)
+//                     ? { "amenities": { $in: amenities } }
+//                     : { "amenities": amenities }
+//             );
+//         }
+
+
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+//         };
+
+//         const data = await PropertyModel.find(filter, null, options);
+
+//         if (!data.length) {
+//             const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
+//             res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
+//         }
+
+//         res.status(200).send(data);
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting Properties" });
+//     }
+// })
 
 // Sell Commercial
 propertyRoute.get("/buy/commercial", async (req, res) => {
@@ -715,25 +1272,31 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
             );
         }
 
-
-
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE, // Define ITEMS_PER_PAGE as the number of items to return per page
+            limit: ITEMS_PER_PAGE,
         };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
+            return res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData, currentPage, totalPages, totalCount });
+        }
 
         const data = await PropertyModel.find(filter, null, options);
 
-        if (!data.length) {
-            const relatedData = await PropertyModel.find({ $and: [{ "lookingFor": "Sell" }, { "propertyGroup": "Commercial" }] }, null, options);
-            res.status(200).send({ "msg": "Exact Match Not Found, Here are some other properties", "data": relatedData });
-        }
-
-        res.status(200).send(data);
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While getting Properties" });
     }
-})
+});
+
 
 
 
