@@ -1439,6 +1439,23 @@ propertyRoute.post("/inquiry", async (req, res) => {
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Sending Enquiry Email", "error": error });
     }
+});
+
+
+
+
+// Get Property List
+propertyRoute.post("/array-list", async (req, res) => {
+    try {
+        let list = req.body.list;
+
+        // Using the $in operator to fetch all properties by their IDs
+        const propertyList = await PropertyModel.find({ "_id": { $in: list } });
+
+        res.status(200).send(propertyList);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While Sending List of Properties", "error": error });
+    }
 })
 
 
