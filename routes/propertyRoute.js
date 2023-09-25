@@ -1428,7 +1428,8 @@ propertyRoute.post("/inquiry", async (req, res) => {
                 res.status(400).send({ "msg": "Email Sending Error", "error": emailSending.msg });
             }
         } else {
-            let emailSending = await contactOwner("gks@ametheus.com", property, buyer);
+            let emailSending = await contactOwner("ejajkhan613@gmail.com", property, buyer);
+            // let emailSending = await contactOwner("gks@ametheus.com", property, buyer);
             if (emailSending.status) {
                 res.status(200).send({ "msg": "Email Sent Successfully" });
             } else {

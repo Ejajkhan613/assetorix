@@ -16,7 +16,7 @@ async function contactOwner(email, property, buyer) {
         const mailOptions = {
             from: process.env.EMAIL_USERNAME,
             to: email,
-            cc: "gks@ametheus.com",
+            // cc: "gks@ametheus.com",
             subject: `New Buyer Inquiry for Your Property`,
             html: `
             <!DOCTYPE html>
