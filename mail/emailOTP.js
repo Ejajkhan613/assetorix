@@ -33,7 +33,7 @@ async function email_OTP_sending(email) {
         const mailOptions = {
             from: process.env.EMAIL_USERNAME,
             to: email,
-            subject: `Email OTP <Assetorix>`,
+            subject: `Email OTP - Assetorix`,
             html: `
             <!DOCTYPE html>
             <html lang="en">

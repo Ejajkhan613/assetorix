@@ -12,6 +12,7 @@ const { spreader } = require("../propertyValidation/spreader");
 const { indianTime } = require("../services/indianTime");
 const { propertyPosted } = require("../mail/propertyPosting");
 const { propertyDeletion } = require("../mail/propertyDelete");
+const { contactOwner } = require("../mail/contactOwner");
 
 // Creating Route Variable
 const propertyRoute = express.Router();
@@ -201,7 +202,7 @@ propertyRoute.get("/", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -292,7 +293,7 @@ propertyRoute.get("/search/", async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -436,6 +437,7 @@ propertyRoute.get("/rent", async (req, res) => {
         const totalCount = await PropertyModel.countDocuments(filter);
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
         const options = {
+            sort: { "price": 1 },
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE,
         };
@@ -456,7 +458,7 @@ propertyRoute.get("/rent", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -612,6 +614,7 @@ propertyRoute.get("/buy", async (req, res) => {
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
         const options = {
+            sort: {},
             skip: (currentPage - 1) * ITEMS_PER_PAGE,
             limit: ITEMS_PER_PAGE,
         };
@@ -630,7 +633,7 @@ propertyRoute.get("/buy", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -787,7 +790,7 @@ propertyRoute.get("/rent/residential", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -944,7 +947,7 @@ propertyRoute.get("/rent/commercial", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -1117,7 +1120,7 @@ propertyRoute.get("/buy/residential", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -1293,7 +1296,7 @@ propertyRoute.get("/buy/commercial", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting Properties" });
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
     }
 });
 
@@ -1321,7 +1324,7 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
             res.status(401).send({ "msg": obj.error });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Posting Property" });
+        res.status(500).send({ "msg": "Server Error While Posting Property", "error": error });
     }
 });
 
@@ -1363,7 +1366,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
             res.status(401).send({ "msg": obj.error });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Updating Property" });
+        res.status(500).send({ "msg": "Server Error While Updating Property", "error": error });
     }
 });
 
@@ -1398,9 +1401,44 @@ propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Property does not exist or failed to delete" });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Deleting Property" });
+        res.status(500).send({ "msg": "Server Error While Deleting Property", "error": error });
     }
 });
+
+
+
+// Enquiry Email
+propertyRoute.post("/inquiry", async (req, res) => {
+    try {
+        let id = xss(req.body.propertyID);
+        let buyer = req.body;
+
+        let property = await PropertyModel.findById(id);
+        if (!property) {
+            return res.status(400).send({ "msg": "Property does not exist" });
+        }
+
+        let user = await UserModel.findById({ "_id": property.userID });
+
+        if (user.email) {
+            let emailSending = await contactOwner(user.email, property, buyer);
+            if (emailSending.status) {
+                res.status(200).send({ "msg": "Email Sent Successfully" });
+            } else {
+                res.status(400).send({ "msg": "Email Sending Error", "error": emailSending.msg });
+            }
+        } else {
+            let emailSending = await contactOwner("gks@ametheus.com", property, buyer);
+            if (emailSending.status) {
+                res.status(200).send({ "msg": "Email Sent Successfully" });
+            } else {
+                res.status(400).send({ "msg": "Email Sending Error", "error": emailSending.msg });
+            }
+        }
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While Sending Enquiry Email", "error": error });
+    }
+})
 
 
 
