@@ -318,7 +318,7 @@ const ITEMS_PER_PAGE = 10;
 // User Properties
 userRoute.get("/listings", tokenVerify, async (req, res) => {
     try {
-        const id = req.header.id;
+        const id = req.headers.id;
 
         const { page } = req.query;
 
