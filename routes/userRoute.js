@@ -311,7 +311,7 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
 
 
 // Items Per Page
-const ITEMS_PER_PAGE = 10;
+// const ITEMS_PER_PAGE = 10;
 
 
 
@@ -320,34 +320,37 @@ userRoute.get("/listings", tokenVerify, async (req, res) => {
     try {
         const id = req.headers.id;
 
-        const { page } = req.query;
+        // const { page } = req.query;
 
-        const currentPage = parseInt(page) || 1;
+        // const currentPage = parseInt(page) || 1;
 
-        let totalCount = await PropertyModel.countDocuments({ "userID": id });
+        let data = await PropertyModel.find({ "userID": id });
+        res.status(200).send({ data });
 
-        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+        // let totalCount = await PropertyModel.countDocuments({ "userID": id });
 
-        const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
-        let data = await PropertyModel.find({ "userID": id })
-            .skip(skipItems)
-            .limit(ITEMS_PER_PAGE);
+        // const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+        // const skipItems = (currentPage - 1) * ITEMS_PER_PAGE;
+        // let data = await PropertyModel.find({ "userID": id })
+        //     .skip(skipItems)
+        //     .limit(ITEMS_PER_PAGE);
 
 
-        // // Adjust the data if it's the last page and there's not enough data for a full page
-        if (data.length === 0 && currentPage > 1) {
-            const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
-            data = await PropertyModel.find({ "userID": id })
-                .skip(lastPageSkipItems)
-                .limit(totalCount % ITEMS_PER_PAGE);
-        }
+        // // // Adjust the data if it's the last page and there's not enough data for a full page
+        // if (data.length === 0 && currentPage > 1) {
+        //     const lastPageSkipItems = (totalPages - 1) * ITEMS_PER_PAGE;
+        //     data = await PropertyModel.find({ "userID": id })
+        //         .skip(lastPageSkipItems)
+        //         .limit(totalCount % ITEMS_PER_PAGE);
+        // }
 
-        res.status(200).send({
-            data,
-            currentPage: data.length === 0 ? totalPages : currentPage,
-            totalPages,
-            totalCount,
-        });
+        // res.status(200).send({
+        //     data,
+        //     currentPage: data.length === 0 ? totalPages : currentPage,
+        //     totalPages,
+        //     totalCount,
+        // });
 
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error while Getting Listings", "error": error });
