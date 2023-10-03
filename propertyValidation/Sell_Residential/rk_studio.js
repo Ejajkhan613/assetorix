@@ -496,11 +496,11 @@ function rk_studio(data) {
 
 
     // Checking which Floor Number is Going to sell
-    // if (!data.floorOn) {
-    //     return { "msg": "ERROR", "error": "Missing Property Floor Number" };
-    // }
+    if (!data.floorOn) {
+        return { "msg": "ERROR", "error": "Missing Property Floor Number" };
+    }
     // Adding Floor Number
-    // obj.floorOn = xss(data.floorOn);
+    obj.floorOn = xss(data.floorOn);
 
 
     // Checking Plot Area
