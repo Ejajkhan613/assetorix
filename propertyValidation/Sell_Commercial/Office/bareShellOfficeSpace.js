@@ -122,7 +122,7 @@ function bareShellOfficeSpace(data) {
     }
     obj.pantryType = xss(data.pantryType);
 
-    if (data.pantryType == "Private" || data.pantryType == "Shared") {
+    if (data.pantryType == "Shared Pantry") {
 
         if (data.pantrySize) {
             obj.pantrySize = xss(data.pantrySize);
