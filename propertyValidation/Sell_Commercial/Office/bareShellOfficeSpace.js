@@ -233,7 +233,6 @@ function bareShellOfficeSpace(data) {
 
         liftDetails.passenger = Number(xss(data.liftDetails.passenger));
         liftDetails.service = Number(xss(data.liftDetails.service));
-        liftDetails.modern = xss(data.liftDetails.modern);
         obj.liftDetails = liftDetails;
     }
 
