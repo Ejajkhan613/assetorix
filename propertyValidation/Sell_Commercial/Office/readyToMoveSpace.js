@@ -360,6 +360,7 @@ function readyToMoveSpace(data) {
         liftDetails.service = Number(xss(data.liftDetails.service));
         liftDetails.modern = xss(data.liftDetails.modern);
     }
+    obj.liftDetails = liftDetails;
 
 
 
