@@ -199,7 +199,7 @@ function bareShellOfficeSpace(data) {
 
 
     // Checking which Floor Number is Going to sell
-    if (data.floorOn && data.floorOn.length) {
+    if (data.floorOn) {
         let floorOn = [];
 
 
