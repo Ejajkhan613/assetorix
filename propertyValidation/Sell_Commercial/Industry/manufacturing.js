@@ -260,8 +260,8 @@ function manufacturing(data) {
 
         obj.preLeased_RentedDetails = preLeased_RentedDetails;
     } else {
-        if (Object.keys(data.preLeased_RentedDetails).length) {
-            delete data.preLeased_RentedDetails;
+        if (Object.keys(obj.preLeased_RentedDetails).length) {
+            obj.preLeased_RentedDetails = {};
         }
     }
 
