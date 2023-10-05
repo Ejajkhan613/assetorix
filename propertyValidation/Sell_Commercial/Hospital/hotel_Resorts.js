@@ -350,6 +350,8 @@ function hotel_Resorts(data) {
         preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
 
         obj.preLeased_RentedDetails = preLeased_RentedDetails;
+    } else {
+        obj.preLeased_RentedDetails = {};
     }
 
 
