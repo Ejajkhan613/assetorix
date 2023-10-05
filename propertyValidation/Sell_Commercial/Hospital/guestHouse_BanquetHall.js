@@ -349,10 +349,6 @@ function guestHouse_BanquetHall(data) {
         preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
 
         obj.preLeased_RentedDetails = preLeased_RentedDetails;
-    } else {
-        if (Object.keys(obj.preLeased_Rented).length) {
-            delete obj.preLeased_Rented;
-        }
     }
 
 

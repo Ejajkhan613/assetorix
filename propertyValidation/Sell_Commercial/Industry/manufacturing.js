@@ -236,9 +236,7 @@ function manufacturing(data) {
 
         additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
         additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-        additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
         additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
-        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
 
         obj.additionalPricingDetails = additionalPricingDetails;
     }
@@ -261,6 +259,10 @@ function manufacturing(data) {
         preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
 
         obj.preLeased_RentedDetails = preLeased_RentedDetails;
+    } else {
+        if (Object.keys(obj.preLeased_Rented).length) {
+            delete obj.preLeased_Rented;
+        }
     }
 
 
