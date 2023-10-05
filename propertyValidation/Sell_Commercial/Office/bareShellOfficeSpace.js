@@ -414,10 +414,23 @@ function bareShellOfficeSpace(data) {
 
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
 
+
     if (!data.preLeased_Rented) {
         return { "msg": "ERROR", "error": "Missing Pre Leased / Pre Rented" };
     }
     obj.preLeased_Rented = xss(data.preLeased_Rented);
+
+
+    if (data.preLeased_Rented == "Yes") {
+        let preLeased_RentedDetails = {};
+
+        preLeased_RentedDetails.currentRentPerMonth = Number(xss(data.preLeased_RentedDetails.currentRentPerMonth));
+        preLeased_RentedDetails.leaseTenureInYear = Number(xss(data.preLeased_RentedDetails.leaseTenureInYear));
+        preLeased_RentedDetails.annualRentIncrease = Number(xss(data.preLeased_RentedDetails.annualRentIncrease));
+        preLeased_RentedDetails.businessType = xss(data.preLeased_RentedDetails.businessType);
+
+        obj.preLeased_RentedDetails = preLeased_RentedDetails;
+    }
 
 
     if (!data.noc) {
