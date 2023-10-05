@@ -383,6 +383,9 @@ function rk_studio(data) {
             furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
 
             obj.furnishedObj = furnishedObj;
+        } else {
+            obj.furnishedList = [];
+            obj.furnishedObj = {};
         }
     }
 

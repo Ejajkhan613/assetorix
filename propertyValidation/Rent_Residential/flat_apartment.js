@@ -238,6 +238,9 @@ function flat_apartment_Sell(data) {
             furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
 
             obj.furnishedObj = furnishedObj;
+        } else {
+            obj.furnishedList = [];
+            obj.furnishedObj = {};
         }
     }
 

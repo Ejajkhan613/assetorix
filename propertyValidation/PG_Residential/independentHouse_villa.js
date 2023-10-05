@@ -274,6 +274,9 @@ function independentHouse_villa_PG(data) {
             furnishedObj.geyser = Number(xss(data.furnishedObj.geyser));
 
             obj.furnishedObj = furnishedObj;
+        } else {
+            obj.furnishedList = [];
+            obj.furnishedObj = {};
         }
     }
 
