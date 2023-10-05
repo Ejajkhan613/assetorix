@@ -171,15 +171,9 @@ function commercialShops(data) {
     if (data.washrooms == "Available") {
         let washroomDetails = {};
 
-        if (!data.washroomDetails.privateWashrooms) {
-            return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
-        }
         washroomDetails.privateWashrooms = Number(xss(data.washrooms.privateWashrooms));
-
-        if (!data.washroomDetails.sharedWashrooms) {
-            return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
-        }
         washroomDetails.sharedWashrooms = Number(xss(data.washrooms.sharedWashrooms));
+
         obj.washroomDetails = washroomDetails;
     }
 
