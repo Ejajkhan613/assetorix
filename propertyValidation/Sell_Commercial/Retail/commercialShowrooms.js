@@ -154,6 +154,7 @@ function commercialShowrooms(data) {
         if (data.shopFacedSize.ceilingHeightUnit) {
             shopFacedSize.ceilingHeightUnit = xss(data.shopFacedSize.ceilingHeightUnit);
         }
+        obj.shopFacedSize = shopFacedSize;
     }
 
 

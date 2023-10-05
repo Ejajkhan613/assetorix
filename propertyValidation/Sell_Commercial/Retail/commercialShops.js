@@ -155,6 +155,7 @@ function commercialShops(data) {
         if (data.shopFacedSize.ceilingHeightUnit) {
             shopFacedSize.ceilingHeightUnit = xss(data.shopFacedSize.ceilingHeightUnit);
         }
+        obj.shopFacedSize = shopFacedSize;
     }
 
     // --------------------------------- WASHROOM DETAILS STARTING ---------------------------------
