@@ -54,6 +54,10 @@ function coldStorage(data) {
     // if present then creating a new address object that will be added in Main Object
     let address = {};
 
+    // Checking address
+    if (data.address.address) {
+        address.address = xss(data.address.address);
+    }
 
     // Checking Pincode
     if (!data.address.pincode) {
@@ -61,6 +65,7 @@ function coldStorage(data) {
     }
     // Adding Pincode
     address.pincode = xss(data.address.pincode);
+
 
 
     // Checking Locality
