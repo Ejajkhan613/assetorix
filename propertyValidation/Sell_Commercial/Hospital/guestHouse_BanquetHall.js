@@ -307,28 +307,28 @@ function guestHouse_BanquetHall(data) {
     // --------------------------------- INCLUSIVE PRICE ARRAY STARTING ---------------------------------
 
 
-    // let inclusivePrices = [];
+    let inclusivePrices = [];
 
-    // if (data.inclusivePrices.length) {
-    //     for (let a = 0; a < data.inclusivePrices.length; a++) {
-    //         inclusivePrices.push(xss(data.inclusivePrices[a]));
-    //     }
-    // }
+    if (data.inclusivePrices.length) {
+        for (let a = 0; a < data.inclusivePrices.length; a++) {
+            inclusivePrices.push(xss(data.inclusivePrices[a]));
+        }
+    }
 
-    // obj.inclusivePrices = inclusivePrices;
+    obj.inclusivePrices = inclusivePrices;
 
 
-    // if (data.additionalPricingDetails) {
-    //     let additionalPricingDetails = {};
+    if (data.additionalPricingDetails) {
+        let additionalPricingDetails = {};
 
-    //     additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
-    //     additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
-    //     additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
-    //     additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
-    //     additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
+        additionalPricingDetails.maintenancePrice = Number(xss(data.additionalPricingDetails.maintenancePrice));
+        additionalPricingDetails.maintenanceTimePeriod = xss(data.additionalPricingDetails.maintenanceTimePeriod);
+        additionalPricingDetails.expectedRental = Number(xss(data.additionalPricingDetails.expectedRental));
+        additionalPricingDetails.bookingAmount = Number(xss(data.additionalPricingDetails.bookingAmount));
+        additionalPricingDetails.annualDuesPayable = Number(xss(data.additionalPricingDetails.annualDuesPayable));
 
-    //     obj.additionalPricingDetails = additionalPricingDetails;
-    // }
+        obj.additionalPricingDetails = additionalPricingDetails;
+    }
 
 
     // --------------------------------- INCLUSIVE PRICE ARRAY ENDING ---------------------------------
