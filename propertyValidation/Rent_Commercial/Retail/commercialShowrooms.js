@@ -177,15 +177,12 @@ function commercialShowrooms_Rent(data) {
     if (data.washrooms == "Available") {
         let washroomDetails = {};
 
-        if (!data.washroomDetails.privateWashrooms) {
-            return { "msg": "ERROR", "error": "Missing Number of Private Washrooms" };
+        if (!data.washroomDetails.privateWashrooms || !data.washroomDetails.sharedWashrooms) {
+            return { "msg": "ERROR", "error": "at least 1 washroom type is mandatory" };
         }
         washroomDetails.privateWashrooms = Number(xss(data.washroomDetails.privateWashrooms));
-
-        if (!data.washroomDetails.sharedWashrooms) {
-            return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
-        }
         washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
+
         obj.washroomDetails = washroomDetails;
     }
 
