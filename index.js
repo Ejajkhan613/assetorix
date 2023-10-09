@@ -14,6 +14,7 @@ const { userRoute } = require("./routes/userRoute");
 const { propertyRoute } = require("./routes/propertyRoute");
 const { pincodeRoute } = require("./routes/pincodeRoute");
 const { adminRoute } = require("./routes/adminRoute");
+const { uploads } = require("./routes/upload");
 
 
 // Port
@@ -39,6 +40,10 @@ app.get("/", (req, res) => {
 
 // Users Route
 app.use("/user", userRoute);
+
+
+// Upload Imges
+app.use("/upload", uploads);
 
 
 

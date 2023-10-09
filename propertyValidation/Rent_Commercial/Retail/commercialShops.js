@@ -182,7 +182,9 @@ function commercialShops_Rent(data) {
             return { "msg": "ERROR", "error": "Missing Number of Shared Washrooms" };
         }
         washroomDetails.sharedWashrooms = Number(xss(data.washroomDetails.sharedWashrooms));
+        obj.washroomDetails = washroomDetails;
     }
+
 
     // --------------------------------- WASHROOM DETAILS ENDING ---------------------------------
 
