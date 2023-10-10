@@ -437,11 +437,9 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         await user.save();
 
         // Using the $in operator to fetch all properties by their IDs
-        // const userWishlist = await PropertyModel.find({ "_id": { $in: user.wishlist } });
+        const userWishlist = await PropertyModel.find({ "_id": { $in: user.wishlist } });
 
-
-
-        res.status(200).send({ "msg": 'Item removed from wishlist', "wishlistIDs": user.wishlist });
+        res.status(200).send({ "msg": 'Item removed from wishlist', "wishlistIDs": userWishlist });
 
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Error while Removing from Wishlist", "error": error });
