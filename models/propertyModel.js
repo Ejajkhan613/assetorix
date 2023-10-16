@@ -12,6 +12,10 @@ const propertySchema = mongoose.Schema({
     managedBy: {
         type: String
     },
+    images: {
+        type: Array,
+        default: []
+    },
     propertyGroup: {
         type: String,
         enum: ["Residential", "Commercial"]

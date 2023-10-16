@@ -13,6 +13,8 @@ const { indianTime } = require("../services/indianTime");
 const { propertyPosted } = require("../mail/propertyPosting");
 const { propertyDeletion } = require("../mail/propertyDelete");
 const { contactOwner } = require("../mail/contactOwner");
+const uploadImage = require("../services/uploadImage");
+const { convertToDataSize } = require("../services/datasize");
 
 // Creating Route Variable
 const propertyRoute = express.Router();
@@ -1312,23 +1314,22 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
         if (obj.msg == "SUCCESS") {
             obj.data.userID = xss(req.headers.id);
             let newProperty = new PropertyModel(obj.data);
+
             await newProperty.save();
 
-            // let user = await UserModel.findById(xss(req.headers.id));
+            // let emailResponse = await propertyPosted(newProperty, userDetail);
 
-            // let emailResponse = await propertyPosted(newProperty, user);
             let emailResponse = "Closed";
 
             res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "emailStatus": emailResponse });
         } else {
             res.status(401).send({ "msg": obj.error });
         }
+        res.status(201).send({ msg: "SUCCESS", "images": images, "files": req.files })
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property", "error": error });
     }
 });
-
-
 
 
 
