@@ -1321,11 +1321,10 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 
             let emailResponse = "Closed";
 
-            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "emailStatus": emailResponse });
+            res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "id": newProperty._id, "emailStatus": emailResponse });
         } else {
             res.status(401).send({ "msg": obj.error });
         }
-        res.status(201).send({ msg: "SUCCESS", "images": images, "files": req.files })
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Posting Property", "error": error });
     }
