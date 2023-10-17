@@ -27,8 +27,8 @@ const filefilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: filefilter });
 
 const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+    accessKeyId: process.env.AWS_ID,
+    secretAccessKey: process.env.AWS_KEY
 });
 
 
@@ -166,7 +166,6 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
                     if (error) {
                         reject();
                     } else {
-                        console.log(data)
                         resolve({ 'URL': data.Location, 'KEY': data.Key, "rawKey": data.Location.split(".com/")[1] });
                     }
                 })
@@ -192,20 +191,67 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
 
 
 
-// DELETE route for deleting an image from S3
-uploads.delete('/:key', (req, res) => {
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: req.params.key,
-    };
+// // DELETE route for deleting an image from S3
+// uploads.delete('/:key', (req, res) => {
+//     const params = {
+//         Bucket: process.env.AWS_BUCKET_NAME,
+//         Key: req.params.key,
+//     };
 
-    s3.deleteObject(params, (error, data) => {
-        if (error) {
-            res.status(500).json({ 'error': 'Failed to delete from S3', 'err': error });
-        } else {
-            res.status(200).json({ message: 'Successfully deleted from S3' });
+//     s3.deleteObject(params, (error, data) => {
+//         if (error) {
+//             res.status(500).json({ 'error': 'Failed to delete from S3', 'err': error });
+//         } else {
+//             res.status(200).json({ message: 'Successfully deleted from S3' });
+//         }
+//     });
+// });
+
+// DELETE route for deleting an image from S3 and updating the database
+uploads.delete('/:id', tokenVerify, async (req, res) => {
+    let awsKey = req.body.key;
+    try {
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: awsKey,
+        };
+
+        if (!awsKey) {
+            return res.status(400).json({ 'msg': 'Missing Image Key' });
         }
-    });
+
+        // Find the property based on the image key
+        const property = await PropertyModel.findOne({ '_id': req.params.id });
+
+        if (!property) {
+            return res.status(400).json({ 'msg': 'Property not found for the given image' });
+        }
+        if (property.userID != req.userDetail._id) {
+            return res.status(400).json({ 'msg': 'Not Your Property' });
+        }
+
+        // First, attempt to delete the image from S3
+        s3.deleteObject(params, async (error, data) => {
+            if (error) {
+                res.status(500).json({ 'error': 'Failed to delete from S3', 'err': error });
+            } else {
+                // Image successfully deleted from S3, now update the database
+                try {
+                    // Remove the deleted image from the property's images array
+                    property.images = property.images.filter(img => img.KEY !== awsKey);
+
+                    // Save the updated property document
+                    await property.save();
+
+                    res.status(200).json({ message: 'Successfully deleted from S3 and updated in the database' });
+                } catch (dbError) {
+                    res.status(500).json({ 'error': 'Failed to update the database', 'dbErr': dbError });
+                }
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ 'error': 'Server error while deleting image from S3', 'err': error });
+    }
 });
 
 
