@@ -183,7 +183,7 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
         // Save the updated property document
         await property.save();
 
-        res.status(201).json({ "msg": "Images Uploaded Successfully" });
+        res.status(201).json({ "msg": "Images Uploaded Successfully", "images": property.images });
     } catch (error) {
         res.status(500).json({ "msg": "Server error while uploading Images", "error": error });
     }
@@ -243,7 +243,7 @@ uploads.delete('/:id', tokenVerify, async (req, res) => {
                     // Save the updated property document
                     await property.save();
 
-                    res.status(200).json({ message: 'Successfully deleted from S3 and updated in the database' });
+                    res.status(200).json({ message: 'Image Deleted', "images": property.images });
                 } catch (dbError) {
                     res.status(500).json({ 'error': 'Failed to update the database', 'dbErr': dbError });
                 }
