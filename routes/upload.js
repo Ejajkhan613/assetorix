@@ -142,6 +142,7 @@ uploads.get('/', (req, res) => {
 uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) => {
     let propertyID = req.params.id;
     try {
+        console.log(req.files)
         if (!propertyID) {
             return res.status(400).send({ "msg": "Please Provide Property ID" });
         }
@@ -164,6 +165,7 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
             return new Promise((resolve, reject) => {
                 s3.upload(params, (error, data) => {
                     if (error) {
+                        console.log(error);
                         reject();
                     } else {
                         resolve({ 'URL': data.Location, 'KEY': data.Key, "rawKey": data.Location.split(".com/")[1] });
