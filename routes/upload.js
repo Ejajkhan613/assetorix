@@ -153,6 +153,9 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
         if (property.userID != req.headers.id) {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
+        if (!req.files.length) {
+            return res.status(400).send({ "msg": "No Images Provided" });
+        }
         const uploadPromises = req.files.map(async (file) => {
             const params = {
                 Bucket: process.env.AWS_BUCKET_NAME,
@@ -168,6 +171,7 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
                         console.log(error);
                         reject();
                     } else {
+                        console.log(data)
                         resolve({ 'URL': data.Location, 'KEY': data.Key, "rawKey": data.Location.split(".com/")[1] });
                     }
                 })
