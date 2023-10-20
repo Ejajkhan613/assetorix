@@ -35,9 +35,15 @@ const propertySchema = mongoose.Schema({
         state: String,
         country: String
     },
-    isActive: {
-        type: Boolean,
-        default: false
+    verificationState: {
+        type: String,
+        enum: ["Pending", "Approved", "Rejected", "Blocked", "Sold"],
+        default: "Pending"
+    },
+    propertyState: {
+        type: String,
+        enum: ["Private", "Public", "Sold"],
+        default: "Public"
     },
     createdOn: {
         type: String,

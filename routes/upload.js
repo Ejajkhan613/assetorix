@@ -7,6 +7,7 @@ const AWS = require('aws-sdk');
 
 const { tokenVerify } = require('../middlewares/token');
 const { PropertyModel } = require("../models/propertyModel");
+const { indianTime } = require('../services/indianTime');
 
 const storage = multer.memoryStorage({
     destination: function (req, file, cb) {
@@ -142,20 +143,28 @@ uploads.get('/', (req, res) => {
 uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) => {
     let propertyID = req.params.id;
     try {
-        console.log(req.files)
         if (!propertyID) {
             return res.status(400).send({ "msg": "Please Provide Property ID" });
         }
+
         let property = await PropertyModel.findOne({ "_id": propertyID });
+
         if (!property) {
             return res.status(400).send({ "msg": "No Property Found" });
         }
+
         if (property.userID != req.headers.id) {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
+
+        if (property.images.length + req.files.length > 15) {
+            return res.status(400).send({ "msg": "You can upload upto 15 Images Only" });
+        }
+
         if (!req.files.length) {
             return res.status(400).send({ "msg": "No Images Provided" });
         }
+
         const uploadPromises = req.files.map(async (file) => {
             const params = {
                 Bucket: process.env.AWS_BUCKET_NAME,
@@ -184,6 +193,8 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
         const filteredResults = results.filter(result => result !== undefined && result !== null);
 
         // Check if 'Images' array exists in the property
+        property.lastUpdated = indianTime();
+        property.verificationState = "Pending"
         property.images = [...property.images, ...filteredResults];
 
         // Save the updated property document

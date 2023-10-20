@@ -1354,6 +1354,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
         if (obj.msg == "SUCCESS") {
             obj.data.userID = xss(req.headers.id);
             obj.data.lastUpdated = indianTime();
+            obj.data.verificationState = "Pending";
 
             const updatedProperty = await PropertyModel.findByIdAndUpdate(propertyID, obj.data);
 
