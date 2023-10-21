@@ -47,7 +47,7 @@ function generateRandomCode() {
 
 
 // Add Avatar
-avatar.post('/', tokenVerify, upload.array("avatarimg", 1), async (req, res) => {
+avatar.post('/', tokenVerify, upload.single("avatarimg"), async (req, res) => {
     try {
         let userDetail = req.userDetail;
 
@@ -55,15 +55,15 @@ avatar.post('/', tokenVerify, upload.array("avatarimg", 1), async (req, res) => 
             return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
         }
 
-        if (!req.files.length) {
+        if (!req.file) {
             return res.status(400).send({ "msg": "No image provided for avatar." });
         }
 
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
-            Body: req.files[0].buffer,
-            ACL: 'public-read-write',
+            Body: req.file.buffer,
+            ACL: 'public-read',
             ContentType: 'image/jpeg',
         };
 
