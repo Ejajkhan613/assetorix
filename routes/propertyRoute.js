@@ -1339,15 +1339,19 @@ propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
         if (!propertyID) {
             return res.status(400).send({ "msg": "No Property ID Provided" });
         }
-        
+
         let list = ["Private", "Public", "Sold"];
         if (!list.includes(status)) {
             return res.status(400).send({ "msg": "Wrong Status Provided" });
         }
-        
-        let property = await PropertyModel.findOne({"_id":propertyID});
+
+        let property = await PropertyModel.findById({ "_id": propertyID });
         if (!property) {
             return res.status(400).send({ "msg": "No Property Found" });
+        }
+
+        if (property.propertyState == status) {
+            return res.status(400).send({ "msg": `Property Status is Already ${status}` });
         }
 
         if (property.userID != req.userDetail._id) {
