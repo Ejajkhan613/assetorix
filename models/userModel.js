@@ -6,7 +6,12 @@ const { indianTime } = require("../services/indianTime");
 // Schema
 const userSchema = mongoose.Schema({
     avatar: {
-        type: String
+        type: String,
+        default: ""
+    },
+    avatarKey: {
+        type: String,
+        default: ""
     },
     name: {
         type: String,

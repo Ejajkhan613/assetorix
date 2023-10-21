@@ -207,6 +207,82 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
 });
 
 
+// Add Avatar
+uploads.post('/avatar', tokenVerify, upload.single("avatarimg"), async (req, res) => {
+    try {
+        const userDetail = req.userDetail;
+        console.log(userDetail)
+
+        if (userDetail.avatar) {
+            return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
+        }
+
+        if (!req.file) {
+            return res.status(400).send({ "msg": "No image provided for avatar." });
+        }
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
+            Body: req.file.buffer,
+            ACL: 'public-read-write',
+            ContentType: 'image/jpeg',
+        };
+
+        s3.upload(params, async (error, data) => {
+            if (error) {
+                return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
+            } else {
+                userDetail.avatar = data.Location;
+                userDetail.avatarKey = data.Key;
+                userDetail.lastUpdated = indianTime();
+
+                await userDetail.save();
+
+                res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
+            }
+        });
+
+    } catch (error) {
+        res.status(500).send({ "msg": "Server error while adding avatar image", "error": error });
+    }
+});
+
+
+
+
+// Delete Avatar
+uploads.delete('/avatar', tokenVerify, async (req, res) => {
+    try {
+        const userDetail = req.userDetail;
+        if (!userDetail.avatar || !userDetail.avatarKey) {
+            return res.status(400).send({ "msg": "No Avatar to delete" });
+        }
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: userDetail.avatarKey
+        };
+
+        // Deleting the image from AWS S3
+        s3.deleteObject(params, async (error, data) => {
+            if (error) {
+                return res.status(500).send({ 'msg': 'Failed to delete Avatar Image', 'error': error });
+            } else {
+                userDetail.avatar = "";
+                userDetail.avatarKey = "";
+                userDetail.lastUpdated = indianTime();
+
+                await userDetail.save();
+                return res.status(200).send({ "msg": "Avatar Deleted Successfully" });
+            }
+        });
+    } catch (error) {
+        res.status(500).send({ "msg": "Server error while deleting Avatar Image", "error": error });
+    }
+});
+
+
 
 // // DELETE route for deleting an image from S3
 // uploads.delete('/:key', (req, res) => {
@@ -225,6 +301,8 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
 // });
 
 // DELETE route for deleting an image from S3 and updating the database
+
+
 uploads.delete('/:id', tokenVerify, async (req, res) => {
     let awsKey = req.body.key;
     try {

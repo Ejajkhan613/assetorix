@@ -1331,6 +1331,39 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 });
 
 
+// Add Property Availability Status
+propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
+    let propertyID = req.params.id;
+    let status = req.body.status;
+    try {
+        if (!propertyID) {
+            return res.status(400).send({ "msg": "No Property ID Provided" });
+        }
+        
+        let list = ["Private", "Public", "Sold"];
+        if (!list.includes(status)) {
+            return res.status(400).send({ "msg": "Wrong Status Provided" });
+        }
+        
+        let property = await PropertyModel.findOne({"_id":propertyID});
+        if (!property) {
+            return res.status(400).send({ "msg": "No Property Found" });
+        }
+
+        if (property.userID != req.userDetail._id) {
+            return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
+        }
+
+        property.propertyState = status;
+        await property.save();
+
+        res.status(201).send({ "msg": `Status Changed to ${status}` });
+    } catch (error) {
+        res.status(500).send({ "msg": "Server error while changing status" });
+    }
+})
+
+
 
 
 // Update Property
@@ -1374,37 +1407,37 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 
 
 // Delete Property
-propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
-    const userID = req.headers.id;
-    const propertyID = req.params.id;
+// propertyRoute.delete("/:id", tokenVerify, async (req, res) => {
+//     const userID = req.headers.id;
+//     const propertyID = req.params.id;
 
-    try {
-        const property = await PropertyModel.findById(propertyID);
+//     try {
+//         const property = await PropertyModel.findById(propertyID);
 
-        if (!property) {
-            return res.status(404).send({ "msg": "Property Not Found or Already Deleted" });
-        }
+//         if (!property) {
+//             return res.status(404).send({ "msg": "Property Not Found or Already Deleted" });
+//         }
 
-        if (property.userID !== userID) {
-            return res.status(400).send({ "msg": "Not Your Property" });
-        }
+//         if (property.userID !== userID) {
+//             return res.status(400).send({ "msg": "Not Your Property" });
+//         }
 
-        // let user = await UserModel.findById(xss(req.headers.id));
+//         // let user = await UserModel.findById(xss(req.headers.id));
 
-        // let emailResponse = await propertyPosted(newProperty, user);
-        let emailResponse = "Closed";
+//         // let emailResponse = await propertyPosted(newProperty, user);
+//         let emailResponse = "Closed";
 
-        const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
+//         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
 
-        if (deletedProperty) {
-            res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
-        } else {
-            res.status(400).send({ "msg": "Property does not exist or failed to delete" });
-        }
-    } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Deleting Property", "error": error });
-    }
-});
+//         if (deletedProperty) {
+//             res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
+//         } else {
+//             res.status(400).send({ "msg": "Property does not exist or failed to delete" });
+//         }
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While Deleting Property", "error": error });
+//     }
+// });
 
 
 
