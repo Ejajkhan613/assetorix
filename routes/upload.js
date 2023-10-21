@@ -1,9 +1,9 @@
 const express = require('express');
 const uploads = express.Router();
-uploads.use(express.json());
 const multer = require('multer');
 const AWS = require('aws-sdk');
 
+uploads.use(express.json());
 
 const { tokenVerify } = require('../middlewares/token');
 const { PropertyModel } = require("../models/propertyModel");
@@ -140,6 +140,50 @@ uploads.get('/', (req, res) => {
 //     }
 // });
 
+
+
+// Add Avatar
+uploads.post('/avatar', tokenVerify, upload.array("avatarimg", 1), async (req, res) => {
+    try {
+        let userDetail = req.userDetail;
+
+        if (userDetail.avatar) {
+            return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
+        }
+
+        if (!req.files.length) {
+            return res.status(400).send({ "msg": "No image provided for avatar." });
+        }
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
+            Body: req.files[0].buffer,
+            ACL: 'public-read-write',
+            ContentType: 'image/jpeg',
+        };
+
+        s3.upload(params, async (error, data) => {
+            if (error) {
+                return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
+            } else {
+                userDetail.avatar = data.Location;
+                userDetail.avatarKey = data.Key;
+                userDetail.lastUpdated = indianTime();
+
+                await userDetail.save();
+
+                res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
+            }
+        });
+
+    } catch (error) {
+        res.status(500).send({ "msg": "Server error while adding avatar image", "error": error });
+    }
+});
+
+
+
 uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) => {
     let propertyID = req.params.id;
     try {
@@ -203,48 +247,6 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
         res.status(201).json({ "msg": "Images Uploaded Successfully", "images": property.images });
     } catch (error) {
         res.status(500).json({ "msg": "Server error while uploading Images", "error": error });
-    }
-});
-
-
-// Add Avatar
-uploads.post('/avatar', tokenVerify, upload.single("avatarimg"), async (req, res) => {
-    try {
-        const userDetail = req.userDetail;
-        console.log(userDetail)
-
-        if (userDetail.avatar) {
-            return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
-        }
-
-        if (!req.file) {
-            return res.status(400).send({ "msg": "No image provided for avatar." });
-        }
-
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
-            Body: req.file.buffer,
-            ACL: 'public-read-write',
-            ContentType: 'image/jpeg',
-        };
-
-        s3.upload(params, async (error, data) => {
-            if (error) {
-                return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
-            } else {
-                userDetail.avatar = data.Location;
-                userDetail.avatarKey = data.Key;
-                userDetail.lastUpdated = indianTime();
-
-                await userDetail.save();
-
-                res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
-            }
-        });
-
-    } catch (error) {
-        res.status(500).send({ "msg": "Server error while adding avatar image", "error": error });
     }
 });
 
