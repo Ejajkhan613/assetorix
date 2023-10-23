@@ -3,7 +3,7 @@ const uploads = express.Router();
 const multer = require('multer');
 const AWS = require('aws-sdk');
 
-uploads.use(express.json());
+uploads.use(express.send());
 
 const { tokenVerify } = require('../middlewares/token');
 const { PropertyModel } = require("../models/propertyModel");
@@ -47,141 +47,27 @@ function generateRandomCode() {
 
 
 // GET route to retrieve a list of all images in the S3 bucket
-uploads.get('/', (req, res) => {
-    const params = {
-        Bucket: process.env.AWS_BUCKET_NAME,
-    };
-
-    s3.listObjects(params, (error, data) => {
-        if (error) {
-            res.status(500).json({ 'error': 'Failed to list objects in S3', 'err': error });
-        } else {
-            const imageUrls = data.Contents.map((object) => {
-                // Generate a public URL for each object in the bucket
-                return s3.getSignedUrl('getObject', {
-                    Bucket: process.env.AWS_BUCKET_NAME,
-                    Key: object.Key,
-                });
-            });
-
-            res.status(200).json({ images: imageUrls });
-        }
-    });
-});
-
-
-// uploads.post('/', upload.single('image'), (req, res) => {
+// uploads.get('/', (req, res) => {
 //     const params = {
 //         Bucket: process.env.AWS_BUCKET_NAME,
-//         Key: req.file.originalname,
-//         Body: req.file.buffer,
-//         ACL: "public-read-write",
-//         ContentType: "image/jpeg"
 //     };
 
-//     s3.upload(params, (error, data) => {
+//     s3.listObjects(params, (error, data) => {
 //         if (error) {
-//             res.status(500).json({ 'error': 'Failed to upload to S3', 'err': error });
+//             res.status(500).send({ 'error': 'Failed to list objects in S3', 'err': error });
 //         } else {
-//             res.status(200).json({ message: 'Successfully uploaded to S3', 'location': data.Location, 'data': data });
+//             const imageUrls = data.Contents.map((object) => {
+//                 // Generate a public URL for each object in the bucket
+//                 return s3.getSignedUrl('getObject', {
+//                     Bucket: process.env.AWS_BUCKET_NAME,
+//                     Key: object.Key,
+//                 });
+//             });
+
+//             res.status(200).send({ images: imageUrls });
 //         }
 //     });
 // });
-
-
-
-// uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) => {
-//     let propertyID = req.params.id;
-//     try {
-//         if (!propertyID) {
-//             return res.status(400).send({ "msg": "Please Provide Property ID" });
-//         }
-//         const property = await PropertyModel.findById(propertyID);
-//         if (!property) {
-//             return res.status(400).send({ "msg": "No Property Found" });
-//         }
-//         if (property.userID != req.headers.id) {
-//             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
-//         }
-//         const uploadPromises = req.files.map(async (file) => {
-//             const params = {
-//                 Bucket: process.env.AWS_BUCKET_NAME,
-//                 Key: `${Date.now()}-${generateRandomCode()}-` + file.originalname,
-//                 Body: file.buffer,
-//                 ACL: 'public-read-write',
-//                 ContentType: 'image/jpeg',
-//             };
-
-//             return new Promise((resolve, reject) => {
-//                 s3.upload(params, (error, data) => {
-//                     if (error) {
-//                         reject();
-//                     } else {
-//                         resolve({ 'URL': data.Location, 'KEY': data.Key });
-//                     }
-//                 })
-//             })
-//         });
-
-//         const results = await Promise.all(uploadPromises);
-
-//         // Filtering out any undefined/null values
-//         const filteredResults = results.filter(result => result !== undefined && result !== null);
-
-//         const updateResult = await PropertyModel.findByIdAndUpdate(
-//             propertyID,
-//             { $push: { images: filteredResults } },
-//             { new: true }
-//         );
-
-//         res.status(201).json({ "msg": "Images Uploaded Successfully", filteredResults, "data": updateResult });
-//     } catch (error) {
-//         res.status(500).json({ "msg": "Server error while uploading Images", "error": error });
-//     }
-// });
-
-
-
-// Add Avatar
-uploads.post('/avatar', tokenVerify, upload.array("avatarimg", 1), async (req, res) => {
-    try {
-        let userDetail = req.userDetail;
-
-        if (userDetail.avatar) {
-            return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
-        }
-
-        if (!req.files.length) {
-            return res.status(400).send({ "msg": "No image provided for avatar." });
-        }
-
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
-            Body: req.files[0].buffer,
-            ACL: 'public-read-write',
-            ContentType: 'image/jpeg',
-        };
-
-        s3.upload(params, async (error, data) => {
-            if (error) {
-                return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
-            } else {
-                userDetail.avatar = data.Location;
-                userDetail.avatarKey = data.Key;
-                userDetail.lastUpdated = indianTime();
-
-                await userDetail.save();
-
-                res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
-            }
-        });
-
-    } catch (error) {
-        res.status(500).send({ "msg": "Server error while adding avatar image", "error": error });
-    }
-});
-
 
 
 uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) => {
@@ -244,65 +130,11 @@ uploads.post('/:id', tokenVerify, upload.array('image', 15), async (req, res) =>
         // Save the updated property document
         await property.save();
 
-        res.status(201).json({ "msg": "Images Uploaded Successfully", "images": property.images });
+        res.status(201).send({ "msg": "Images Uploaded Successfully", "images": property.images });
     } catch (error) {
-        res.status(500).json({ "msg": "Server error while uploading Images", "error": error });
+        res.status(500).send({ "msg": "Server error while uploading Images", "error": error });
     }
 });
-
-
-
-
-// Delete Avatar
-uploads.delete('/avatar', tokenVerify, async (req, res) => {
-    try {
-        const userDetail = req.userDetail;
-        if (!userDetail.avatar || !userDetail.avatarKey) {
-            return res.status(400).send({ "msg": "No Avatar to delete" });
-        }
-
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: userDetail.avatarKey
-        };
-
-        // Deleting the image from AWS S3
-        s3.deleteObject(params, async (error, data) => {
-            if (error) {
-                return res.status(500).send({ 'msg': 'Failed to delete Avatar Image', 'error': error });
-            } else {
-                userDetail.avatar = "";
-                userDetail.avatarKey = "";
-                userDetail.lastUpdated = indianTime();
-
-                await userDetail.save();
-                return res.status(200).send({ "msg": "Avatar Deleted Successfully" });
-            }
-        });
-    } catch (error) {
-        res.status(500).send({ "msg": "Server error while deleting Avatar Image", "error": error });
-    }
-});
-
-
-
-// // DELETE route for deleting an image from S3
-// uploads.delete('/:key', (req, res) => {
-//     const params = {
-//         Bucket: process.env.AWS_BUCKET_NAME,
-//         Key: req.params.key,
-//     };
-
-//     s3.deleteObject(params, (error, data) => {
-//         if (error) {
-//             res.status(500).json({ 'error': 'Failed to delete from S3', 'err': error });
-//         } else {
-//             res.status(200).json({ message: 'Successfully deleted from S3' });
-//         }
-//     });
-// });
-
-// DELETE route for deleting an image from S3 and updating the database
 
 
 uploads.delete('/:id', tokenVerify, async (req, res) => {
@@ -314,23 +146,23 @@ uploads.delete('/:id', tokenVerify, async (req, res) => {
         };
 
         if (!awsKey) {
-            return res.status(400).json({ 'msg': 'Missing Image Key' });
+            return res.status(400).send({ 'msg': 'Missing Image Key' });
         }
 
         // Find the property based on the image key
         const property = await PropertyModel.findOne({ '_id': req.params.id });
 
         if (!property) {
-            return res.status(400).json({ 'msg': 'Property not found for the given image' });
+            return res.status(400).send({ 'msg': 'Property not found for the given image' });
         }
         if (property.userID != req.userDetail._id) {
-            return res.status(400).json({ 'msg': 'Not Your Property' });
+            return res.status(400).send({ 'msg': 'Not Your Property' });
         }
 
         // First, attempt to delete the image from S3
         s3.deleteObject(params, async (error, data) => {
             if (error) {
-                res.status(500).json({ 'error': 'Failed to delete from S3', 'err': error });
+                res.status(500).send({ 'error': 'Failed to delete from S3', 'err': error });
             } else {
                 // Image successfully deleted from S3, now update the database
                 try {
@@ -340,14 +172,14 @@ uploads.delete('/:id', tokenVerify, async (req, res) => {
                     // Save the updated property document
                     await property.save();
 
-                    res.status(200).json({ message: 'Image Deleted', "images": property.images });
+                    res.status(200).send({ message: 'Image Deleted', "images": property.images });
                 } catch (dbError) {
-                    res.status(500).json({ 'error': 'Failed to update the database', 'dbErr': dbError });
+                    res.status(500).send({ 'error': 'Failed to update the database', 'dbErr': dbError });
                 }
             }
         });
     } catch (error) {
-        res.status(500).json({ 'error': 'Server error while deleting image from S3', 'err': error });
+        res.status(500).send({ 'error': 'Server error while deleting image from S3', 'err': error });
     }
 });
 
