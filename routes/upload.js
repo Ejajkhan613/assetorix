@@ -3,7 +3,7 @@ const uploads = express.Router();
 const multer = require('multer');
 const AWS = require('aws-sdk');
 
-uploads.use(express.send());
+uploads.use(express.json());
 
 const { tokenVerify } = require('../middlewares/token');
 const { PropertyModel } = require("../models/propertyModel");
