@@ -1361,6 +1361,11 @@ propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
         property.propertyState = status;
         await property.save();
 
+        let userDetail = req.userDetail;
+        userDetail.listings = userDetail.listings + 1;
+
+        await userDetail.save();
+
         res.status(201).send({ "msg": `Status Changed to ${status}` });
     } catch (error) {
         res.status(500).send({ "msg": "Server error while changing status" });
@@ -1434,6 +1439,10 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 //         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
 
 //         if (deletedProperty) {
+                // let userDetail = req.userDetail;
+                // userDetail.listings = userDetail.listings + 1;
+
+                // await userDetail.save();
 //             res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
 //         } else {
 //             res.status(400).send({ "msg": "Property does not exist or failed to delete" });

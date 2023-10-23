@@ -37,6 +37,10 @@ const userSchema = mongoose.Schema({
     wishlist: {
         type: Array
     },
+    listings: {
+        type: Number,
+        default: 0
+    },
     password: {
         type: String,
         required: true

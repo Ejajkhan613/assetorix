@@ -51,6 +51,10 @@ userRoute.get("/", tokenVerify, async (req, res) => {
         obj.name = req.userDetail.name || "";
         obj.email = req.userDetail.email || "";
         obj.mobile = req.userDetail.mobile || "";
+        obj.wishlist = req.userDetail.wishlist.length;
+
+        obj.listings = req.userDetail.listings;
+
         res.status(200).send(obj);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting User Data", "error": error });
