@@ -1321,6 +1321,11 @@ propertyRoute.post("/", tokenVerify, async (req, res) => {
 
             let emailResponse = "Closed";
 
+            let userDetail = req.userDetail;
+            userDetail.listings = userDetail.listings + 1;
+
+            await userDetail.save();
+
             res.status(201).send({ "msg": `${payload.propertyType} Posted Successfully`, "id": newProperty._id, "emailStatus": emailResponse });
         } else {
             res.status(401).send({ "msg": obj.error });
@@ -1360,11 +1365,6 @@ propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
 
         property.propertyState = status;
         await property.save();
-
-        let userDetail = req.userDetail;
-        userDetail.listings = userDetail.listings + 1;
-
-        await userDetail.save();
 
         res.status(201).send({ "msg": `Status Changed to ${status}` });
     } catch (error) {
@@ -1439,10 +1439,10 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 //         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
 
 //         if (deletedProperty) {
-                // let userDetail = req.userDetail;
-                // userDetail.listings = userDetail.listings + 1;
+// let userDetail = req.userDetail;
+// userDetail.listings = userDetail.listings + 1;
 
-                // await userDetail.save();
+// await userDetail.save();
 //             res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
 //         } else {
 //             res.status(400).send({ "msg": "Property does not exist or failed to delete" });
