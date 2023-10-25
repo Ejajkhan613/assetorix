@@ -46,7 +46,6 @@ function generateRandomCode() {
 
 
 
-
 // Add Avatar
 avatar.post('/', tokenVerify, upload.single("avatarimg"), async (req, res) => {
     try {
@@ -69,7 +68,7 @@ avatar.post('/', tokenVerify, upload.single("avatarimg"), async (req, res) => {
                 if (error) {
                     return res.status(500).send({ 'error': 'Failed to delete existing avatar', 'err': error });
                 }
-                
+
                 // Continue to upload the new avatar
                 uploadNewAvatar();
             });

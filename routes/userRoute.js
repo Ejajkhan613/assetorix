@@ -51,11 +51,10 @@ userRoute.get("/", tokenVerify, async (req, res) => {
         obj.name = req.userDetail.name || "";
         obj.email = req.userDetail.email || "";
         obj.mobile = req.userDetail.mobile || "";
-        obj.wishlist = req.userDetail.wishlist.length || 0;
-        obj.avatar = req.userDetail.Location || "";
-        obj.avatarKey = req.userDetail.Key || "";
+        obj.wishlist = req.userDetail.wishlist.length;
+        obj.avatar = req.userDetail.avatar;
 
-        obj.listings = req.userDetail.listings || 0;
+        obj.listings = req.userDetail.listings;
 
         res.status(200).send(obj);
     } catch (error) {
