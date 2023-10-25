@@ -51,9 +51,11 @@ userRoute.get("/", tokenVerify, async (req, res) => {
         obj.name = req.userDetail.name || "";
         obj.email = req.userDetail.email || "";
         obj.mobile = req.userDetail.mobile || "";
-        obj.wishlist = req.userDetail.wishlist.length;
+        obj.wishlist = req.userDetail.wishlist.length || 0;
+        obj.avatar = req.userDetail.Location || "";
+        obj.avatarKey = req.userDetail.Key || "";
 
-        obj.listings = req.userDetail.listings;
+        obj.listings = req.userDetail.listings || 0;
 
         res.status(200).send(obj);
     } catch (error) {
@@ -151,7 +153,7 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
 // User Login Route
 userRoute.post("/login", async (req, res) => {
     let { mobile, password } = req.body;
-
+    
     if (!mobile) {
         return res.status(400).send({ "msg": "Mobile Number is Missing" });
     }
@@ -162,29 +164,29 @@ userRoute.post("/login", async (req, res) => {
     if (!password) {
         return res.status(400).send({ "msg": "Password is Missing" });
     }
-
+    
     try {
-
+        
         // Matching input from Database
         let finding = await UserModel.findOne({ mobile });
-
+        
         if (!finding) {
             return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
         }
-
+        
         let isPasswordMatching = bcrypt.compareSync(password, finding.password);
-
+        
         if (!isPasswordMatching) {
             return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
         }
-
+        
         const token = jwt.sign({ "userID": finding._id }, secretKey);
-
+        
         finding.lastLogin = indianTime();
         await finding.save();
-
+        
         // Sending Response
-        res.status(201).send({ "msg": "Login Successful", token, "name": finding.name, "id": finding._id });
+        res.status(201).send({ "msg": "Login Successful", token, "name": finding.name, "id": finding._id, "avatar": finding.avatar || "", "avatarKey": finding.avatarKey || "" });
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error while Login", "error": error });
     }

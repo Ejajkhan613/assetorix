@@ -35,7 +35,8 @@ const userSchema = mongoose.Schema({
         lowercase: true
     },
     wishlist: {
-        type: Array
+        type: Array,
+        default: []
     },
     listings: {
         type: Number,

@@ -1440,7 +1440,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 
 //         if (deletedProperty) {
 // let userDetail = req.userDetail;
-// userDetail.listings = userDetail.listings + 1;
+// userDetail.listings = userDetail.listings - 1;
 
 // await userDetail.save();
 //             res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
