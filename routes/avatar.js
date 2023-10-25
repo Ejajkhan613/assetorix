@@ -46,45 +46,65 @@ function generateRandomCode() {
 
 
 
+
 // Add Avatar
 avatar.post('/', tokenVerify, upload.single("avatarimg"), async (req, res) => {
     try {
         let userDetail = req.userDetail;
 
-        if (userDetail.avatar) {
-            return res.status(400).send({ "msg": "Avatar is already present. Delete it first." });
-        }
-
         if (!req.file) {
             return res.status(400).send({ "msg": "No image provided for avatar." });
         }
 
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
-            Body: req.file.buffer,
-            ACL: 'public-read',
-            ContentType: 'image/jpeg',
-        };
+        // Check if the user already has an avatar
+        if (userDetail.avatar) {
+            // Delete the existing avatar from S3
+            const avatarKeyToDelete = userDetail.avatarKey;
+            const paramsToDelete = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: avatarKeyToDelete,
+            };
 
-        s3.upload(params, async (error, data) => {
-            if (error) {
-                return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
-            } else {
-                userDetail.avatar = data.Location;
-                userDetail.avatarKey = data.Key;
-                userDetail.lastUpdated = indianTime();
+            s3.deleteObject(paramsToDelete, async (error) => {
+                if (error) {
+                    return res.status(500).send({ 'error': 'Failed to delete existing avatar', 'err': error });
+                }
+                
+                // Continue to upload the new avatar
+                uploadNewAvatar();
+            });
+        } else {
+            // User doesn't have an existing avatar, proceed to upload the new one
+            uploadNewAvatar();
+        }
 
-                await userDetail.save();
+        function uploadNewAvatar() {
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `avatar-${userDetail._id}-${Date.now()}-${generateRandomCode()}`,
+                Body: req.file.buffer,
+                ACL: 'public-read',
+                ContentType: 'image/jpeg',
+            };
 
-                res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
-            }
-        });
+            s3.upload(params, async (error, data) => {
+                if (error) {
+                    return res.status(500).send({ 'error': 'Failed to add avatar image', 'err': error });
+                } else {
+                    userDetail.avatar = data.Location;
+                    userDetail.avatarKey = data.Key;
+                    userDetail.lastUpdated = indianTime();
 
+                    userDetail.save();
+                    res.status(201).send({ "msg": "Avatar added successfully", "avatar": data.Location });
+                }
+            });
+        }
     } catch (error) {
         res.status(500).send({ "msg": "Server error while adding avatar image", "error": error });
     }
 });
+
 
 
 
