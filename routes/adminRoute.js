@@ -8,9 +8,9 @@ const xss = require('xss');
 
 // Custom Modules
 const { UserModel } = require("../models/userModel");
-const { checkRequiredFields } = require("../services/requiredFields");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
 const { tokenVerify } = require("../middlewares/token");
+const { isValidName } = require("../services/nameValidation");
 
 
 
@@ -38,55 +38,82 @@ adminRoute.use(express.json());
 
 
 
+
+// Get Admin Details
+adminRoute.get("/", tokenVerify, async (req, res) => {
+    try {
+        let obj = {};
+        obj.name = req.userDetail.name || "";
+        obj.email = req.userDetail.email || "";
+        obj.mobile = req.userDetail.mobile || "";
+        obj.wishlist = req.userDetail.wishlist.length;
+        obj.avatar = req.userDetail.avatar;
+
+        obj.listings = req.userDetail.listings;
+
+        res.status(200).send(obj);
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While Getting Data", "error": error });
+    }
+});
+
+
 // Admin Registration Route
 adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
-
     let { name, mobile, password, role, key } = req.body;
+    let roles = ["employee", "admin", "super_admin"];
 
-    // Define the required fields
-    const requiredFields = ["name", "mobile", "password", "role", "key"];
-
-    // Sanitize and validate user inputs
     name = xss(name);
     mobile = xss(mobile);
     role = xss(role);
 
-    // Check if required fields exist and have non-empty values in the request body
-    const missingFields = checkRequiredFields(req.body, requiredFields);
-
-    if (missingFields.length > 0) {
-        const errorMsg = `Following Fields are Missing: ${missingFields.join(", ")}`;
-        res.status(400).send({ "msg": xss(errorMsg) });
-        return;
+    if (!name) {
+        return res.status(400).send({ "msg": "Name is Missing" });
     }
+    if (!isValidName(name)) {
+        return res.status(400).send({ "msg": "Name can't contain number or symbols" });
+    }
+
+    if (!mobile) {
+        return res.status(400).send({ "msg": "Mobile Number is Missing" });
+    }
+    if (mobile.length != 10) {
+        return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
+    }
+
+    if (!password) {
+        return res.status(400).send({ "msg": "Password is Missing" });
+    }
+
+    if (!role) {
+        return res.status(400).send({ "msg": "Role is Missing" })
+    }
+
+    if (!roles.includes(role)) {
+        return res.status(400).send({ "msg": "Wrong Role Type" });
+    }
+
+    if (!key) {
+        return res.status(400).send({ "msg": "Admin Access Key is Missing" })
+    }
+
     if (key != adminSecretKey) {
-        res.status(400).send({ "msg": "Wrong Key" });
-        return;
+        return res.status(400).send({ "msg": "Access Denied, Wrong Admin Key" });
     }
 
     try {
-        bcrypt.hash(password, saltRounds, async (err, hash) => {
+        let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
-            if (err) {
-                res.status(500).send({ "msg": "Error in Password Hashing", "err": xss(err) });
-                return;
-            }
+        // Saving Data in Database
+        let savingData = new UserModel({ name, mobile, "password": hashedPassword, role });
+        await savingData.save();
 
+        const token = jwt.sign({ "userID": savingData._id }, secretKey);
 
-            // Saving Data in Database
-            let savingData = new UserModel({ name, mobile, "password": hash, role });
-            await savingData.save();
-
-            const token = jwt.sign({ "userID": savingData._id }, secretKey);
-
-            // Sending Response
-            res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id });
-
-        });
+        // Sending Response
+        res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id, role });
     } catch (error) {
-
         res.status(500).send({ "msg": "Server Error While Registration" });
-
     }
 });
 
@@ -94,55 +121,46 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
 
 // User Login Route
 adminRoute.post("/login", async (req, res) => {
-
     let { mobile, password } = req.body;
+    let roles = ["employee", "admin", "super_admin"];
 
-    // Sanitize and validate user inputs
     mobile = xss(mobile);
 
     if (!mobile) {
-        res.status(400).send({ "msg": "Please Provide Your Mobile" });
-        return;
+        return res.status(400).send({ "msg": "Mobile Number is Missing" });
+    }
+    if (mobile.length != 10) {
+        return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
     }
 
     if (!password) {
-        res.status(400).send({ "msg": "Please Provide Your Password" });
-        return;
+        return res.status(400).send({ "msg": "Password is Missing" });
     }
 
     try {
 
         // Matching input from Database
-        let finding = await UserModel.find({ mobile });
+        let finding = await UserModel.findOne({ mobile });
 
-        if (finding.length === 1 && (finding[0].role === "admin" || finding[0].role === "super_admin")) {
-
-            bcrypt.compare(password, finding[0].password, (err, result) => {
-
-                if (result) {
-
-                    // Generating Token
-                    const token = jwt.sign({ "userID": finding[0]._id }, secretKey);
-
-                    // Sending Response
-                    res.status(200).send({ "msg": "Login Successful", "token": token, "name": finding[0].name, "id": finding[0]._id });
-
-                } else {
-
-                    res.status(400).send({ "msg": "Wrong Credentials" });
-
-                }
-            });
-
-        } else {
-
-            res.status(400).send({ "msg": "Wrong Credentials" });
-
+        if (!finding) {
+            return res.status(400).send({ "msg": "Wrong Credentials" });
         }
+        if (!roles.includes(finding.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        let isPasswordMatching = bcrypt.compareSync(password, finding.password);
+
+        if (!isPasswordMatching) {
+            return res.status(400).send({ "msg": "Wrong Credentials" });
+        }
+
+        const token = jwt.sign({ "userID": finding._id }, secretKey);
+
+        // Sending Response
+        res.status(200).send({ "msg": "Login Successful", token, "name": finding.name, "id": finding._id, "role": finding.role });
     } catch (error) {
-
         res.status(500).send({ "msg": "Server Error While Login" });
-
     }
 });
 

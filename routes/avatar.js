@@ -18,13 +18,18 @@ const filefilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png') {
         cb(null, true)
     } else {
-        cb(new Error('Invalid file type. Only JPEG files are allowed.'), false)
+        cb(new Error('Invalid file type or file size. Allowed file types: JPEG, JPG, PNG'), false);
     }
 }
 
 
+const upload = multer({
+    storage: storage,
+    fileFilter: filefilter,
+    limits: { fileSize: 10 * 1024 * 1024 } // 10 MB file size limit
+});
 
-const upload = multer({ storage: storage, fileFilter: filefilter });
+
 
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ID,

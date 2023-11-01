@@ -59,7 +59,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
 
         res.status(200).send(obj);
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Getting User Data", "error": error });
+        res.status(500).send({ "msg": "Server Error While Getting Data", "error": error });
     }
 });
 
@@ -171,13 +171,13 @@ userRoute.post("/login", async (req, res) => {
         let finding = await UserModel.findOne({ mobile });
 
         if (!finding) {
-            return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
+            return res.status(400).send({ "msg": "Wrong Credentials" });
         }
 
         let isPasswordMatching = bcrypt.compareSync(password, finding.password);
 
         if (!isPasswordMatching) {
-            return res.status(400).send({ "msg": "Not Found: Wrong Credentials" });
+            return res.status(400).send({ "msg": "Wrong Credentials" });
         }
 
         const token = jwt.sign({ "userID": finding._id }, secretKey);
@@ -273,12 +273,12 @@ userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
 
         let user = req.userDetail;
         let logs = new LogsModel({ "id": user._id, "title": "Email_OTP_Verification", "old": user.email, "new": email });
+        await logs.save();
 
         user.email = email;
         user.lastUpdated = indianTime();
 
         await user.save();
-        await logs.save();
 
         res.status(201).send({ "msg": "Email Updated" });
     } catch (error) {
