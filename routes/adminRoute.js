@@ -50,6 +50,7 @@ adminRoute.get("/", tokenVerify, async (req, res) => {
         obj.name = req.userDetail.name || "";
         obj.email = req.userDetail.email || "";
         obj.mobile = req.userDetail.mobile || "";
+        obj.role = req.userDetail.role;
         obj.wishlist = req.userDetail.wishlist.length;
         obj.avatar = req.userDetail.avatar;
 
