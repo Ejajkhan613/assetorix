@@ -8,6 +8,7 @@ const xss = require('xss');
 
 // Custom Modules
 const { UserModel } = require("../models/userModel");
+const { PropertyModel } = require("../models/propertyModel");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
 const { tokenVerify } = require("../middlewares/token");
 const { isValidName } = require("../services/nameValidation");
@@ -310,13 +311,14 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
 
 
 // Items Per Page
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 20;
 
 // get all details except password
 adminRoute.get("/all", tokenVerify, async (req, res) => {
     try {
 
         let roles = ["employee", "admin", "super_admin"];
+        let allRoles = ["customer", "agent", "employee", "admin", "super_admin"];
 
         if (!roles.includes(req.userDetail.role)) {
             return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
@@ -332,16 +334,15 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
 
         if (searchQuery) {
             queryConditions.$or = [
-                { name: { $regex: searchQuery, $options: "i" } }, // Case-insensitive name search
-                { number: searchQuery },
-                { email: { $regex: searchQuery, $options: "i" } } // Case-insensitive email search
+                { name: { $regex: searchQuery, $options: "i" } }, // Case-insensitive $options: "i"
+                { mobile: searchQuery },
+                { email: { $regex: searchQuery, $options: "i" } }
             ];
         }
 
         // Validate and sanitize roleQuery parameter
         if (roleQuery && (typeof roleQuery !== 'string' || !allRoles.includes(roleQuery))) {
-            res.status(400).send({ "msg": `Bad Request: Invalid role ${roleQuery}` });
-            return;
+            return res.status(400).send({ "msg": `Bad Request: Invalid role ${roleQuery}` });
         }
 
         if (roleQuery) {
@@ -354,8 +355,12 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
 
         if (totalCount === 0) {
             // Handle the case where there are no users with the provided role
-            res.status(201).send([]);
-            return;
+            return res.status(201).send({
+                data: [],
+                currentPage: 1,
+                totalPages: 0,
+                totalCount,
+            });
         }
 
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -393,10 +398,24 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
 // route to block or unblock access
 adminRoute.post("/block", tokenVerify, async (req, res) => {
     let { id, status } = req.body;
-
-    let user = req.userDetail;
+    let validTypes = [true, false];
 
     try {
+
+        if (!id) {
+            return res.status(400).send({ "msg": "Missing Target Account ID" });
+        }
+        
+        if (!status) {
+            return res.status(400).send({ "msg": "Missing Status Value" });
+        }
+        
+        if (!validTypes.includes(status)) {
+            return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
+        }
+
+
+        let user = req.userDetail;
         let roles = ["admin", "super_admin"];
 
         if (!roles.includes(req.userDetail.role)) {
@@ -418,6 +437,44 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             targetAccount.isBlocked = status;
             targetAccount.save();
         }
+
+        res.status(200).send({ "msg": "Updated Successfully" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+    }
+});
+
+
+
+// route to verify Property and Approve/reject/pending/sold
+adminRoute.post("/verificationState", tokenVerify, async (req, res) => {
+    let { id, status } = req.body;
+
+    let validTypes = ["Pending", "Approved", "Rejected", "Blocked", "Sold"];
+
+    try {
+        if (!id) {
+            return res.status(400).send({ "msg": "Missing Target Account ID" });
+        }
+
+        if (!status) {
+            return res.status(400).send({ "msg": "Missing Status Value" });
+        }
+
+        let roles = ["admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        let targetProperty = await PropertyModel.findById({ "_id": id });
+
+        if (!validTypes.includes(status)) {
+            return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
+        }
+
+        targetProperty.verificationState = status;
+        targetProperty.save();
 
         res.status(200).send({ "msg": "Updated Successfully" });
     } catch (error) {
