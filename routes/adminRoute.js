@@ -11,7 +11,11 @@ const { UserModel } = require("../models/userModel");
 const { userMobileDuplicateVerification } = require("../duplicateVerification/mobile");
 const { tokenVerify } = require("../middlewares/token");
 const { isValidName } = require("../services/nameValidation");
-
+const { userEmailDuplicateVerification } = require("../duplicateVerification/email");
+const { email_OTP_sending } = require("../mail/emailOTP");
+const { EmailOTPModel } = require("../models/emailOTPModel");
+const { LogsModel } = require("../models/logs");
+const { indianTime } = require("../services/indianTime");
 
 
 // SaltRounds
@@ -60,8 +64,7 @@ adminRoute.get("/", tokenVerify, async (req, res) => {
 
 // Admin Registration Route
 adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
-    let { name, mobile, password, role, key } = req.body;
-    let roles = ["employee", "admin", "super_admin"];
+    let { name, mobile, password, key } = req.body;
 
     name = xss(name);
     mobile = xss(mobile);
@@ -85,14 +88,6 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
         return res.status(400).send({ "msg": "Password is Missing" });
     }
 
-    if (!role) {
-        return res.status(400).send({ "msg": "Role is Missing" })
-    }
-
-    if (!roles.includes(role)) {
-        return res.status(400).send({ "msg": "Wrong Role Type" });
-    }
-
     if (!key) {
         return res.status(400).send({ "msg": "Admin Access Key is Missing" })
     }
@@ -111,7 +106,7 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
         const token = jwt.sign({ "userID": savingData._id }, secretKey);
 
         // Sending Response
-        res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id, role });
+        res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id, "role": "employee" });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Registration" });
     }
@@ -166,52 +161,148 @@ adminRoute.post("/login", async (req, res) => {
 
 
 
-// Update employee Detail
+
+
+// Sending OTP to Email and Saving in DB
+adminRoute.post("/emailOTP", tokenVerify, async (req, res) => {
+    try {
+        const email = req.body.email;
+        let roles = ["employee", "admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        if (!email) {
+            return res.status(400).send({ "msg": "Please Provide Valid Email" });
+        }
+
+        if (req.userDetail.email == email) {
+            return res.status(400).send({ "msg": "Email Already Registered, Provide Another" });
+        }
+
+        if (await userEmailDuplicateVerification(email)) {
+            return res.status(400).send({ "msg": "Email Already Registered, Provide Another" });
+        }
+
+        const sending = await email_OTP_sending(email);
+
+        if (!sending.status) {
+            return res.status(400).send({ "msg": "Error: Could not send OTP, Try Again Later", "error": sending.msg });
+        }
+
+
+        const filter = { email };
+        const update = { "otp": sending.otp, "createdAt": Date.now() };
+
+        const result = await EmailOTPModel.findOneAndUpdate(filter, update, {
+            upsert: true,
+            new: true
+        });
+
+        if (result) {
+            let userDetail = req.userDetail;
+            let logs = new LogsModel({ "id": userDetail._id, "title": "Email_OTP_Sending", "old": userDetail.email, "new": email });
+            await logs.save();
+            return res.status(200).json({ "msg": "OTP Sent Successfully" });
+        } else {
+            return res.status(500).json({ "error": "Failed to update new OTP" });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "msg": "Internal Server Error: While Sending OTP", "error": error });
+    }
+});
+
+
+
+// Verifying OTP and Updating Email
+adminRoute.post("/emailVerify", tokenVerify, async (req, res) => {
+    try {
+        let { email, otp } = req.body;
+        let roles = ["employee", "admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        if (!email) {
+            return res.status(400).send({ "msg": "Email Not Provided" });
+        }
+
+        if (!otp) {
+            return res.status(400).send({ "msg": "OTP Not Provided" });
+        }
+
+        let findInDB = await EmailOTPModel.findOne({ "email": email });
+
+        if (!findInDB.email) {
+            return res.status(400).send({ "msg": "Invalid OTP" });
+        }
+
+        if (findInDB.otp != otp) {
+            return res.status(400).send({ "msg": "Invalid OTP" });
+        }
+
+        await EmailOTPModel.findByIdAndDelete({ "_id": findInDB._id });
+
+        let user = req.userDetail;
+        let logs = new LogsModel({ "id": user._id, "title": "Email_OTP_Verification", "old": user.email || "", "new": email });
+        await logs.save();
+
+        user.email = email;
+        user.lastUpdated = indianTime();
+
+        await user.save();
+
+        res.status(201).send({ "msg": "Email Updated" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error While Verifying OTP", "error": error });
+    }
+})
+
+
+
+
+// Update User Detail
 adminRoute.patch("/update", tokenVerify, async (req, res) => {
-
-    let roles = ["employee", "admin", "super_admin"];
-
-    let id = req.headers.id;
-
-    let { name, email, mobile } = req.body;
-
-    let obj = {};
-
-    // Sanitize and validate user inputs
-    if (name) {
-        obj.name = xss(name);
-    }
-
-    if (email) {
-        obj.email = xss(email);
-    }
-
-    if (mobile) {
-        obj.mobile = xss(mobile);
-    }
-
     try {
 
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
-            return;
-        }
-        res.removeHeader("role");
+        let roles = ["employee", "admin", "super_admin"];
 
-        const updatedUser = await UserModel.findByIdAndUpdate({ "_id": id }, obj);
-
-        if (!updatedUser) {
-            res.status(404).send({ "msg": "Not Found: Details not found with the provided ID" });
-            return;
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
         }
 
-        res.status(200).send({ "msg": "Updated successfully" });
+        let user = req.userDetail;
 
+        let { name, mobile } = req.body;
+
+        if (name) {
+            if (!isValidName(name)) {
+                return res.status(400).send({ "msg": "Name can't contain number or symbols" });
+            } else {
+                let logs = new LogsModel({ "id": user._id, "title": "Name_Update", "old": user.name, "new": name });
+                await logs.save();
+                user.name = name;
+            }
+        }
+
+        if (mobile) {
+            if (mobile.length != 10) {
+                return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
+            } else {
+                let logs = new LogsModel({ "id": user._id, "title": "Mobile_Update", "old": user.mobile, "new": mobile });
+                await logs.save();
+                user.mobile = mobile;
+            }
+        }
+
+        await user.save();
+
+        res.status(200).send({ "msg": "Profile Updated" });
     } catch (error) {
-
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Updating" });
-
+        res.status(500).send({ "msg": "Internal Server Error while Updating", "error": error });
     }
 });
 
@@ -223,16 +314,13 @@ const ITEMS_PER_PAGE = 10;
 
 // get all details except password
 adminRoute.get("/all", tokenVerify, async (req, res) => {
-    let roles = ["admin", "super_admin"];
-    let allRoles = ["customer", "agent", "employee", "admin", "super_admin"];
-
     try {
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to access this resource" });
-            return;
+
+        let roles = ["employee", "admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
         }
-        res.removeHeader("role");
 
         // Get query parameters from frontend
         const roleQuery = req.query.role; // Grouped by role
@@ -304,39 +392,36 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
 
 // route to block or unblock access
 adminRoute.post("/block", tokenVerify, async (req, res) => {
-
-    let roles = ["admin", "super_admin"];
-
     let { id, status } = req.body;
 
+    let user = req.userDetail;
+
     try {
+        let roles = ["admin", "super_admin"];
 
-        const role = res.getHeader("role");
-        if (!roles.includes(role)) {
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to modify Access Control" });
-            return;
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
         }
-        res.removeHeader("role");
 
-        let Data = await UserModel.findById({ "_id": id });
+        let targetAccount = await UserModel.findById({ "_id": id });
 
-        let dataRole = Data.role;
-
-        if (role == "admin" && dataRole == "super_admin") {
-
-            res.status(400).send({ "msg": "Bad Request: Not Authorized to block/unblock Super Admin" });
-
+        if (user.role == "super_admin") {
+            targetAccount.isBlocked = status;
+            targetAccount.save();
         } else {
+            let allowedRolesToBlock = ["customer", "agent", "employee"];
 
-            await UserModel.findByIdAndUpdate({ "_id": id }, { "isBlocked": status });
+            if (!targetAccount.role.includes(allowedRolesToBlock)) {
+                return res.status(400).send({ "msg": "Not Allowed to Block/Unblock" });
+            }
 
-            res.status(200).send({ "msg": "Updated Successfully" });
-
+            targetAccount.isBlocked = status;
+            targetAccount.save();
         }
+
+        res.status(200).send({ "msg": "Updated Successfully" });
     } catch (error) {
-
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
-
     }
 });
 
