@@ -68,7 +68,6 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
 
     name = xss(name);
     mobile = xss(mobile);
-    role = xss(role);
 
     if (!name) {
         return res.status(400).send({ "msg": "Name is Missing" });
@@ -100,15 +99,15 @@ adminRoute.post("/register", userMobileDuplicateVerification, async (req, res) =
         let hashedPassword = bcrypt.hashSync(password, saltRounds);
 
         // Saving Data in Database
-        let savingData = new UserModel({ name, mobile, "password": hashedPassword, role });
+        let savingData = new UserModel({ name, mobile, "password": hashedPassword, "role": "employee" });
         await savingData.save();
 
         const token = jwt.sign({ "userID": savingData._id }, secretKey);
 
         // Sending Response
-        res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id, "role": "employee" });
+        res.status(201).send({ "msg": "Successfully Registered", "token": token, "name": name, "id": savingData._id, "role": savingData.role });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Registration" });
+        res.status(500).send({ "msg": "Server Error While Registration", error });
     }
 });
 
