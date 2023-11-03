@@ -317,7 +317,7 @@ const ITEMS_PER_PAGE = 20;
 adminRoute.get("/all", tokenVerify, async (req, res) => {
     try {
 
-        let roles = ["employee", "admin", "super_admin"];
+        let roles = ["admin", "super_admin"];
         let allRoles = ["customer", "agent", "employee", "admin", "super_admin"];
 
         if (!roles.includes(req.userDetail.role)) {
@@ -451,10 +451,10 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             if (user.role == "super_admin") {
                 targetAccount.isBlocked = status;
                 targetAccount.save();
-            } else {
+            } else if(user.role == "admin") {
                 let allowedRolesToBlock = ["customer", "agent", "employee"];
 
-                if (!targetAccount.role.includes(allowedRolesToBlock)) {
+                if (!allowedRolesToBlock.includes(targetAccount.role)) {
                     return res.status(400).send({ "msg": "Not Allowed to Block/Unblock" });
                 }
 
@@ -465,7 +465,6 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
         } else {
             return res.status(400).send({ "msg": `Missing Status Value- ${status}` });
         }
-
 
 
     } catch (error) {
