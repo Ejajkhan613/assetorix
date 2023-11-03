@@ -393,6 +393,39 @@ adminRoute.get("/all", tokenVerify, async (req, res) => {
 
 
 
+// Route to Change Role
+adminRoute.post("/role", tokenVerify, async (req, res) => {
+    let { id, status } = req.body;
+    let validTypes = ["customer", "agent", "employee", "admin", "super_admin"];
+
+    try {
+        let roles = ["super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+        if (!id) {
+            return res.status(400).send({ "msg": "Missing Target Account ID" });
+        }
+
+        if (!status) {
+            return res.status(400).send({ "msg": "Missing Role Value" });
+        }
+
+        if (!validTypes.includes(status)) {
+            return res.status(400).send({ "msg": `Role Value is Wrong- ${status}` });
+        }
+
+        await UserModel.findOneAndUpdate({ "_id": id }, { "role": status });
+
+        res.status(200).send({ "msg": `Role Successfully Updated to ${status}` });
+
+
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+    }
+});
+
 
 
 // route to block or unblock access
