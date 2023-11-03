@@ -401,44 +401,40 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
     let validTypes = [true, false];
 
     try {
-
-        if (!id) {
-            return res.status(400).send({ "msg": "Missing Target Account ID" });
-        }
-
-        if (!status) {
-            return res.status(400).send({ "msg": "Missing Status Value" });
-        }
-
-        if (!validTypes.includes(status)) {
-            return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
-        }
-
-
-        let user = req.userDetail;
         let roles = ["admin", "super_admin"];
 
         if (!roles.includes(req.userDetail.role)) {
             return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
         }
-
-        let targetAccount = await UserModel.findById({ "_id": id });
-
-        if (user.role == "super_admin") {
-            targetAccount.isBlocked = status;
-            targetAccount.save();
-        } else {
-            let allowedRolesToBlock = ["customer", "agent", "employee"];
-
-            if (!targetAccount.role.includes(allowedRolesToBlock)) {
-                return res.status(400).send({ "msg": "Not Allowed to Block/Unblock" });
-            }
-
-            targetAccount.isBlocked = status;
-            targetAccount.save();
+        if (!id) {
+            return res.status(400).send({ "msg": "Missing Target Account ID" });
         }
 
-        res.status(200).send({ "msg": "Updated Successfully" });
+        if (status == true || status == false) {
+            let user = req.userDetail;
+
+            let targetAccount = await UserModel.findById({ "_id": id });
+
+            if (user.role == "super_admin") {
+                targetAccount.isBlocked = status;
+                targetAccount.save();
+            } else {
+                let allowedRolesToBlock = ["customer", "agent", "employee"];
+
+                if (!targetAccount.role.includes(allowedRolesToBlock)) {
+                    return res.status(400).send({ "msg": "Not Allowed to Block/Unblock" });
+                }
+
+                targetAccount.isBlocked = status;
+                targetAccount.save();
+            }
+            res.status(200).send({ "msg": "Updated Successfully" });
+        } else {
+            return res.status(400).send({ "msg": `Missing Status Value- ${status}` });
+        }
+
+
+
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
     }
