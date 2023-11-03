@@ -405,11 +405,11 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
         if (!id) {
             return res.status(400).send({ "msg": "Missing Target Account ID" });
         }
-        
+
         if (!status) {
             return res.status(400).send({ "msg": "Missing Status Value" });
         }
-        
+
         if (!validTypes.includes(status)) {
             return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
         }
@@ -453,18 +453,18 @@ adminRoute.post("/verificationState", tokenVerify, async (req, res) => {
     let validTypes = ["Pending", "Approved", "Rejected", "Blocked", "Sold"];
 
     try {
+        let roles = ["admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
         if (!id) {
             return res.status(400).send({ "msg": "Missing Target Account ID" });
         }
 
         if (!status) {
             return res.status(400).send({ "msg": "Missing Status Value" });
-        }
-
-        let roles = ["admin", "super_admin"];
-
-        if (!roles.includes(req.userDetail.role)) {
-            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
         }
 
         let targetProperty = await PropertyModel.findById({ "_id": id });
@@ -478,9 +478,65 @@ adminRoute.post("/verificationState", tokenVerify, async (req, res) => {
 
         res.status(200).send({ "msg": "Updated Successfully" });
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Changing Status" });
     }
 });
+
+
+// Get Verification List
+adminRoute.get("/verificationStateList", tokenVerify, async (req, res) => {
+    const verificationStateList = ["Pending", "Approved", "Rejected", "Blocked", "Sold"];
+    const propertyStateList = ["Private", "Public", "Sold"];
+    const roles = ["admin", "super_admin"];
+
+    const adminVerificationStatus = req.query.adminState;
+    const userPropertyStatus = req.query.userState;
+    // const search = req.query.search;
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 20;
+
+    try {
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        const query = {};
+
+        if (adminVerificationStatus && verificationStateList.includes(adminVerificationStatus)) {
+            query.$and = [{ verificationState: adminVerificationStatus }];
+        }
+
+        if (userPropertyStatus && propertyStateList.includes(userPropertyStatus)) {
+            if (query.$and) {
+                query.$and.push({ propertyState: userPropertyStatus });
+            } else {
+                query.$and = [{ propertyState: userPropertyStatus }];
+            }
+        }
+
+        const totalProperties = await PropertyModel.countDocuments(query);
+        const totalPages = Math.ceil(totalProperties / perPage);
+
+        const targetProperties = await PropertyModel
+            .find(query)
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+        const data = targetProperties;
+        const currentPage = data.length === 0 ? totalPages : page;
+        const totalCount = totalProperties;
+
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Getting List" });
+    }
+});
+
 
 
 // exporting module
