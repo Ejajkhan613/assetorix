@@ -1359,7 +1359,8 @@ propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": `Property Status is Already ${status}` });
         }
 
-        if (property.userID != req.userDetail._id) {
+        let user = req.userDetail;
+        if (property.userID != req.userDetail._id || !user.role == "admin" || !user.role == "super_admin" ) {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
 
@@ -1387,8 +1388,9 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
             return res.status(404).send({ "msg": "Property Not Found" });
         }
 
-        if (property.userID != userID) {
-            return res.status(400).send({ "msg": "Not Your Property" });
+        let user = req.userDetail;
+        if (property.userID != userID || !user.role == "admin" || !user.role == "super_admin" ) {
+            return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
 
         let obj = spreader(req.body);
