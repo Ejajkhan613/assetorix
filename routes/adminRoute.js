@@ -431,7 +431,7 @@ adminRoute.post("/role", tokenVerify, async (req, res) => {
 // route to block or unblock access
 adminRoute.post("/block", tokenVerify, async (req, res) => {
     let { id, status } = req.body;
-    let validTypes = [true, false];
+    let validTypes = [true, false, "true", "false"];
 
     try {
         let roles = ["admin", "super_admin"];
@@ -443,7 +443,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Missing Target Account ID" });
         }
 
-        if (status == true || status == false) {
+        if (validTypes.includes(status)) {
             let user = req.userDetail;
 
             let targetAccount = await UserModel.findById({ "_id": id });
@@ -463,7 +463,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             }
             res.status(200).send({ "msg": "Updated Successfully" });
         } else {
-            return res.status(400).send({ "msg": `Missing Status Value- ${status}` });
+            return res.status(400).send({ "msg": `Missing/Wrong Status Value- ${status}` });
         }
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
