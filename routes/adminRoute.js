@@ -475,7 +475,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
 adminRoute.post("/verifyUser", tokenVerify, async (req, res) => {
     let { id, status } = req.body;
 
-    let validTypes = [true, false];
+    let validTypes = [true, false, "true", "false"];
 
     try {
         let roles = ["admin", "super_admin"];
@@ -491,7 +491,7 @@ adminRoute.post("/verifyUser", tokenVerify, async (req, res) => {
         let targetAccount = await UserModel.findById({ "_id": id });
 
         if (!validTypes.includes(status)) {
-            return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
+            return res.status(400).send({ "msg": `Missing/Wrong Verification Status Type - ${status}` });
         }
 
         targetAccount.isVerified = status;
