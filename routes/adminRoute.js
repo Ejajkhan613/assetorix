@@ -451,7 +451,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             if (user.role == "super_admin") {
                 targetAccount.isBlocked = status;
                 targetAccount.save();
-            } else if(user.role == "admin") {
+            } else if (user.role == "admin") {
                 let allowedRolesToBlock = ["customer", "agent", "employee"];
 
                 if (!allowedRolesToBlock.includes(targetAccount.role)) {
@@ -465,10 +465,41 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
         } else {
             return res.status(400).send({ "msg": `Missing Status Value- ${status}` });
         }
-
-
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+    }
+});
+
+
+// Verify User
+adminRoute.post("/verifyUser", tokenVerify, async (req, res) => {
+    let { id, status } = req.body;
+
+    let validTypes = [true, false];
+
+    try {
+        let roles = ["admin", "super_admin"];
+
+        if (!roles.includes(req.userDetail.role)) {
+            return res.status(400).send({ "msg": "Access Denied, Role Not Allowed" });
+        }
+
+        if (!id) {
+            return res.status(400).send({ "msg": "Missing Target Account ID" });
+        }
+
+        let targetAccount = await UserModel.findById({ "_id": id });
+
+        if (!validTypes.includes(status)) {
+            return res.status(400).send({ "msg": `Wrong Verification Status Type - ${status}` });
+        }
+
+        targetAccount.isVerified = status;
+        targetAccount.save();
+
+        res.status(200).send({ "msg": "Updated Successfully" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Changing Status" });
     }
 });
 
