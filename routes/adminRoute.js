@@ -183,7 +183,6 @@ adminRoute.get("/property/", tokenVerify, async (req, res) => {
                 );
             }
         }
-        console.log(filter)
 
         const totalCount = await PropertyModel.countDocuments(filter);
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
