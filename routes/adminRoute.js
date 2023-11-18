@@ -162,6 +162,62 @@ adminRoute.post("/login", async (req, res) => {
 
 
 
+// Filter Route
+adminRoute.get("/property/", tokenVerify, async (req, res) => {
+    try {
+        let { lookingFor, propertyGroup, page, ...queryParams } = req.query;
+        const currentPage = parseInt(page) || 1;
+
+        let filter = { "lookingFor": lookingFor };
+
+        if (propertyGroup) {
+            filter["propertyGroup"] = propertyGroup;
+        }
+
+        for (const [key, value] of Object.entries(queryParams)) {
+            if (value) {
+                filter["$and"] = filter["$and"] || [];
+                filter["$and"].push(Array.isArray(value)
+                    ? { [key]: { $in: value } }
+                    : { [key]: value }
+                );
+            }
+        }
+        console.log(filter)
+
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE,
+        };
+
+        if (!totalCount) {
+            const relatedData = await PropertyModel.find({ "lookingFor": lookingFor }, null, options);
+            if (relatedData.length) {
+                return res.status(200).send({ "msg": "Exact Match Not Found", "data": relatedData, currentPage, totalPages, totalCount });
+            } else {
+                const relatedData = await PropertyModel.find({}, null, options);
+                const totalCount = await PropertyModel.countDocuments({});
+                const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+                return res.status(200).send({ "msg": "Exact Match Not Found", relatedData, currentPage, totalPages, totalCount })
+            }
+        }
+
+        const data = await PropertyModel.find(filter, null, options);
+
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
+    }
+});
+
 
 
 // Sending OTP to Email and Saving in DB
@@ -466,7 +522,7 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": `Missing/Wrong Status Value- ${status}` });
         }
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Access Control" });
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while User Block/Unblock" });
     }
 });
 
@@ -499,7 +555,7 @@ adminRoute.post("/verifyUser", tokenVerify, async (req, res) => {
 
         res.status(200).send({ "msg": "Updated Successfully" });
     } catch (error) {
-        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while Changing Status" });
+        res.status(500).send({ "msg": "Internal Server Error: Something Went Wrong while User Status" });
     }
 });
 
