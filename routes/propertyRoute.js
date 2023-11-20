@@ -1360,7 +1360,7 @@ propertyRoute.patch("/statusToggle/:id", tokenVerify, async (req, res) => {
         }
 
         let user = req.userDetail;
-        if (property.userID != req.userDetail._id || !user.role == "admin" || !user.role == "super_admin" ) {
+        if (property.userID != req.userDetail._id || !user.role == "admin" || !user.role == "super_admin") {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
 
@@ -1389,7 +1389,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
         }
 
         let user = req.userDetail;
-        if (property.userID != userID || !user.role == "admin" || !user.role == "super_admin" ) {
+        if (property.userID != userID || !user.role == "admin" || !user.role == "super_admin") {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
 
@@ -1441,10 +1441,10 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
 //         const deletedProperty = await PropertyModel.findByIdAndDelete(propertyID);
 
 //         if (deletedProperty) {
-// let userDetail = req.userDetail;
-// userDetail.listings = userDetail.listings - 1;
+//             let userDetail = req.userDetail;
+//             userDetail.listings = userDetail.listings - 1;
 
-// await userDetail.save();
+//             await userDetail.save();
 //             res.status(201).send({ "msg": "Property Deleted Successfully", "emailStatus": emailResponse });
 //         } else {
 //             res.status(400).send({ "msg": "Property does not exist or failed to delete" });
