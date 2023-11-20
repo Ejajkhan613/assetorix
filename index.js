@@ -29,13 +29,13 @@ const app = express();
 
 
 // Using Cors
-app.use(cors({
-    origin: "https://assetorix.com", // Add your frontend URL here
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-}));
+// app.use(cors({
+//     origin: "https://assetorix.com", // Add your frontend URL here
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     credentials: true,
+// }));
 
-// app.use(cors());
+app.use(cors());
 
 
 // Homepage Route
