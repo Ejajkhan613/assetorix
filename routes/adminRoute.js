@@ -463,10 +463,6 @@ adminRoute.post("/role", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Missing Target Account ID" });
         }
 
-        if (id == userDetail._id) {
-            return res.status(400).send({ "msg": "Can't Change Own Role" });
-        }
-
         if (!status) {
             return res.status(400).send({ "msg": "Missing Role Value" });
         }
@@ -500,10 +496,6 @@ adminRoute.post("/block", tokenVerify, async (req, res) => {
         }
         if (!id) {
             return res.status(400).send({ "msg": "Missing Target Account ID" });
-        }
-
-        if (id == userDetail._id) {
-            return res.status(400).send({ "msg": "Can't Block Own Account" });
         }
 
         if (validTypes.includes(status)) {
