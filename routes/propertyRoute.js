@@ -111,52 +111,13 @@ propertyRoute.get("/", async (req, res) => {
 });
 
 
-// // Search based on address
-// propertyRoute.get("/search/", async (req, res) => {
-//     try {
-//         const { search, page } = req.query;
-//         const currentPage = parseInt(page) || 1;
 
-//         let filter = {};
-
-//         if (search) {
-//             const regexSearch = new RegExp(search, "i");
-//             filter = {
-//                 $or: [
-//                     { "address.pincode": regexSearch },
-//                     { "address.city": regexSearch },
-//                     { "address.state": regexSearch },
-//                     { "address.country": regexSearch },
-//                     { "address.houseNumber": regexSearch },
-//                     { "address.apartmentName": regexSearch },
-//                     { "address.zoneType": regexSearch },
-//                     { "address.locatedInside": regexSearch },
-//                     { "address.type": regexSearch }
-//                 ]
-//             };
-//         }
-
-//         const options = {
-//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
-//             limit: ITEMS_PER_PAGE,
-//         };
-
-//         const data = await PropertyModel.find(filter)
-//             .skip(options.skip)
-//             .limit(options.limit);
-
-//         res.status(200).send(data);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send({ "msg": "Server Error While getting Properties" });
-//     }
-// });
 propertyRoute.get("/search/", async (req, res) => {
     try {
-        const { search, page } = req.query;
+        const { lookingFor, propertyGroup, search, page } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "$and": [{ "verificationState": "Approved" }, { "propertyState": "Public" }] };
+        let filter = { "$and": [{ "verificationState": "Approved" }, { "propertyState": "Public" }, { "lookingFor": lookingFor || "Sell" }, { "propertyGroup": propertyGroup || "Residential" }] };
 
         if (search) {
             const regexSearch = new RegExp(search, "i");
