@@ -162,6 +162,53 @@ adminRoute.post("/login", async (req, res) => {
 
 
 
+adminRoute.get("/search/", async (req, res) => {
+    try {
+        const { lookingFor, propertyGroup, search, page } = req.query;
+        const currentPage = parseInt(page) || 1;
+
+        let filter = { "$and": [{ "lookingFor": lookingFor || "Sell" }, { "propertyGroup": propertyGroup || "Residential" }] };
+
+        if (search) {
+            const regexSearch = new RegExp(search, "i");
+            filter["$and"].push({
+                $or: [
+                    { "address.pincode": regexSearch },
+                    { "address.city": regexSearch },
+                    { "address.state": regexSearch },
+                    { "address.country": regexSearch },
+                    { "address.houseNumber": regexSearch },
+                    { "address.apartmentName": regexSearch },
+                    { "address.zoneType": regexSearch },
+                    { "address.locatedInside": regexSearch },
+                    { "address.type": regexSearch }
+                ]
+            });
+        }
+
+        const totalCount = await PropertyModel.countDocuments(filter);
+        const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+        const options = {
+            skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            limit: ITEMS_PER_PAGE,
+        };
+
+        const data = await PropertyModel.find(filter, null, options);
+
+        res.status(200).send({
+            data,
+            currentPage,
+            totalPages,
+            totalCount,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ "msg": "Server Error While getting Properties", "error": error });
+    }
+});
+
+
 // Filter Route
 adminRoute.get("/property/", tokenVerify, async (req, res) => {
     try {
