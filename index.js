@@ -16,6 +16,7 @@ const { pincodeRoute } = require("./routes/pincodeRoute");
 const { adminRoute } = require("./routes/adminRoute");
 const { uploads } = require("./routes/upload");
 const { avatar } = require("./routes/avatar");
+const { leadFormRoute } = require("./routes/leadForm");
 
 
 // Port
@@ -62,7 +63,12 @@ app.use("/property", propertyRoute);
 
 
 
-// Property Route
+// Lead Form Route
+app.use("/leadForm", leadFormRoute);
+
+
+
+// Pincode Route
 app.use("/pincode", pincodeRoute);
 
 
