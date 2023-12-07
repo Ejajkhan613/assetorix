@@ -19,20 +19,13 @@ const leadFormRoute = express.Router();
 leadFormRoute.use(express.json());
 
 
-// Get Admin Details
+// Get Lead List Details
 leadFormRoute.get("/", tokenVerify, async (req, res) => {
     try {
-        let obj = {};
-        obj.name = req.userDetail.name || "";
-        obj.email = req.userDetail.email || "";
-        obj.mobile = req.userDetail.mobile || "";
-        obj.role = req.userDetail.role;
-        obj.wishlist = req.userDetail.wishlist.length;
-        obj.avatar = req.userDetail.avatar;
+        let id = req.userDetail._id;
 
-        obj.listings = req.userDetail.listings;
-
-        res.status(200).send(obj);
+        let list = await LeadFormModel.find({ "userID": id }).sort({"createdOn": -1});
+        res.status(200).send(list);
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Getting Data", "error": error });
     }
@@ -98,12 +91,7 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
         }
         data.description = xss(payload.description);
 
-
-        let findingUser = await UserModel.findById(payload.userID);
-
-        if (!findingUser._id) {
-            return res.status(400).send({ "msg": "User Details not Found" });
-        }
+        data.userID = req.userDetail._id;
 
         let newForm = new LeadFormModel(data);
         await newForm.save();
@@ -112,7 +100,7 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Saving Form Data", "error": error });
     }
-})
+});
 
 
 

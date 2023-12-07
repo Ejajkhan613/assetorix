@@ -6,7 +6,8 @@ const { indianTime } = require("../services/indianTime");
 // Schema
 const leadFormSchema = mongoose.Schema({
     userID: {
-        type: String
+        type: String,
+        trim: true
     },
     name: {
         type: String,
@@ -15,37 +16,42 @@ const leadFormSchema = mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     email: {
         type: String,
-        unique: true,
-        sparse: true,
-        trim: true,
-        lowercase: true
+        required: true,
+        lowercase: true,
+        trim: true
     },
     formType: {
         type: String,
         enum: ["Buy", "Rent", "Sell"],
-        default: "Buy"
+        default: "Buy",
+        trim: true
     },
     propertyType: {
         type: String,
         enum: ["None", "Residential", "Commercial"],
-        default: "None"
+        default: "None",
+        trim: true
     },
     description: {
-        type: String
+        type: String,
+        trim: true
     },
     verificationState: {
         type: String,
         enum: ["Pending", "Approved", "Rejected", "Fulfilled"],
-        default: "Pending"
+        default: "Pending",
+        trim: true
     },
     leadFormState: {
         type: String,
         enum: ["Private", "Public"],
-        default: "Public"
+        default: "Public",
+        trim: true
     },
     createdOn: {
         type: String,
@@ -54,7 +60,7 @@ const leadFormSchema = mongoose.Schema({
     expiryTime: {
         type: Date,
         default: Date.now,
-        index: { expires: 90 * 24 * 60 * 60 } // 90 days in seconds
+        index: { expires: 60 * 24 * 60 * 60 } // 60 days in seconds
     }
 });
 

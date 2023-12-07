@@ -29,7 +29,7 @@ const app = express();
 
 
 
-// Using Cors
+// Using Cors to Block
 // app.use(cors({
 //     origin: "https://assetorix.com", // Add your frontend URL here
 //     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
