@@ -19,9 +19,9 @@ const leadFormSchema = mongoose.Schema({
         required: true,
         trim: true
     },
-    // isMobileVisible: {
-    //     type: Boolean
-    // },
+    isMobileVisible: {
+        type: Boolean
+    },
     email: {
         type: String,
         required: true,

@@ -33,6 +33,59 @@ leadFormRoute.get("/", tokenVerify, async (req, res) => {
 
 
 
+// // get Lead Form Lists
+// leadFormRoute.get("/all/", async (req, res) => {
+//     const ITEMS_PER_PAGE = 20;
+//     try {
+//         let { page, ...queryParams } = req.query;
+//         const currentPage = parseInt(page) || 1;
+
+//         let filter = { "$and": [{ "verificationState": "Approved" }, { "leadFormState": "Public" }] };
+//         for (const [key, value] of Object.entries(queryParams)) {
+//             if (value && key !== "verificationState" && key !== "leadFormState") {
+//                 filter["$and"] = filter["$and"] || [];
+//                 filter["$and"].push({ [key]: { $regex: new RegExp(value, "i") } });
+//             }
+//         }
+
+//         const totalCount = await LeadFormModel.countDocuments(filter);
+//         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+//         const options = {
+//             skip: (currentPage - 1) * ITEMS_PER_PAGE,
+//             limit: ITEMS_PER_PAGE,
+//         };
+
+//         const data = await LeadFormModel.find(filter, null, options);
+//         console.log(data);
+
+//         const processedData = data.map(item => {
+//             const { expiryTime, leadFormState, verificationState, isMobileVisible, mobile, ...rest } = item.toObject();
+
+//             if (item.isMobileVisible) {
+//                 return {
+//                     ...rest,
+//                     mobile: item.mobile // Including mobile field
+//                 };
+//             } else {
+//                 const { expiryTime, leadFormState, verificationState, isMobileVisible, mobile, ...rest } = item.toObject();
+//                 return rest;
+//             }
+//         });
+
+
+//         res.status(200).send({
+//             data: processedData,
+//             currentPage,
+//             totalPages,
+//             totalCount,
+//         });
+//     } catch (error) {
+//         res.status(500).send({ "msg": "Server Error While getting RFQ's", "error": error });
+//     }
+// });
+
+
 // get Lead Form Lists
 leadFormRoute.get("/all/", async (req, res) => {
     const ITEMS_PER_PAGE = 20;
@@ -40,23 +93,57 @@ leadFormRoute.get("/all/", async (req, res) => {
         let { page, ...queryParams } = req.query;
         const currentPage = parseInt(page) || 1;
 
-        let filter = { "$and": [{ "verificationState": "Approved" }, { "leadFormState": "Public" }] };
+        let pipeline = [
+            {
+                $match: {
+                    $and: [{ verificationState: "Approved" }, { leadFormState: "Public" }],
+                },
+            },
+        ];
+
         for (const [key, value] of Object.entries(queryParams)) {
             if (value && key !== "verificationState" && key !== "leadFormState") {
-                filter["$and"] = filter["$and"] || [];
-                filter["$and"].push({ [key]: { $regex: new RegExp(value, "i") } });
+                pipeline.push({
+                    $match: {
+                        $and: pipeline[0].$match.$and.concat({
+                            [key]: { $regex: new RegExp(value, "i") },
+                        }),
+                    },
+                });
             }
         }
 
-        const totalCount = await LeadFormModel.countDocuments(filter);
+        pipeline = pipeline.concat([
+            {
+                $project: {
+                    userID: 1,
+                    name: 1,
+                    email: 1,
+                    formType: 1,
+                    propertyType: 1,
+                    description: 1,
+                    createdOn: 1,
+                    mobile: {
+                        $cond: {
+                            if: "$isMobileVisible",
+                            then: "$mobile",
+                            else: "$REMOVE", // "$REMOVE" is used to exclude the mobile field
+                        }
+                    }
+                },
+            },
+            {
+                $skip: (currentPage - 1) * ITEMS_PER_PAGE,
+            },
+            {
+                $limit: ITEMS_PER_PAGE,
+            },
+        ]);
+
+        const data = await LeadFormModel.aggregate(pipeline);
+
+        const totalCount = await LeadFormModel.countDocuments(pipeline[0].$match);
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-
-        const options = {
-            skip: (currentPage - 1) * ITEMS_PER_PAGE,
-            limit: ITEMS_PER_PAGE,
-        };
-
-        const data = await LeadFormModel.find(filter, null, options);
 
         res.status(200).send({
             data,
@@ -65,9 +152,11 @@ leadFormRoute.get("/all/", async (req, res) => {
             totalCount,
         });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While getting RFQ's", "error": error });
+        res.status(500).send({ msg: "Server Error While getting RFQ's", error });
     }
 });
+
+
 
 
 leadFormRoute.post("/", tokenVerify, async (req, res) => {
@@ -91,6 +180,12 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Mobile is Missing" });
         }
         data.mobile = xss(payload.mobile);
+
+        if (!payload.isMobileVisible) {
+            data.isMobileVisible = false;
+        } else {
+            data.isMobileVisible = xss(payload.isMobileVisible);
+        }
 
 
         if (!payload.email) {
