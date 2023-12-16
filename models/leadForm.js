@@ -56,6 +56,22 @@ const leadFormSchema = mongoose.Schema({
         default: "Public",
         trim: true
     },
+    replies: [
+        {
+            userID: {
+                type: String,
+                trim: true,
+            },
+            message: {
+                type: String,
+                trim: true,
+            },
+            createdOn: {
+                type: String,
+                default: indianTime
+            },
+        }
+    ],
     createdOn: {
         type: String,
         default: indianTime

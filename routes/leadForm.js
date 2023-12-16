@@ -19,6 +19,7 @@ const leadFormRoute = express.Router();
 leadFormRoute.use(express.json());
 
 
+
 // Get Lead List Details
 leadFormRoute.get("/", tokenVerify, async (req, res) => {
     try {
@@ -30,6 +31,42 @@ leadFormRoute.get("/", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Server Error While Getting Data", "error": error });
     }
 });
+
+
+
+// Retrieve Single Lead Form Data
+leadFormRoute.get("/single/:id", async (req, res) => {
+    try {
+        const leadFormID = req.params.id;
+        const response = await LeadFormModel.findById(leadFormID);
+
+        if (!response) {
+            return res.status(404).send({ msg: "Lead Form Data Not Found" });
+        }
+
+        const data = {
+            _id: response._id,
+            userID: response.userID,
+            name: response.name,
+            email: response.email,
+            formType: response.formType,
+            propertyType: response.propertyType,
+            description: response.description,
+            replies: response.replies,
+            createdOn: response.createdOn
+        };
+
+        if (response.isMobileVisible) {
+            data.mobile = response.mobile;
+        }
+
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({ msg: "Server Error While Getting Lead Form", error });
+    }
+});
+
+
 
 
 
@@ -86,7 +123,8 @@ leadFormRoute.get("/", tokenVerify, async (req, res) => {
 // });
 
 
-// get Lead Form Lists
+
+// get Lead Form Lists All
 leadFormRoute.get("/all/", async (req, res) => {
     const ITEMS_PER_PAGE = 20;
     try {
@@ -260,6 +298,13 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         data.mobile = xss(payload.mobile);
 
 
+        if (!payload.isMobileVisible) {
+            data.isMobileVisible = false;
+        } else {
+            data.isMobileVisible = xss(payload.isMobileVisible);
+        }
+
+
         if (!payload.email) {
             return res.status(400).send({ "msg": "Email is Missing" });
         }
@@ -300,7 +345,9 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
             res.status(400).send({ "msg": "Missing Lead Form ID to Update" });
         }
 
+
         data.userID = req.userDetail._id;
+        data.verificationState = "Pending";
 
         let updateForm = await LeadFormModel.findByIdAndUpdate({ "_id": leadFormID }, data);
 
@@ -309,6 +356,59 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         res.status(500).send({ "msg": "Server Error While Saving Form Data", "error": error });
     }
 });
+
+
+// Delete Lead Form Data
+leadFormRoute.delete("/:id", tokenVerify, async (req, res) => {
+    let leadFormID = req.params.id;
+
+    let foundData = await LeadFormModel.findById(leadFormID);
+    if (!foundData) {
+        res.status(404).send({ "msg": "No Lead Form Found with this ID" });
+    }
+
+    if (foundData.userID != req.userDetail._id) {
+        res.status(400).send({ "msg": "Not Your Lead Form, Can't Delete" });
+    }
+
+    await LeadFormModel.findByIdAndDelete(leadFormID);
+
+    res.status(200).send({ "msg": "Deleted Successfully" });
+});
+
+
+// Reply
+leadFormRoute.post("/:id/replies", tokenVerify, async (req, res) => {
+    try {
+        const leadFormID = req.params.id;
+        const { message } = req.body;
+        const userID = req.userDetail._id;
+
+        if (!leadFormID) {
+            return res.status(400).send({ msg: "Lead Form ID Not Provided" });
+        }
+
+        if (!message) {
+            return res.status(400).send({ msg: "Reply message is missing" });
+        }
+
+        const reply = {
+            userID,
+            message
+        };
+
+        await LeadFormModel.findByIdAndUpdate(
+            { _id: leadFormID },
+            { $push: { replies: reply } }
+        );
+
+        res.status(201).send({ msg: "Reply added successfully" });
+    } catch (error) {
+        res.status(500).send({ msg: "Server Error While Adding Reply", error });
+    }
+});
+
+
 
 
 
