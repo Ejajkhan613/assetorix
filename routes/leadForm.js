@@ -394,7 +394,7 @@ leadFormRoute.post("/:id/replies", tokenVerify, async (req, res) => {
 
         const reply = {
             userID,
-            message
+            message: xss(message)
         };
 
         await LeadFormModel.findByIdAndUpdate(
