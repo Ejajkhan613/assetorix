@@ -34,7 +34,7 @@ leadFormRoute.get("/", tokenVerify, async (req, res) => {
 
 
 
-// Retrieve Single Lead Form Data
+// // Retrieve Single Lead Form Data with User Names in Replies
 leadFormRoute.get("/single/:id", async (req, res) => {
     try {
         const leadFormID = req.params.id;
@@ -52,7 +52,7 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             formType: response.formType,
             propertyType: response.propertyType,
             description: response.description,
-            replies: response.replies,
+            replies: [],
             createdOn: response.createdOn
         };
 
@@ -60,12 +60,24 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             data.mobile = response.mobile;
         }
 
+        // Fetch user names for each reply
+        for (const reply of response.replies) {
+            const user = await UserModel.findById(reply.userID);
+            const userName = user ? user.name : "Unknown User";
+            const formattedReply = {
+                userID: reply.userID,
+                name: userName,
+                message: reply.message,
+                createdOn: reply.createdOn
+            };
+            data.replies.push(formattedReply);
+        }
+
         res.status(200).send(data);
     } catch (error) {
         res.status(500).send({ msg: "Server Error While Getting Lead Form", error });
     }
 });
-
 
 
 
@@ -180,7 +192,7 @@ leadFormRoute.get("/all/", async (req, res) => {
 
         const data = await LeadFormModel.aggregate(pipeline);
 
-        const totalCount = await LeadFormModel.countDocuments(pipeline[0].$match);
+        const totalCount = data.length;
         const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
         res.status(200).send({
@@ -196,16 +208,13 @@ leadFormRoute.get("/all/", async (req, res) => {
 
 
 
-
 leadFormRoute.post("/", tokenVerify, async (req, res) => {
     let payload = req.body;
     try {
         let data = {};
 
-        if (!payload.userID) {
-            return res.status(400).send({ "msg": "UserID is Missing" });
-        }
-        data.userID = xss(payload.userID);
+
+        data.userID = xss(req.userDetail._id);
 
 
         if (!payload.name) {
@@ -218,6 +227,7 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
             return res.status(400).send({ "msg": "Mobile is Missing" });
         }
         data.mobile = xss(payload.mobile);
+
 
         if (!payload.isMobileVisible) {
             data.isMobileVisible = false;
@@ -249,7 +259,7 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
 
             let validPropertyType = ["Residential", "Commercial"];
             if (!validPropertyType.includes(payload.propertyType)) {
-                return res.status(400).send({ "msg": `Form Type is Wrong - ${payload.propertyType}` })
+                return res.status(400).send({ "msg": `Property Type is Wrong - ${payload.propertyType}` })
             }
             data.propertyType = xss(payload.propertyType);
         } else {
@@ -274,16 +284,14 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
 });
 
 
+
 leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
     let payload = req.body;
     let leadFormID = req.params.id;
     try {
         let data = {};
 
-        if (!payload.userID) {
-            return res.status(400).send({ "msg": "UserID is Missing" });
-        }
-        data.userID = xss(payload.userID);
+        data.userID = xss(req.userDetail._id);
 
 
         if (!payload.name) {
@@ -349,7 +357,7 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         data.userID = req.userDetail._id;
         data.verificationState = "Pending";
 
-        let updateForm = await LeadFormModel.findByIdAndUpdate({ "_id": leadFormID }, data);
+        await LeadFormModel.findByIdAndUpdate({ "_id": leadFormID }, data);
 
         res.status(201).send({ "msg": "Form Updated Successfully" });
     } catch (error) {
@@ -368,7 +376,7 @@ leadFormRoute.delete("/:id", tokenVerify, async (req, res) => {
     }
 
     if (foundData.userID != req.userDetail._id) {
-        res.status(400).send({ "msg": "Not Your Lead Form, Can't Delete" });
+        res.status(400).send({ "msg": "Looks like this Lead Form is not associated with your account" });
     }
 
     await LeadFormModel.findByIdAndDelete(leadFormID);

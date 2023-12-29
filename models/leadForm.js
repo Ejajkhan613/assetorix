@@ -9,6 +9,12 @@ const leadFormSchema = mongoose.Schema({
         type: String,
         trim: true
     },
+    uniqueId: {
+        type: String,
+        required: true,
+        default: () => nanoid(7),
+        index: { unique: true },
+    },
     name: {
         type: String,
         required: true,
