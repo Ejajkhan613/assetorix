@@ -43,10 +43,13 @@ leadFormRoute.get("/single/:id", async (req, res) => {
         if (!response) {
             return res.status(404).send({ msg: "Lead Form Data Not Found" });
         }
+        
+        const userAvatar = await UserModel.findById(response.userID);
 
         const data = {
             _id: response._id,
             userID: response.userID,
+            avatar: userAvatar.avatar,
             name: response.name,
             email: response.email,
             formType: response.formType,
@@ -55,13 +58,6 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             replies: [],
             createdOn: response.createdOn
         };
-
-        const userAvatar = await UserModel.findById(response.userID);
-
-        if (userAvatar) {
-            data.avatar = userAvatar;
-        }
-
 
 
         if (response.isMobileVisible) {
@@ -72,15 +68,17 @@ leadFormRoute.get("/single/:id", async (req, res) => {
         for (const reply of response.replies) {
             const user = await UserModel.findById(reply.userID);
             const userName = user ? user.name : "Unknown User";
-            const formattedReply = {
+            let formattedReply = {
+                _id: reply._id,
                 userID: reply.userID,
                 name: userName,
-                avatar,
+                avatar: user.avatar,
                 message: reply.message,
                 createdOn: reply.createdOn
             };
             data.replies.push(formattedReply);
         }
+        console.log(data);
 
         res.status(200).send(data);
     } catch (error) {
