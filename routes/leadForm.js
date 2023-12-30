@@ -43,7 +43,7 @@ leadFormRoute.get("/single/:id", async (req, res) => {
         if (!response) {
             return res.status(404).send({ msg: "Lead Form Data Not Found" });
         }
-        
+
         const userAvatar = await UserModel.findById(response.userID);
 
         const data = {
@@ -78,7 +78,6 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             };
             data.replies.push(formattedReply);
         }
-        console.log(data);
 
         res.status(200).send(data);
     } catch (error) {
@@ -141,13 +140,11 @@ leadFormRoute.get("/single/:id", async (req, res) => {
 //     }
 // });
 
-
-
 // get Lead Form Lists All
 leadFormRoute.get("/all/", async (req, res) => {
     const ITEMS_PER_PAGE = 20;
     try {
-        let { page, ...queryParams } = req.query;
+        let { page, search, ...queryParams } = req.query; // Extract 'search' from query parameters
         const currentPage = parseInt(page) || 1;
 
         let pipeline = [
@@ -168,6 +165,17 @@ leadFormRoute.get("/all/", async (req, res) => {
                     },
                 });
             }
+        }
+
+        if (search) {
+            pipeline.push({
+                $match: {
+                    $or: [
+                        { "description": { $regex: new RegExp(search, "i") } },
+                        { "name": { $regex: new RegExp(search, "i") } }
+                    ],
+                },
+            });
         }
 
         pipeline = pipeline.concat([
@@ -215,6 +223,7 @@ leadFormRoute.get("/all/", async (req, res) => {
 
 
 
+// Post a Lead Form
 leadFormRoute.post("/", tokenVerify, async (req, res) => {
     let payload = req.body;
     try {
