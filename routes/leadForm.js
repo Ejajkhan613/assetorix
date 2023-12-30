@@ -56,6 +56,14 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             createdOn: response.createdOn
         };
 
+        const userAvatar = await UserModel.findById(response.userID);
+
+        if (userAvatar) {
+            data.avatar = userAvatar;
+        }
+
+
+
         if (response.isMobileVisible) {
             data.mobile = response.mobile;
         }
@@ -67,6 +75,7 @@ leadFormRoute.get("/single/:id", async (req, res) => {
             const formattedReply = {
                 userID: reply.userID,
                 name: userName,
+                avatar,
                 message: reply.message,
                 createdOn: reply.createdOn
             };
