@@ -426,7 +426,49 @@ leadFormRoute.post("/:id/replies", tokenVerify, async (req, res) => {
             { $push: { replies: reply } }
         );
 
-        res.status(201).send({ msg: "Reply added successfully" });
+        //  ---------- ---------- ----------- ----------- ------------
+        const response = await LeadFormModel.findById(leadFormID);
+
+        if (!response) {
+            return res.status(404).send({ msg: "Lead Form Data Not Found" });
+        }
+
+        const userAvatar = await UserModel.findById(response.userID);
+
+        const data = {
+            _id: response._id,
+            userID: response.userID,
+            avatar: userAvatar.avatar,
+            name: response.name,
+            email: response.email,
+            formType: response.formType,
+            propertyType: response.propertyType,
+            description: response.description,
+            replies: [],
+            createdOn: response.createdOn
+        };
+
+
+        if (response.isMobileVisible) {
+            data.mobile = response.mobile;
+        }
+
+        // Fetch user names for each reply
+        for (const reply of response.replies) {
+            const user = await UserModel.findById(reply.userID);
+            const userName = user ? user.name : "Unknown User";
+            let formattedReply = {
+                _id: reply._id,
+                userID: reply.userID,
+                name: userName,
+                avatar: user.avatar,
+                message: reply.message,
+                createdOn: reply.createdOn
+            };
+            data.replies.push(formattedReply);
+        }
+
+        res.status(201).send({ msg: "Reply added successfully", data });
     } catch (error) {
         res.status(500).send({ msg: "Server Error While Adding Reply", error });
     }
