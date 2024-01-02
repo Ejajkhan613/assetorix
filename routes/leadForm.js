@@ -309,6 +309,9 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
 
         data.userID = xss(req.userDetail._id);
 
+        if (!leadFormID) {
+            res.status(400).send({ "msg": "Missing Lead Form ID to Update" });
+        }
 
         if (!payload.name) {
             return res.status(400).send({ "msg": "Name is Missing" });
@@ -365,17 +368,22 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         }
         data.description = xss(payload.description);
 
-        if (!leadFormID) {
-            res.status(400).send({ "msg": "Missing Lead Form ID to Update" });
+
+        if (verificationState) {
+            let validVerificationStates = ["Public", "Private"];
+            if (!validVerificationStates.includes(xss(payload.verificationState))) {
+                data.verificationState = xss(payload.verificationState);
+            } else {
+                res.status(400).send({ "msg": `verification State is wrong - ${xss(payload.verificationState)}` })
+            }
         }
 
 
         data.userID = req.userDetail._id;
-        data.verificationState = "Pending";
 
         await LeadFormModel.findByIdAndUpdate({ "_id": leadFormID }, data);
 
-        res.status(201).send({ "msg": "Form Updated Successfully" });
+        res.status(201).send({ "msg": "Lead Updated Successfully" });
     } catch (error) {
         res.status(500).send({ "msg": "Server Error While Saving Form Data", "error": error });
     }
