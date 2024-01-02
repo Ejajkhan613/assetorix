@@ -25,10 +25,10 @@ leadFormRoute.get("/", tokenVerify, async (req, res) => {
     try {
         let id = req.userDetail._id;
 
-        let list = await LeadFormModel.find({ "userID": id }).sort({ "createdOn": -1 });
+        let list = await LeadFormModel.find({ "userID": id }).sort({ "expiryTime": -1 });
         res.status(200).send(list);
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Getting Data", "error": error });
+        res.status(500).send({ "msg": "Server Error While Getting Own Lead Data", "error": error });
     }
 });
 
