@@ -302,12 +302,10 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
 
 
 leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
-    let payload = req.body;
-    let leadFormID = req.params.id;
+    const payload = req.body;
+    const leadFormID = req.params.id;
     try {
-        let data = {};
-
-        data.userID = xss(req.userDetail._id);
+        const data = {};
 
         if (!leadFormID) {
             res.status(400).send({ "msg": "Missing Lead Form ID to Update" });
@@ -341,7 +339,9 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         if (!payload.formType) {
             return res.status(400).send({ "msg": "Form Type is Missing" });
         }
+
         let validFormType = ["Buy", "Rent", "Sell"];
+
         if (!validFormType.includes(payload.formType)) {
             return res.status(400).send({ "msg": `Form Type is Wrong - ${payload.formType}` })
         }
@@ -354,6 +354,7 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
             }
 
             let validPropertyType = ["Residential", "Commercial"];
+
             if (!validPropertyType.includes(payload.propertyType)) {
                 return res.status(400).send({ "msg": `Form Type is Wrong - ${payload.propertyType}` })
             }
