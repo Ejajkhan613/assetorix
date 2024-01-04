@@ -370,12 +370,12 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
         data.description = xss(payload.description);
 
 
-        if (verificationState) {
-            let validVerificationStates = ["Public", "Private"];
-            if (!validVerificationStates.includes(xss(payload.verificationState))) {
-                data.verificationState = xss(payload.verificationState);
+        if (payload.leadFormState) {
+            let validLeadFormState = ["Public", "Private"];
+            if (!validLeadFormState.includes(xss(payload.leadFormState))) {
+                data.leadFormState = xss(payload.leadFormState);
             } else {
-                res.status(400).send({ "msg": `verification State is wrong - ${xss(payload.verificationState)}` })
+                res.status(400).send({ "msg": `verification State is wrong - ${xss(payload.leadFormState)}` })
             }
         }
 
