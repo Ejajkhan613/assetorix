@@ -295,7 +295,7 @@ leadFormRoute.post("/", tokenVerify, async (req, res) => {
 
         res.status(201).send({ "msg": "Form Submitted Successfully" });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Saving Form Data", "error": error });
+        res.status(500).send({ "msg": "Server Error While Saving Lead Form Data", "error": error });
     }
 });
 
@@ -384,29 +384,33 @@ leadFormRoute.patch("/:id", tokenVerify, async (req, res) => {
 
         await LeadFormModel.findByIdAndUpdate({ "_id": leadFormID }, data);
 
-        res.status(201).send({ "msg": "Lead Updated Successfully" });
+        res.status(201).send({ "msg": "Lead Form Updated Successfully" });
     } catch (error) {
-        res.status(500).send({ "msg": "Server Error While Saving Form Data", "error": error });
+        res.status(500).send({ "msg": "Server Error While Updating Lead Form", "error": error });
     }
 });
 
 
 // Delete Lead Form Data
 leadFormRoute.delete("/:id", tokenVerify, async (req, res) => {
-    let leadFormID = req.params.id;
+    try {
+        let leadFormID = req.params.id;
 
-    let foundData = await LeadFormModel.findById(leadFormID);
-    if (!foundData) {
-        res.status(404).send({ "msg": "No Lead Form Found with this ID" });
+        let foundData = await LeadFormModel.findById(leadFormID);
+        if (!foundData) {
+            res.status(404).send({ "msg": "No Lead Form Found with this ID" });
+        }
+
+        if (foundData.userID != req.userDetail._id) {
+            res.status(400).send({ "msg": "Looks like this Lead Form is not associated with your account" });
+        }
+
+        await LeadFormModel.findByIdAndDelete(leadFormID);
+
+        res.status(200).send({ "msg": "Deleted Successfully" });
+    } catch (error) {
+        res.status(500).send({ "msg": "Server Error While Deleting Lead Form", "error": error });
     }
-
-    if (foundData.userID != req.userDetail._id) {
-        res.status(400).send({ "msg": "Looks like this Lead Form is not associated with your account" });
-    }
-
-    await LeadFormModel.findByIdAndDelete(leadFormID);
-
-    res.status(200).send({ "msg": "Deleted Successfully" });
 });
 
 
