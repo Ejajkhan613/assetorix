@@ -489,67 +489,67 @@ leadFormRoute.post("/:id/replies", tokenVerify, async (req, res) => {
 
 
 // Edit Reply from Lead Form
-leadFormRoute.put("/:id/replies/:replyId", tokenVerify, async (req, res) => {
-    try {
-        const leadFormID = req.params.id;
-        const replyId = req.params.replyId;
-        const { message } = req.body;
-        const userID = req.userDetail._id;
+// leadFormRoute.put("/:id/replies/:replyId", tokenVerify, async (req, res) => {
+//     try {
+//         const leadFormID = req.params.id;
+//         const replyId = req.params.replyId;
+//         const { message } = req.body;
+//         const userID = req.userDetail._id;
 
-        if (!leadFormID) {
-            return res.status(400).send({ msg: "Lead Form ID Not Provided" });
-        }
+//         if (!leadFormID) {
+//             return res.status(400).send({ msg: "Lead Form ID Not Provided" });
+//         }
 
-        if (!replyId) {
-            return res.status(400).send({ msg: "Reply ID Not Provided" });
-        }
+//         if (!replyId) {
+//             return res.status(400).send({ msg: "Reply ID Not Provided" });
+//         }
 
-        if (!message) {
-            return res.status(400).send({ msg: "Reply message is missing" });
-        }
+//         if (!message) {
+//             return res.status(400).send({ msg: "Reply message is missing" });
+//         }
 
-        const updatedReply = {
-            userID,
-            message: xss(message).trim()
-        };
+//         const updatedReply = {
+//             userID,
+//             message: xss(message).trim()
+//         };
 
-        await LeadFormModel.findOneAndUpdate(
-            { _id: leadFormID, "replies._id": replyId, "replies.userID": userID },
-            { $set: { "replies.$.message": updatedReply.message } }
-        );
+//         await LeadFormModel.findOneAndUpdate(
+//             { _id: leadFormID, "replies._id": replyId, "replies.userID": userID },
+//             { $set: { "replies.$.message": updatedReply.message } }
+//         );
 
-        res.status(200).send({ msg: "Reply updated successfully" });
-    } catch (error) {
-        res.status(500).send({ msg: "Server Error While Updating Reply", error });
-    }
-});
+//         res.status(200).send({ msg: "Reply updated successfully" });
+//     } catch (error) {
+//         res.status(500).send({ msg: "Server Error While Updating Reply", error });
+//     }
+// });
 
 
 // Delete Reply from Lead Form
-leadFormRoute.delete("/:id/replies/:replyId", tokenVerify, async (req, res) => {
-    try {
-        const leadFormID = req.params.id;
-        const replyId = req.params.replyId;
-        const userID = req.userDetail._id;
+// leadFormRoute.delete("/:id/replies/:replyId", tokenVerify, async (req, res) => {
+//     try {
+//         const leadFormID = req.params.id;
+//         const replyId = req.params.replyId;
+//         const userID = req.userDetail._id;
 
-        if (!leadFormID) {
-            return res.status(400).send({ msg: "Lead Form ID Not Provided" });
-        }
+//         if (!leadFormID) {
+//             return res.status(400).send({ msg: "Lead Form ID Not Provided" });
+//         }
 
-        if (!replyId) {
-            return res.status(400).send({ msg: "Reply ID Not Provided" });
-        }
+//         if (!replyId) {
+//             return res.status(400).send({ msg: "Reply ID Not Provided" });
+//         }
 
-        await LeadFormModel.findByIdAndUpdate(
-            { _id: leadFormID },
-            { $pull: { replies: { _id: replyId, userID: userID } } }
-        );
+//         await LeadFormModel.findByIdAndUpdate(
+//             { _id: leadFormID },
+//             { $pull: { replies: { _id: replyId, userID: userID } } }
+//         );
 
-        res.status(200).send({ msg: "Reply deleted successfully" });
-    } catch (error) {
-        res.status(500).send({ msg: "Server Error While Deleting Reply", error });
-    }
-});
+//         res.status(200).send({ msg: "Reply deleted successfully" });
+//     } catch (error) {
+//         res.status(500).send({ msg: "Server Error While Deleting Reply", error });
+//     }
+// });
 
 
 
