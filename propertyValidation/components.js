@@ -1447,7 +1447,7 @@ function roadFacingWidth(data) {
         return { "msg": "ERROR", "error": "Missing Road Facing Width" };
     }
 
-    const numericRoadFacingWidth = Number(xss(data).trim());
+    const numericRoadFacingWidth = Number(xss(data));
 
     if (isNaN(numericRoadFacingWidth)) {
         return { "msg": "ERROR", "error": "Invalid Road Facing Width, It should be number only" };
@@ -1509,7 +1509,7 @@ function totalFloorsAllowed(data) {
         return { "msg": "ERROR", "error": "Missing Total Allowed Floors for Construction" };
     }
 
-    const numericTotalAllowedFloors = Number(xss(data).trim());
+    const numericTotalAllowedFloors = Number(xss(data));
 
     if (isNaN(numericTotalAllowedFloors)) {
         return { "msg": "ERROR", "error": `${data} is Invalid Total Allowed Floors, It should be a number only` };
