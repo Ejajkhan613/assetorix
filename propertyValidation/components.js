@@ -38,7 +38,7 @@ function propertyGroup(data) {
 
 
 // Property Type
-function propertyType(data, propertyGroup) {
+function propertyType(data, propertyGroupValue) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Property Type" };
     }
@@ -50,7 +50,7 @@ function propertyType(data, propertyGroup) {
     let validTypes;
 
     const sanitizedData = xss(data).trim();
-    const sanitizedPropertyGroup = propertyGroup(propertyGroup);
+    const sanitizedPropertyGroup = propertyGroup(propertyGroupValue);
 
     if (sanitizedPropertyGroup.msg == "ERROR") {
         return sanitizedPropertyGroup;
@@ -807,8 +807,8 @@ function price(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Price" };
     }
-
-    const sanitizedData = Number(xss(data.trim()));
+    
+    const sanitizedData = Number(xss(data));
 
     if (isNaN(sanitizedData)) {
         return { "msg": "ERROR", "error": `Price should be a number only - ${data}` };
@@ -833,8 +833,8 @@ function priceUnit(price, area) {
         return { "msg": "ERROR", "error": "Missing Plot/Carpet Area Detail" };
     }
 
-    const numericPrice = Number(xss(price.trim()));
-    const numericArea = Number(xss(area.trim()));
+    const numericPrice = Number(xss(price));
+    const numericArea = Number(xss(area));
 
     if (isNaN(numericPrice)) {
         return { "msg": "ERROR", "error": `${price} is an invalid price; it should be a number only` };
@@ -1484,15 +1484,16 @@ function roadFacingWidthType(data) {
 
 // Property Location Advantages
 function locationAdv(data) {
-    if (!data || !Array.isArray(data)) {
+    if (!data.length || !Array.isArray(data)) {
         return { "msg": "SUCCESS", "data": [] };
     }
-    let list = ["Close to Metro Station", "Close to School", "Close to Hospital", "Close to Market", "Close to Railway Station", "Close to Airport", "Close to Mall", "Close to highway"];
+    const valueList = ["Close to Metro Station", "Close to School", "Close to Hospital", "Close to Market", "Close to Railway Station", "Close to Airport", "Close to Mall", "Close to highway"];
     let uniqueLocationAdv = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data).trim();
-        if (list.includes(value)) {
+        let value = xss(data[a]).trim();
+        if (valueList.includes(value)) {
+            console.log("Yes", value)
             uniqueLocationAdv.add(value);
         } else {
             return { "msg": "ERROR", "error": `This Location Advantage value is not valid - ${value}` }

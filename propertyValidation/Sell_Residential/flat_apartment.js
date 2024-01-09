@@ -28,7 +28,7 @@ function flat_apartment(data) {
     } else {
         return propertyGroup;
     }
-
+    
 
     // Property Type
     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
@@ -37,8 +37,7 @@ function flat_apartment(data) {
     } else {
         return propertyType;
     }
-
-
+    
 
     // --------------------------------- ADDRESS STARTING ---------------------------------
 
@@ -245,8 +244,7 @@ function flat_apartment(data) {
     }
 
     // ------------------ Area Details and Unit Details ENDING -----------------------------
-
-
+   
 
     // Other Room
     let otherRoom = component.otherRoom(data.otherRoom || []);
@@ -294,7 +292,7 @@ function flat_apartment(data) {
     } else {
         return floorOn;
     }
-
+    
 
 
     // Availability Status
@@ -315,7 +313,7 @@ function flat_apartment(data) {
     }
 
 
-
+    
 
     // Ownership Type
     let ownership = component.ownership(data.ownership);
@@ -335,8 +333,7 @@ function flat_apartment(data) {
         return price;
     }
 
-
-
+    
     // Price Per Unit
     let priceUnit = component.priceUnit(data.price, data.plotArea);
     if (priceUnit.msg == "SUCCESS") {
@@ -344,6 +341,7 @@ function flat_apartment(data) {
     } else {
         return priceUnit;
     }
+    
 
 
     // Country Currency
@@ -353,10 +351,10 @@ function flat_apartment(data) {
     } else {
         return countryCurrency;
     }
-
-
-
-
+    
+    
+    
+    
     // Inclusive Prices
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
@@ -364,10 +362,10 @@ function flat_apartment(data) {
     } else {
         return inclusivePrices;
     }
+    
 
 
-
-
+    
     // Additional Pricing Details
     let additionalPricingDetails = component.additionalPricingDetails(data.additionalPricingDetails);
     if (additionalPricingDetails.msg == "SUCCESS") {
@@ -522,6 +520,8 @@ function flat_apartment(data) {
         return locationAdv;
     }
 
+
+    console.log(obj);
 
 
     return { "msg": "SUCCESS", "data": obj };
