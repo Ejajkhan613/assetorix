@@ -770,7 +770,7 @@ propertyRoute.patch("/:id", tokenVerify, async (req, res) => {
         if (property.userID != userID || !user.role == "admin" || !user.role == "super_admin") {
             return res.status(400).send({ "msg": "Access Denied, Not Your Property" });
         }
-
+        
         let obj = spreader(req.body);
 
         if (obj.msg == "SUCCESS") {

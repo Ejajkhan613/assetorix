@@ -9,8 +9,7 @@ function flat_apartment(data) {
     let obj = {};
 
 
-
-
+    
     // Looking For
     let lookingFor = component.lookingFor(data.lookingFor);
     if (lookingFor.msg == "SUCCESS") {
@@ -18,9 +17,9 @@ function flat_apartment(data) {
     } else {
         return lookingFor;
     }
-
-
-
+    
+    
+    
     // Property Group
     let propertyGroup = component.propertyGroup(data.propertyGroup);
     if (propertyGroup.msg == "SUCCESS") {
@@ -29,7 +28,7 @@ function flat_apartment(data) {
         return propertyGroup;
     }
     
-
+    
     // Property Type
     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
     if (propertyType.msg == "SUCCESS") {
@@ -38,18 +37,19 @@ function flat_apartment(data) {
         return propertyType;
     }
     
-
+    
+    
     // --------------------------------- ADDRESS STARTING ---------------------------------
-
+    
     // Checking Address
     if (!data.address) {
         return { "msg": "ERROR", "error": "Missing Address Detail Object" };
     }
-
+    
     // Adding Address Data
     let address = {};
-
-
+    
+    
     // House Number ( Optional )
     let houseNumber = component.houseNumber(data.address.houseNumber);
     if (houseNumber.msg == "SUCCESS") {
@@ -160,7 +160,7 @@ function flat_apartment(data) {
 
     // --------------------------------- ROOM DETAILS ENDING ---------------------------------
 
-
+    
 
     // ------------------ Area Details and Unit Details STARTING -----------------------------
 
@@ -179,7 +179,6 @@ function flat_apartment(data) {
     } else {
         return plotAreaUnit;
     }
-
 
     // Carpet Area
     if (data.carpetArea && data.carpetAreaUnit) {
@@ -244,7 +243,7 @@ function flat_apartment(data) {
     }
 
     // ------------------ Area Details and Unit Details ENDING -----------------------------
-   
+
 
     // Other Room
     let otherRoom = component.otherRoom(data.otherRoom || []);
@@ -264,7 +263,6 @@ function flat_apartment(data) {
     } else {
         return furnished;
     }
-
 
     // Parking
     let parking = component.parking(data.parking);
@@ -292,8 +290,8 @@ function flat_apartment(data) {
     } else {
         return floorOn;
     }
-    
 
+    
 
     // Availability Status
     let availabilityData = { "type": data.availabilityStatus, "value": data.propertyStatus || data.expectedByYear };
@@ -313,7 +311,7 @@ function flat_apartment(data) {
     }
 
 
-    
+
 
     // Ownership Type
     let ownership = component.ownership(data.ownership);
@@ -333,7 +331,7 @@ function flat_apartment(data) {
         return price;
     }
 
-    
+
     // Price Per Unit
     let priceUnit = component.priceUnit(data.price, data.plotArea);
     if (priceUnit.msg == "SUCCESS") {
@@ -341,7 +339,7 @@ function flat_apartment(data) {
     } else {
         return priceUnit;
     }
-    
+
 
 
     // Country Currency
@@ -351,10 +349,10 @@ function flat_apartment(data) {
     } else {
         return countryCurrency;
     }
-    
-    
-    
-    
+
+
+
+
     // Inclusive Prices
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
@@ -362,10 +360,10 @@ function flat_apartment(data) {
     } else {
         return inclusivePrices;
     }
-    
 
 
-    
+
+
     // Additional Pricing Details
     let additionalPricingDetails = component.additionalPricingDetails(data.additionalPricingDetails);
     if (additionalPricingDetails.msg == "SUCCESS") {
@@ -520,8 +518,6 @@ function flat_apartment(data) {
         return locationAdv;
     }
 
-
-    console.log(obj);
 
 
     return { "msg": "SUCCESS", "data": obj };

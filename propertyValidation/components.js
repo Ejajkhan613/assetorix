@@ -447,7 +447,7 @@ function plotArea(data) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
 
-    const numericPlotArea = Number(xss(data.trim()));
+    const numericPlotArea = Number(xss(data));
 
     if (isNaN(numericPlotArea)) {
         return { "msg": "ERROR", "error": `${data} is Invalid Plot Area, It should be a number only` };
@@ -481,7 +481,7 @@ function carpetArea(data) {
         return { "msg": "ERROR", "error": "Missing Carpet Area" };
     }
 
-    const numericCarpetArea = Number(xss(data.trim()));
+    const numericCarpetArea = Number(xss(data));
 
     if (isNaN(numericCarpetArea)) {
         return { "msg": "ERROR", "error": `${numericCarpetArea} is Invalid Carpet Area, It should be a number only` };
@@ -515,7 +515,7 @@ function builtupArea(data) {
         return { "msg": "ERROR", "error": "Missing Builtup Area" };
     }
 
-    const numericBuiltupArea = Number(xss(data.trim()));
+    const numericBuiltupArea = Number(xss(data));
 
     if (isNaN(numericBuiltupArea)) {
         return { "msg": "ERROR", "error": `${numericBuiltupArea} is Invalid Builtup Area, It should be a number only` };
@@ -549,7 +549,7 @@ function superBuiltupArea(data) {
         return { "msg": "ERROR", "error": "Missing Super Builtup Area" };
     }
 
-    const numericSuperBuiltupArea = Number(xss(data.trim()));
+    const numericSuperBuiltupArea = Number(xss(data));
 
     if (isNaN(numericSuperBuiltupArea)) {
         return { "msg": "ERROR", "error": `${data} is Invalid Super Builtup Area, It should be a number only` };
@@ -1493,7 +1493,6 @@ function locationAdv(data) {
     for (let a = 0; a < data.length; a++) {
         let value = xss(data[a]).trim();
         if (valueList.includes(value)) {
-            console.log("Yes", value)
             uniqueLocationAdv.add(value);
         } else {
             return { "msg": "ERROR", "error": `This Location Advantage value is not valid - ${value}` }
