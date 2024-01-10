@@ -1,5 +1,6 @@
 // Dependencies
 const express = require("express");
+const rateLimit = require('express-rate-limit');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const xss = require('xss');
@@ -20,7 +21,6 @@ const { isValidName } = require("../services/nameValidation");
 const { isValidEmail } = require("../services/emailValidation");
 const { EmailOTPModel } = require("../models/emailOTPModel");
 const { email_OTP_sending } = require("../mail/emailOTP");
-const { LogsModel } = require("../models/logs");
 
 
 
@@ -43,6 +43,12 @@ const userRoute = express.Router();
 userRoute.use(express.json());
 
 
+// Added Rate Limit for login and signup
+const loginSignupLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 5, // limit each IP to 5 requests per windowMs
+    message: 'Too many login attempts, please try again after 10 minutes.',
+});
 
 
 // Get User Details
@@ -107,7 +113,7 @@ userRoute.get("/", tokenVerify, async (req, res) => {
 
 
 // User Registration Route
-userRoute.post("/register", userMobileDuplicateVerification, async (req, res) => {
+userRoute.post("/register", loginSignupLimiter, userMobileDuplicateVerification, async (req, res) => {
     let { name, mobile, password } = req.body;
 
     if (!name) {
@@ -151,7 +157,7 @@ userRoute.post("/register", userMobileDuplicateVerification, async (req, res) =>
 
 
 // User Login Route
-userRoute.post("/login", async (req, res) => {
+userRoute.post("/login", loginSignupLimiter, async (req, res) => {
     let { mobile, password } = req.body;
 
     if (!mobile) {
@@ -166,8 +172,6 @@ userRoute.post("/login", async (req, res) => {
     }
 
     try {
-
-        // Matching input from Database
         let finding = await UserModel.findOne({ mobile });
 
         if (!finding) {

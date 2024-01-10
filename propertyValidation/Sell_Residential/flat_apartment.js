@@ -9,7 +9,7 @@ function flat_apartment(data) {
     let obj = {};
 
 
-    
+
     // Looking For
     let lookingFor = component.lookingFor(data.lookingFor);
     if (lookingFor.msg == "SUCCESS") {
@@ -17,9 +17,9 @@ function flat_apartment(data) {
     } else {
         return lookingFor;
     }
-    
-    
-    
+
+
+
     // Property Group
     let propertyGroup = component.propertyGroup(data.propertyGroup);
     if (propertyGroup.msg == "SUCCESS") {
@@ -27,8 +27,8 @@ function flat_apartment(data) {
     } else {
         return propertyGroup;
     }
-    
-    
+
+
     // Property Type
     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
     if (propertyType.msg == "SUCCESS") {
@@ -36,20 +36,20 @@ function flat_apartment(data) {
     } else {
         return propertyType;
     }
-    
-    
-    
+
+
+
     // --------------------------------- ADDRESS STARTING ---------------------------------
-    
+
     // Checking Address
     if (!data.address) {
         return { "msg": "ERROR", "error": "Missing Address Detail Object" };
     }
-    
+
     // Adding Address Data
     let address = {};
-    
-    
+
+
     // House Number ( Optional )
     let houseNumber = component.houseNumber(data.address.houseNumber);
     if (houseNumber.msg == "SUCCESS") {
@@ -160,7 +160,7 @@ function flat_apartment(data) {
 
     // --------------------------------- ROOM DETAILS ENDING ---------------------------------
 
-    
+
 
     // ------------------ Area Details and Unit Details STARTING -----------------------------
 
@@ -291,7 +291,7 @@ function flat_apartment(data) {
         return floorOn;
     }
 
-    
+
 
     // Availability Status
     let availabilityData = { "type": data.availabilityStatus, "value": data.propertyStatus || data.expectedByYear };
@@ -518,14 +518,22 @@ function flat_apartment(data) {
         return locationAdv;
     }
 
-
-
     return { "msg": "SUCCESS", "data": obj };
 }
 
 
 module.exports = { flat_apartment };
 
+
+
+
+
+
+
+
+
+
+// ::::::::::::::::::::::: OLD METHOD :::::::::::::::::::::::::::
 
 // const xss = require("xss");
 

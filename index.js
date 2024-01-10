@@ -27,8 +27,6 @@ const Port = process.env.port;
 // Converting express into an app variable
 const app = express();
 
-
-
 // Using Cors to Block
 // app.use(cors({
 //     origin: "https://assetorix.com", // Add your frontend URL here

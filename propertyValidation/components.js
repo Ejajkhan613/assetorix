@@ -4,15 +4,15 @@ const xss = require("xss");
 // ------------------ Basic Details START -----------------------------
 
 // Looking For
-function lookingFor(data) {
+function lookingFor(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Looking For" };
     }
 
-    const validTypes = ["Sell", "Rent", "PG"];
-    const sanitizedData = xss(data).trim();
+    const validTypes = new Set(["Sell", "Rent", "PG"]);
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validTypes.includes(sanitizedData)) {
+    if (!validTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Looking For Type - ${sanitizedData}` };
     }
 
@@ -21,15 +21,15 @@ function lookingFor(data) {
 
 
 // Property Group
-function propertyGroup(data) {
+function propertyGroup(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Property Group" };
     }
 
-    const validGroups = ["Residential", "Commercial"];
-    const sanitizedData = xss(data).trim();
+    const validGroups = new Set(["Residential", "Commercial"]);
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validGroups.includes(sanitizedData)) {
+    if (!validGroups.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Property Group - ${sanitizedData}` };
     }
 
@@ -38,34 +38,29 @@ function propertyGroup(data) {
 
 
 // Property Type
-function propertyType(data, propertyGroupValue) {
-    if (!data) {
-        return { "msg": "ERROR", "error": "Missing Property Type" };
+function propertyType(data = "", propertyGroupValue) {
+    if (!propertyGroupValue) {
+        return { "msg": "ERROR", "error": "Missing Property Group" };
     }
 
-
-    const validResidentialTypes = ["Flat / Apartment", "Independent House / Villa", "Independent / Builder Floor", "Serviced Apartment", "1RK / Studio Apartment", "Farmhouse", "Plot / Land"];
-    const validCommercialTypes = ["Office", "Storage", "Industry", "Hospitality", "Retail"];
-
-    let validTypes;
-
-    const sanitizedData = xss(data).trim();
     const sanitizedPropertyGroup = propertyGroup(propertyGroupValue);
 
-    if (sanitizedPropertyGroup.msg == "ERROR") {
+    if (sanitizedPropertyGroup.msg === "ERROR") {
         return sanitizedPropertyGroup;
     }
 
+    const sanitizedData = xss(data.toString().trim());
+
+    let validTypes;
     if (sanitizedPropertyGroup.data === "Residential") {
-        validTypes = validResidentialTypes;
+        validTypes = new Set(["Flat / Apartment", "Independent House / Villa", "Independent / Builder Floor", "Serviced Apartment", "1RK / Studio Apartment", "Farmhouse", "Plot / Land"]);
     } else if (sanitizedPropertyGroup.data === "Commercial") {
-        validTypes = validCommercialTypes;
+        validTypes = new Set(["Office", "Storage", "Industry", "Hospitality", "Retail"]);
     } else {
         return { "msg": "ERROR", "error": `Wrong Property Group - ${sanitizedPropertyGroup.data}` };
     }
 
-
-    if (!validTypes.includes(sanitizedData)) {
+    if (!validTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Property Type - ${sanitizedData}` };
     }
 
@@ -73,16 +68,18 @@ function propertyType(data, propertyGroupValue) {
 }
 
 
-// Hospitality Type
-function hospitalityType(data) {
-    let validHospitalityTypes = ["Guest-House / Banquet-Hall", "Hotel / Resorts"];
 
+// Hospitality Type
+function hospitalityType(data = "") {
     if (!data) {
-        return { msg: "ERROR", error: "Missing Hospitality Type" };
+        return { "msg": "ERROR", "error": "Missing Hospitality Type" };
     }
 
-    const sanitizedData = xss(data).trim();
-    if (!validHospitalityTypes.includes(sanitizedData)) {
+    const validHospitalityTypes = new Set(["Guest-House / Banquet-Hall", "Hotel / Resorts"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validHospitalityTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Hospitality Type - ${sanitizedData}` };
     }
 
@@ -90,16 +87,18 @@ function hospitalityType(data) {
 }
 
 
-// Industry Type
-function industryType(data) {
-    let validIndustryType = ["Factory", "Manufacturing"];
 
+// Industry Type
+function industryType(data = "") {
     if (!data) {
-        return { msg: "ERROR", error: "Missing Industry Type" };
+        return { "msg": "ERROR", "error": "Missing Industry Type" };
     }
 
-    const sanitizedData = xss(data).trim();
-    if (!validIndustryType.includes(sanitizedData)) {
+    const validIndustryTypes = new Set(["Factory", "Manufacturing"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validIndustryTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Industry Type - ${sanitizedData}` };
     }
 
@@ -108,15 +107,16 @@ function industryType(data) {
 
 
 // Office Type
-function officeType(data) {
-    let validOfficeType = ["Co-working office space", "Bare shell office space", "Ready to move office space"];
-
+function officeType(data = "") {
     if (!data) {
-        return { msg: "ERROR", error: "Missing Office Type" };
+        return { "msg": "ERROR", "error": "Missing Office Type" };
     }
 
-    const sanitizedData = xss(data).trim();
-    if (!validOfficeType.includes(sanitizedData)) {
+    const validOfficeTypes = new Set(["Co-working office space", "Bare shell office space", "Ready to move office space"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validOfficeTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Office Type - ${sanitizedData}` };
     }
 
@@ -807,7 +807,7 @@ function price(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Price" };
     }
-    
+
     const sanitizedData = Number(xss(data));
 
     if (isNaN(sanitizedData)) {
