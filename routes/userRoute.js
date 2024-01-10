@@ -233,9 +233,6 @@ userRoute.post("/emailOTP", tokenVerify, async (req, res) => {
         });
 
         if (result) {
-            let userDetail = req.userDetail;
-            let logs = new LogsModel({ "id": userDetail._id, "title": "Email_OTP_Sending", "old": userDetail.email, "new": email });
-            await logs.save();
             return res.status(200).json({ "msg": "OTP Sent Successfully" });
         } else {
             return res.status(500).json({ "error": "Failed to update new OTP" });
@@ -276,8 +273,6 @@ userRoute.post("/emailVerify", tokenVerify, async (req, res) => {
         await EmailOTPModel.findByIdAndDelete({ "_id": findInDB._id });
 
         let user = req.userDetail;
-        let logs = new LogsModel({ "id": user._id, "title": "Email_OTP_Verification", "old": user.email, "new": email });
-        await logs.save();
 
         user.email = email;
         user.lastUpdated = indianTime();
@@ -304,8 +299,6 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             if (!isValidName(name)) {
                 return res.status(400).send({ "msg": "Name can't contain number or symbols" });
             } else {
-                let logs = new LogsModel({ "id": user._id, "title": "Name_Update", "old": user.name, "new": name });
-                await logs.save();
                 user.name = name;
             }
         }
@@ -314,8 +307,6 @@ userRoute.patch("/update", tokenVerify, async (req, res) => {
             if (mobile.length != 10) {
                 return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
             } else {
-                let logs = new LogsModel({ "id": user._id, "title": "Mobile_Update", "old": user.mobile, "new": mobile });
-                await logs.save();
                 user.mobile = mobile;
             }
         }
@@ -431,9 +422,6 @@ userRoute.patch("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         user.wishlist.push(propertyID);
         await user.save();
 
-        let logs = new LogsModel({ "id": user._id, "title": "Property_Added_To_Wishlist", "old": "", "new": propertyID });
-        await logs.save();
-
         res.status(200).send({ "msg": 'Item added to wishlist', "wishlistIDs": user.wishlist });
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error while Adding to Wishlist", "error": error });
@@ -463,11 +451,7 @@ userRoute.delete("/wishlist/:propertyID", tokenVerify, async (req, res) => {
         // Using the $in operator to fetch all properties by their IDs
         const userWishlist = await PropertyModel.find({ "_id": { $in: user.wishlist } });
 
-        let logs = new LogsModel({ "id": user._id, "title": "Property_Removed_From_Wishlist", "old": "", "new": propertyID });
-        await logs.save();
-
         res.status(200).send({ "msg": 'Item removed from wishlist', "wishlistIDs": userWishlist });
-
     } catch (error) {
         res.status(500).send({ "msg": "Internal Server Error: Error while Removing from Wishlist", "error": error });
     }

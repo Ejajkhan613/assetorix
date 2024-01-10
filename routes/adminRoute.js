@@ -15,7 +15,6 @@ const { isValidName } = require("../services/nameValidation");
 const { userEmailDuplicateVerification } = require("../duplicateVerification/email");
 const { email_OTP_sending } = require("../mail/emailOTP");
 const { EmailOTPModel } = require("../models/emailOTPModel");
-const { LogsModel } = require("../models/logs");
 const { indianTime } = require("../services/indianTime");
 
 
@@ -304,9 +303,6 @@ adminRoute.post("/emailOTP", tokenVerify, async (req, res) => {
         });
 
         if (result) {
-            let userDetail = req.userDetail;
-            let logs = new LogsModel({ "id": userDetail._id, "title": "Email_OTP_Sending", "old": userDetail.email, "new": email });
-            await logs.save();
             return res.status(200).json({ "msg": "OTP Sent Successfully" });
         } else {
             return res.status(500).json({ "error": "Failed to update new OTP" });
@@ -350,8 +346,6 @@ adminRoute.post("/emailVerify", tokenVerify, async (req, res) => {
         await EmailOTPModel.findByIdAndDelete({ "_id": findInDB._id });
 
         let user = req.userDetail;
-        let logs = new LogsModel({ "id": user._id, "title": "Email_OTP_Verification", "old": user.email || "", "new": email });
-        await logs.save();
 
         user.email = email;
         user.lastUpdated = indianTime();
@@ -385,8 +379,6 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
             if (!isValidName(name)) {
                 return res.status(400).send({ "msg": "Name can't contain number or symbols" });
             } else {
-                let logs = new LogsModel({ "id": user._id, "title": "Name_Update", "old": user.name, "new": name });
-                await logs.save();
                 user.name = name;
             }
         }
@@ -395,8 +387,6 @@ adminRoute.patch("/update", tokenVerify, async (req, res) => {
             if (mobile.length != 10) {
                 return res.status(400).send({ "msg": "Wrong Mobile Number, Check length" });
             } else {
-                let logs = new LogsModel({ "id": user._id, "title": "Mobile_Update", "old": user.mobile, "new": mobile });
-                await logs.save();
                 user.mobile = mobile;
             }
         }
