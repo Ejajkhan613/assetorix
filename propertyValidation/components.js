@@ -355,74 +355,90 @@ function locatedInside(data = "") {
 // ------------------ Room Details START -----------------------------
 
 // Bedrooms
-function bedroom(data) {
+function bedroom(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Bedroom Quantity" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericBedroom = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericBedroom) || numericBedroom < 0 || numericBedroom > 30) {
-        return { "msg": "ERROR", "error": "Number of Bedrooms should be between 0 and 30" };
+    const minBedrooms = 0;
+    const maxBedrooms = 30;
+
+    if (isNaN(numericBedroom) || numericBedroom < minBedrooms || numericBedroom > maxBedrooms) {
+        return { "msg": "ERROR", "error": `Number of Bedrooms should be between ${minBedrooms} and ${maxBedrooms}` };
     }
 
     return { "msg": "SUCCESS", "data": numericBedroom };
 }
 
 
+
 // Bathroom
-function bathroom(data) {
+function bathroom(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Bathroom Quantity" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericBathroom = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericBathroom) || numericBathroom < 0 || numericBathroom > 30) {
-        return { "msg": "ERROR", "error": "Number of Bathrooms should be between 0 and 30" };
+    const minBathrooms = 0;
+    const maxBathrooms = 30;
+
+    if (isNaN(numericBathroom) || numericBathroom < minBathrooms || numericBathroom > maxBathrooms) {
+        return { "msg": "ERROR", "error": `Number of Bathrooms should be between ${minBathrooms} and ${maxBathrooms}` };
     }
 
     return { "msg": "SUCCESS", "data": numericBathroom };
 }
 
 
+
 // Balcony
-function balcony(data) {
+function balcony(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Balcony Quantity" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericBalcony = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericBalcony) || numericBalcony < 0 || numericBalcony > 30) {
-        return { "msg": "ERROR", "error": "Number of Balconies should be between 0 and 30" };
+    const minBalconies = 0;
+    const maxBalconies = 30;
+
+    if (isNaN(numericBalcony) || numericBalcony < minBalconies || numericBalcony > maxBalconies) {
+        return { "msg": "ERROR", "error": `Number of Balconies should be between ${minBalconies} and ${maxBalconies}` };
     }
 
     return { "msg": "SUCCESS", "data": numericBalcony };
 }
 
+
 // Rooms
-function rooms(data) {
+function rooms(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Total Rooms Quantity" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericRooms = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericRooms) || numericRooms < 0 || numericRooms > 30) {
-        return { "msg": "ERROR", "error": "Number of Rooms should be between 0 and 100" };
+    const minRooms = 0;
+    const maxRooms = 100;
+
+    if (isNaN(numericRooms) || numericRooms < minRooms || numericRooms > maxRooms) {
+        return { "msg": "ERROR", "error": `Number of Rooms should be between ${minRooms} and ${maxRooms}` };
     }
 
     return { "msg": "SUCCESS", "data": numericRooms };
 }
+
 
 
 // ------------------ Room Details ENDING -----------------------------
