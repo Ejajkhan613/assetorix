@@ -134,45 +134,54 @@ function officeType(data = "") {
 // ------------------ Address Details START ----------------------------
 
 // Address (Optional)
-function address(data) {
+function address(data = "") {
     if (!data) {
         return { "msg": "SUCCESS", "data": "" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (sanitizedData.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "Address should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `Address should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
 // Plot Number (Optional)
-function plotNumber(data) {
+function plotNumber(data = "") {
     if (!data) {
         return { "msg": "SUCCESS", "data": "" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (sanitizedData.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "Plot Name/Number should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `Plot Number should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
 // House Number (Optional)
-function houseNumber(data) {
+function houseNumber(data = "") {
     if (!data) {
         return { "msg": "SUCCESS", "data": "" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (sanitizedData.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "House Name/Number should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `House Number should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
@@ -180,15 +189,18 @@ function houseNumber(data) {
 
 
 // Apartment Name
-function apartmentName(data) {
+function apartmentName(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Apartment Name" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (sanitizedData.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "Apartment Name/Number should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `Apartment Name should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
@@ -196,16 +208,19 @@ function apartmentName(data) {
 
 
 // Pincode
-function pincode(data) {
+function pincode(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Pincode Number" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericPincode = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericPincode) || !(sanitizedData.length >= 5 && sanitizedData.length <= 6)) {
+    const minLength = 5;
+    const maxLength = 6;
+
+    if (isNaN(numericPincode) || !(sanitizedData.length >= minLength && sanitizedData.length <= maxLength)) {
         return { "msg": "ERROR", "error": `Invalid Pincode Number - ${sanitizedData}` };
     }
 
@@ -215,15 +230,18 @@ function pincode(data) {
 
 
 // Locality
-function locality(data) {
+function locality(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Locality Name" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (data.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "Locality Name should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `Locality Name should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
