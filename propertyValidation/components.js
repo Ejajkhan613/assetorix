@@ -250,49 +250,58 @@ function locality(data = "") {
 
 
 // City
-function city(data) {
+function city(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing City Name" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (data.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "City Name should be between 3 to 100 characters" };
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `City Name should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
 
+
 // State
-function state(data) {
+function state(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing State Name" };
     }
 
-    const sanitizedData = xss(data).trim();
-    let ValidIndiaStates = ['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Jammu and Kashmir', 'Ladakh'];
-    let ValidUSAStates = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
+    const sanitizedData = xss(data.toString().trim());
 
-    if (data.length > 100 || sanitizedData.length < 3) {
-        return { "msg": "ERROR", "error": "State Name should be between 3 to 100 characters" };
+    const validIndiaStates = new Set(['Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Jammu and Kashmir', 'Ladakh']);
+    const validUSAStates = new Set(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']);
+
+    const minLength = 3;
+    const maxLength = 100;
+
+    if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
+        return { "msg": "ERROR", "error": `State Name should be between ${minLength} to ${maxLength} characters` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
 
+
 // Country
-function country(data) {
+function country(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Country Name" };
     }
 
-    const validCountries = ["India", "United States of America"];
-    const sanitizedData = xss(data).trim();
+    const validCountries = new Set(["India", "United States of America"]);
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validCountries.includes(sanitizedData)) {
+    if (!validCountries.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Country Name - ${sanitizedData}` };
     }
 
@@ -300,17 +309,17 @@ function country(data) {
 }
 
 
+
 // Zone Type
-function zoneType(data) {
+function zoneType(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Zone Type" };
     }
 
-    const validTypes = ["Industrial", "Commercial", "Residential", "Transport and Communication", "Public Utilities", "Public and Semi Public Use"];
+    const validTypes = new Set(["Industrial", "Commercial", "Residential", "Transport and Communication", "Public Utilities", "Public and Semi Public Use"]);
+    const sanitizedData = xss(data.toString().trim());
 
-    const sanitizedData = xss(data).trim();
-
-    if (!validTypes.includes(sanitizedData)) {
+    if (!validTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Zone Type Selected - ${sanitizedData}` };
     }
 
@@ -318,22 +327,23 @@ function zoneType(data) {
 }
 
 
+
 // Located Inside Type
-function locatedInside(data) {
+function locatedInside(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Located Inside Detail" };
     }
 
-    const validTypes = ["IT Park", "Business Park", "Other"];
+    const validTypes = new Set(["IT Park", "Business Park", "Other"]);
+    const sanitizedData = xss(data.toString().trim());
 
-    const sanitizedData = xss(data).trim();
-
-    if (!validTypes.includes(sanitizedData)) {
+    if (!validTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Located Inside Selected - ${sanitizedData}` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 // ------------------ Address Details ENDING -------------------------
