@@ -421,7 +421,7 @@ function flat_apartment(data) {
 
     // Additional Features
     if (data.additionalFeatures) {
-        const list = ["Separate entry for sevant room", "Waste Disposal", "No open drainage around", "Rain Water Harvesting", "Bank Attached Property", "Low Density Society"];
+        const list = ["Separate entry for servant room", "Waste Disposal", "No open drainage around", "Rain Water Harvesting", "Bank Attached Property", "Low Density Society"];
         let additionalFeatures = component.additionalFeatures({ "data": data.additionalFeatures, list })
         if (additionalFeatures.msg == "SUCCESS") {
             obj.additionalFeatures = additionalFeatures.data;
