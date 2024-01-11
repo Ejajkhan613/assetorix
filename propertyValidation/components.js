@@ -444,17 +444,20 @@ function rooms(data = "") {
 // ------------------ Room Details ENDING -----------------------------
 
 // Total Washrooms
-function washrooms(data) {
+function washrooms(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Total Washrooms Quantity" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
     const numericWashrooms = parseInt(sanitizedData, 10);
 
-    if (isNaN(numericWashrooms) || numericWashrooms < 0 || numericWashrooms > 30) {
-        return { "msg": "ERROR", "error": "Number of Washrooms should be between 0 and 100" };
+    const minWashrooms = 0;
+    const maxWashrooms = 30;
+
+    if (isNaN(numericWashrooms) || numericWashrooms < minWashrooms || numericWashrooms > maxWashrooms) {
+        return { "msg": "ERROR", "error": `Number of Washrooms should be between ${minWashrooms} and ${maxWashrooms}` };
     }
 
     return { "msg": "SUCCESS", "data": numericWashrooms };
@@ -462,21 +465,23 @@ function washrooms(data) {
 
 
 
-// Quality Rating
-function qualityRating(data) {
-    let validQualityRatings = ["No Rating", "1 Star", "2 Star", "3 Star", "4 Star", "5 Star", "6 Star", "7 Star"];
 
+// Quality Rating
+function qualityRating(data = "") {
     if (!data) {
-        return { msg: "ERROR", error: "Missing Quality Rating" };
+        return { "msg": "ERROR", "error": "Missing Quality Rating" };
     }
 
-    const sanitizedData = xss(data).trim();
-    if (!validQualityRatings.includes(sanitizedData)) {
+    const validQualityRatings = new Set(["No Rating", "1 Star", "2 Star", "3 Star", "4 Star", "5 Star", "6 Star", "7 Star"]);
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validQualityRatings.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Quality Rating - ${sanitizedData}` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 
