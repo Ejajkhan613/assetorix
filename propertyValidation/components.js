@@ -501,7 +501,7 @@ function plotArea(data) {
     if (isNaN(numericPlotArea)) {
         return { "msg": "ERROR", "error": `${data} is Invalid Plot Area, It should be a number only` };
     } else if (numericPlotArea < 0) {
-        return { "msg": "ERROR", "error": `Plot Area can't be negative - ${numericPlotArea}` };
+        return { "msg": "ERROR", "error": `Plot Area can't be below 0 - ${numericPlotArea}` };
     }
 
     return { "msg": "SUCCESS", "data": numericPlotArea };
