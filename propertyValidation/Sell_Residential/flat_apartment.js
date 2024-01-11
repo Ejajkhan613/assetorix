@@ -180,7 +180,7 @@ function flat_apartment(data) {
         return plotAreaUnit;
     }
 
-    // Carpet Area
+    // Carpet Area ( Optional )
     if (data.carpetArea && data.carpetAreaUnit) {
         let carpetArea = component.carpetArea(data.carpetArea);
         if (carpetArea.msg == "SUCCESS") {
@@ -190,7 +190,7 @@ function flat_apartment(data) {
         }
     }
 
-    // Carpet Area Unit
+    // Carpet Area Unit ( Optional )
     if (data.carpetArea && data.carpetAreaUnit) {
         let carpetAreaUnit = component.carpetAreaUnit(data.carpetAreaUnit);
         if (carpetAreaUnit.msg == "SUCCESS") {
@@ -201,7 +201,7 @@ function flat_apartment(data) {
     }
 
 
-    // Builtup Area
+    // Builtup Area ( Optional )
     if (data.builtupArea && data.builtupAreaUnit) {
         let builtupArea = component.builtupArea(data.builtupArea);
         if (builtupArea.msg == "SUCCESS") {
@@ -211,7 +211,7 @@ function flat_apartment(data) {
         }
     }
 
-    // Builtup Area Unit
+    // Builtup Area Unit ( Optional )
     if (data.builtupArea && data.builtupAreaUnit) {
         let builtupAreaUnit = component.builtupAreaUnit(data.builtupAreaUnit);
         if (builtupAreaUnit.msg == "SUCCESS") {
@@ -222,7 +222,7 @@ function flat_apartment(data) {
     }
 
 
-    // Super Builtup Area
+    // Super Builtup Area ( Optional )
     if (data.superBuiltupArea && data.superBuiltupAreaUnit) {
         let superBuiltupArea = component.superBuiltupArea(data.superBuiltupArea);
         if (superBuiltupArea.msg == "SUCCESS") {
@@ -232,7 +232,7 @@ function flat_apartment(data) {
         }
     }
 
-    // Super Builtup Area Unit
+    // Super Builtup Area Unit ( Optional )
     if (data.superBuiltupArea && data.superBuiltupAreaUnit) {
         let superBuiltupAreaUnit = component.superBuiltupAreaUnit(data.superBuiltupAreaUnit);
         if (superBuiltupAreaUnit.msg == "SUCCESS") {
@@ -245,7 +245,7 @@ function flat_apartment(data) {
     // ------------------ Area Details and Unit Details ENDING -----------------------------
 
 
-    // Other Room
+    // Other Room ( Optional )
     let otherRoom = component.otherRoom(data.otherRoom || []);
     if (otherRoom.msg == "SUCCESS") {
         obj.otherRoom = otherRoom.data;
@@ -353,7 +353,7 @@ function flat_apartment(data) {
 
 
 
-    // Inclusive Prices
+    // Inclusive Prices ( Optional )
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
         obj.inclusivePrices = inclusivePrices.data;
@@ -364,7 +364,7 @@ function flat_apartment(data) {
 
 
 
-    // Additional Pricing Details
+    // Additional Pricing Details ( Optional )
     let additionalPricingDetails = component.additionalPricingDetails(data.additionalPricingDetails);
     if (additionalPricingDetails.msg == "SUCCESS") {
         obj.additionalPricingDetails = additionalPricingDetails.data;
@@ -383,7 +383,7 @@ function flat_apartment(data) {
     }
 
 
-    // Amenities
+    // Amenities ( Optional )
     if (data.amenities) {
         const list = ["Maintenance Staff", "Water Storage", "Security / Fire Alarm", "Visitor Parking", "Park", "Intercom Facility", "Feng Shui / Vaastu Compliant", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
@@ -395,7 +395,7 @@ function flat_apartment(data) {
     }
 
 
-    // Property Features
+    // Property Features ( Optional )
     if (data.propertyFeatures) {
         const list = ["High Ceiling Height", "False Ceiling Lighting", "Piped-gas", "Internet / wi-fi connectivity", "Centrally Air Renovated", "Water Purifier", "Recently Renovated", "Private Garden / Terrace", "Natural Light", "Airy Roooms", "Spacious Interiors"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
@@ -407,7 +407,7 @@ function flat_apartment(data) {
     }
 
 
-    // Society / Building Features
+    // Society / Building Features ( Optional )
     if (data.society_buildingFeatures) {
         const list = ["Water softening plant", "Shopping Centre", "Fitness Centre / GYM", "Swimming Pool", "Club house / Community Center", "Security Personnel"];
         let society_buildingFeatures = component.society_buildingFeatures({ "data": data.society_buildingFeatures, list })
@@ -419,7 +419,7 @@ function flat_apartment(data) {
     }
 
 
-    // Additional Features
+    // Additional Features ( Optional )
     if (data.additionalFeatures) {
         const list = ["Separate entry for servant room", "Waste Disposal", "No open drainage around", "Rain Water Harvesting", "Bank Attached Property", "Low Density Society"];
         let additionalFeatures = component.additionalFeatures({ "data": data.additionalFeatures, list })
@@ -431,7 +431,7 @@ function flat_apartment(data) {
     }
 
 
-    // Water Sources
+    // Water Sources ( Optional )
     if (data.waterSources) {
         let waterSources = component.waterSources(data.waterSources)
         if (waterSources.msg == "SUCCESS") {
@@ -442,7 +442,7 @@ function flat_apartment(data) {
     }
 
 
-    // Overlookings
+    // Overlookings ( Optional )
     if (data.overLookings) {
         let list = ["Pool", "Park / Garden", "Club", "Main Road", "Other"];
         let overLookings = component.overLookings({ "data": data.overLookings, list })
@@ -454,7 +454,7 @@ function flat_apartment(data) {
     }
 
 
-    // Other Features
+    // Other Features ( Optional )
     if (data.otherFeatures) {
         let list = ["In a gated society", "Corner Property", "Pet Friendly", "Wheelchair friendly"];
         let otherFeatures = component.otherFeatures({ "data": data.otherFeatures, list })
@@ -510,7 +510,7 @@ function flat_apartment(data) {
     }
 
 
-    // Property Location Advantages
+    // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)
     if (locationAdv.msg == "SUCCESS") {
         obj.locationAdv = locationAdv.data;
