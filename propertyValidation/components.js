@@ -487,19 +487,18 @@ function qualityRating(data = "") {
 
 // ------------------ Area Details and Unit Details START -------------
 
-const validAreaUnits = ["sq.ft", "sq.yards", "sq.m", "acres", "marla", "cents", "bigha", "kottah", "kanal", "grounds", "ares", "biswa", "guntha", "aankadam", "hectares", "rood", "chataks", "perch"];
-
+const validAreaUnits = new Set(["sq.ft", "sq.yards", "sq.m", "acres", "marla", "cents", "bigha", "kottah", "kanal", "grounds", "ares", "biswa", "guntha", "aankadam", "hectares", "rood", "chataks", "perch"]);
 
 // Plot Area
-function plotArea(data) {
+function plotArea(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
 
-    const numericPlotArea = Number(xss(data));
+    const numericPlotArea = Number(xss(data.trim()));
 
     if (isNaN(numericPlotArea)) {
-        return { "msg": "ERROR", "error": `${data} is Invalid Plot Area, It should be a number only` };
+        return { "msg": "ERROR", "error": `${data} is an Invalid Plot Area; it should be a number only` };
     } else if (numericPlotArea < 0) {
         return { "msg": "ERROR", "error": `Plot Area can't be below 0 - ${numericPlotArea}` };
     }
@@ -508,15 +507,16 @@ function plotArea(data) {
 }
 
 
+
 // Plot Area Unit
-function plotAreaUnit(data) {
+function plotAreaUnit(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Plot Area Unit" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validAreaUnits.includes(sanitizedData)) {
+    if (!validAreaUnits.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `${sanitizedData} is a Wrong Plot Area Unit` };
     }
 
@@ -525,32 +525,33 @@ function plotAreaUnit(data) {
 
 
 // Carpet Area
-function carpetArea(data) {
+function carpetArea(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Carpet Area" };
     }
 
-    const numericCarpetArea = Number(xss(data));
+    const numericCarpetArea = Number(xss(data.toString().trim()));
 
     if (isNaN(numericCarpetArea)) {
-        return { "msg": "ERROR", "error": `${numericCarpetArea} is Invalid Carpet Area, It should be a number only` };
+        return { "msg": "ERROR", "error": `${data} is an Invalid Carpet Area; it should be a number only` };
     } else if (numericCarpetArea < 0) {
-        return { "msg": "ERROR", "error": `Carpet Area can't be negative - ${numericPlotArea}` };
+        return { "msg": "ERROR", "error": `Carpet Area can't be below 0 - ${numericCarpetArea}` };
     }
 
     return { "msg": "SUCCESS", "data": numericCarpetArea };
 }
 
 
+
 // Carpet Area Unit
-function carpetAreaUnit(data) {
+function carpetAreaUnit(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Carpet Area Unit" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validAreaUnits.includes(sanitizedData)) {
+    if (!validAreaUnits.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `${sanitizedData} is a Wrong Carpet Area Unit` };
     }
 
@@ -558,33 +559,35 @@ function carpetAreaUnit(data) {
 }
 
 
+
 // Builtup Area
-function builtupArea(data) {
+function builtupArea(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Builtup Area" };
     }
 
-    const numericBuiltupArea = Number(xss(data));
+    const numericBuiltupArea = Number(xss(data.toString().trim()));
 
     if (isNaN(numericBuiltupArea)) {
-        return { "msg": "ERROR", "error": `${numericBuiltupArea} is Invalid Builtup Area, It should be a number only` };
+        return { "msg": "ERROR", "error": `${data} is an Invalid Builtup Area; it should be a number only` };
     } else if (numericBuiltupArea < 0) {
-        return { "msg": "ERROR", "error": `Builtup Area can't be negative - ${numericPlotArea}` };
+        return { "msg": "ERROR", "error": `Builtup Area can't be negative - ${numericBuiltupArea}` };
     }
 
     return { "msg": "SUCCESS", "data": numericBuiltupArea };
 }
 
 
+
 // Builtup Area Unit
-function builtupAreaUnit(data) {
+function builtupAreaUnit(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Builtup Area Unit" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validAreaUnits.includes(sanitizedData)) {
+    if (!validAreaUnits.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `${sanitizedData} is a Wrong Builtup Area Unit` };
     }
 
@@ -592,62 +595,66 @@ function builtupAreaUnit(data) {
 }
 
 
+
 // Super Builtup Area
-function superBuiltupArea(data) {
+function superBuiltupArea(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Super Builtup Area" };
     }
 
-    const numericSuperBuiltupArea = Number(xss(data));
+    const numericSuperBuiltupArea = Number(xss(data.toString().trim()));
 
     if (isNaN(numericSuperBuiltupArea)) {
-        return { "msg": "ERROR", "error": `${data} is Invalid Super Builtup Area, It should be a number only` };
+        return { "msg": "ERROR", "error": `${data} is an Invalid Super Builtup Area; it should be a number only` };
     } else if (numericSuperBuiltupArea < 0) {
-        return { "msg": "ERROR", "error": `Super Builtup Area can't be negative - ${numericPlotArea}` };
+        return { "msg": "ERROR", "error": `Super Builtup Area can't be negative - ${numericSuperBuiltupArea}` };
     }
 
     return { "msg": "SUCCESS", "data": numericSuperBuiltupArea };
 }
 
 
+
 // Super Builtup Area Unit
-function superBuiltupAreaUnit(data) {
+function superBuiltupAreaUnit(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Super Builtup Area Unit" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validAreaUnits.includes(sanitizedData)) {
+    if (!validAreaUnits.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `${sanitizedData} is a Wrong Super Builtup Area Unit` };
     }
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
+
 // ------------------ Area Details and Unit Details ENDING -----------------------------
 
 
 // Pantry Type
-function pantryType(data, pantrySize = "", pantrySizeUnit = "") {
+function pantryType(data = "", pantrySize = "", pantrySizeUnit = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Pantry Type Detail" };
     }
 
     const obj = {};
 
-    const validTypes = ["Shared Pantry", "No Shared Pantry"];
+    const validTypes = new Set(["Shared Pantry", "No Shared Pantry"]);
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.toString().trim());
 
-    if (!validTypes.includes(sanitizedData)) {
+    if (!validTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Wrong Pantry Type - ${sanitizedData}` };
     }
 
-    if (sanitizedData == validTypes[0]) {
+    if (sanitizedData == "Shared Pantry") {
         obj.pantryType = sanitizedData;
+
         if (pantrySize && pantrySizeUnit) {
-            const newPantrySize = parseFloat(xss(pantrySize));
+            const newPantrySize = parseFloat(xss(pantrySize.trim()));
             if (isNaN(newPantrySize)) {
                 return { "msg": "ERROR", "error": `Pantry Size Should be a number only` }
             }
@@ -660,8 +667,8 @@ function pantryType(data, pantrySize = "", pantrySizeUnit = "") {
         }
 
         if (pantrySize && pantrySizeUnit) {
-            const newPantrySizeUnit = xss(pantrySizeUnit).trim();
-            if (!validAreaUnits.includes(newPantrySizeUnit)) {
+            const newPantrySizeUnit = xss(pantrySizeUnit.trim());
+            if (!validAreaUnits.has(newPantrySizeUnit)) {
                 return { "msg": "ERROR", "error": `Wrong Pantry Size Unit - ${newPantrySizeUnit}` }
             }
 
@@ -689,7 +696,7 @@ function facilityAvailable(data) {
         return { "msg": "ERROR", "error": "Missing Central Air Conditioning Detail" };
     }
 
-    const sanitizedCentralAirConditioning = xss(data.centralAirConditioning).trim();
+    const sanitizedCentralAirConditioning = xss(data.centralAirConditioning.trim());
 
     if (!validTypes.includes(sanitizedCentralAirConditioning)) {
         return { "msg": "ERROR", "error": `Wrong Central Air Conditioning Detail - ${sanitizedCentralAirConditioning}` };
@@ -701,7 +708,7 @@ function facilityAvailable(data) {
         return { "msg": "ERROR", "error": "Missing Oxygen Duct Detail" };
     }
 
-    const sanitizedOxygenDuct = xss(data.centralAirConditioning).trim();
+    const sanitizedOxygenDuct = xss(data.oxygenDuct.trim());
 
     if (!validTypes.includes(sanitizedOxygenDuct)) {
         return { "msg": "ERROR", "error": `Wrong Oxygen Duct Detail - ${sanitizedOxygenDuct}` };
@@ -714,15 +721,19 @@ function facilityAvailable(data) {
 
 
 // Fire Safety
-function fireSafety(data) {
+function fireSafety(data = []) {
+    if (!Array.isArray(data)) {
+        return { "msg": "SUCCESS", "data": [] };
+    }
+
     if (!data.length) {
-        return { msg: "SUCCESS", "data": [] };
+        return { "msg": "SUCCESS", "data": [] };
     }
 
     const validTypes = ["Fire Extinguisher", "Fire Sensors", "Sprinklers", "Fire Hose"];
     const list = [];
     for (let a = 0; a < data.length; a++) {
-        const value = xss(data[a].length);
+        const value = xss(data[a].trim());
         if (!validTypes.includes(value)) {
             return { "msg": `Wrong Fire Safety Detail - ${value}` };
         }
@@ -734,13 +745,14 @@ function fireSafety(data) {
 }
 
 
+
 // Lift with passenger, Service and Modern Lifts Detail
-function liftWithPassengerServiceModern(data, liftDetail) {
+function liftWithPassengerServiceModern(data = "", liftDetail = {}) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Lift Details" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.trim());
 
     if (sanitizedData == "Available") {
         const liftDetails = {};
@@ -749,7 +761,7 @@ function liftWithPassengerServiceModern(data, liftDetail) {
             return { "msg": "ERROR", "error": `Missing Passenger Lift Detail` }
         }
 
-        const sanitizedPassenger = parseInt(xss(liftDetail.passenger).trim());
+        const sanitizedPassenger = parseInt(xss(liftDetail.passenger.trim()));
 
 
         if (isNaN(sanitizedPassenger)) {
@@ -767,7 +779,7 @@ function liftWithPassengerServiceModern(data, liftDetail) {
             return { "msg": "ERROR", "error": `Missing Service Lift Detail` }
         }
 
-        const sanitizedService = parseInt(xss(liftDetail.service));
+        const sanitizedService = parseInt(xss(liftDetail.service.trim()));
 
 
         if (isNaN(sanitizedService)) {
@@ -780,21 +792,21 @@ function liftWithPassengerServiceModern(data, liftDetail) {
 
         liftDetails.service = sanitizedService;
 
-        return { "msg": "SUCCESS", data, liftDetails };
+        return { "msg": "SUCCESS", "data": sanitizedData, liftDetails };
     } else {
-        return { "msg": "SUCCESS", data };
+        return { "msg": "SUCCESS", "data": sanitizedData };
     }
 }
 
 
 
 // Plot Length
-function plotLength(data) {
+function plotLength(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Plot Length" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.trim());
 
     const numericPlotLength = parseFloat(sanitizedData);
 
@@ -806,17 +818,17 @@ function plotLength(data) {
         return { "msg": "ERROR", "error": "Plot Length can't be below 0" };
     }
 
-    return { "msg": "SUCCESS", "data": (numericPlotLength).toFixed(3) };
+    return { "msg": "SUCCESS", "data": numericPlotLength.toFixed(2) };
 }
 
 
 // Plot Breadth
-function plotBreadth(data) {
+function plotBreadth(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Plot Breadth" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.trim());
 
     const numericPlotBreadth = parseFloat(sanitizedData);
     if (isNaN(numericPlotBreadth)) {
@@ -827,22 +839,22 @@ function plotBreadth(data) {
         return { "msg": "ERROR", "error": "Plot Breadth can't be below 0" };
     }
 
-    return { "msg": "SUCCESS", "data": (numericPlotBreadth).toFixed(3) };
+    return { "msg": "SUCCESS", "data": numericPlotBreadth.toFixed(3) };
 }
 
 
 
 // Ownership
-function ownership(data) {
+function ownership(data = "") {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Ownership Type" };
     }
 
-    const sanitizedData = xss(data).trim();
+    const sanitizedData = xss(data.trim());
 
-    const validOwnershipTypes = ["Freehold", "Leasehold", "Co-operative society", "Power of Attorney"];
+    const validOwnershipTypes = new Set(["Freehold", "Leasehold", "Co-operative society", "Power of Attorney"]);
 
-    if (!validOwnershipTypes.includes(sanitizedData)) {
+    if (!validOwnershipTypes.has(sanitizedData)) {
         return { "msg": "ERROR", "error": `Invalid Ownership Type - ${sanitizedData}` };
     }
 
