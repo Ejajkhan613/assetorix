@@ -161,7 +161,7 @@ function flat_apartment(data) {
     // --------------------------------- ROOM DETAILS ENDING ---------------------------------
 
 
-
+    
     // ------------------ Area Details and Unit Details STARTING -----------------------------
 
     // Plot Area
@@ -171,6 +171,7 @@ function flat_apartment(data) {
     } else {
         return plotArea;
     }
+    
 
     // Plot Area Unit
     let plotAreaUnit = component.plotAreaUnit(data.plotAreaUnit);
@@ -179,6 +180,7 @@ function flat_apartment(data) {
     } else {
         return plotAreaUnit;
     }
+    
 
     // Carpet Area ( Optional )
     if (data.carpetArea && data.carpetAreaUnit) {
@@ -243,7 +245,7 @@ function flat_apartment(data) {
     }
 
     // ------------------ Area Details and Unit Details ENDING -----------------------------
-
+    
 
     // Other Room ( Optional )
     let otherRoom = component.otherRoom(data.otherRoom || []);

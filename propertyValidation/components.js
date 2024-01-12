@@ -490,12 +490,12 @@ function qualityRating(data = "") {
 const validAreaUnits = new Set(["sq.ft", "sq.yards", "sq.m", "acres", "marla", "cents", "bigha", "kottah", "kanal", "grounds", "ares", "biswa", "guntha", "aankadam", "hectares", "rood", "chataks", "perch"]);
 
 // Plot Area
-function plotArea(data = "") {
+function plotArea(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Plot Area" };
     }
 
-    const numericPlotArea = Number(xss(data.trim()));
+    const numericPlotArea = Number(xss(data));
 
     if (isNaN(numericPlotArea)) {
         return { "msg": "ERROR", "error": `${data} is an Invalid Plot Area; it should be a number only` };
@@ -525,12 +525,12 @@ function plotAreaUnit(data = "") {
 
 
 // Carpet Area
-function carpetArea(data = "") {
+function carpetArea(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Carpet Area" };
     }
 
-    const numericCarpetArea = Number(xss(data.toString().trim()));
+    const numericCarpetArea = Number(xss(data));
 
     if (isNaN(numericCarpetArea)) {
         return { "msg": "ERROR", "error": `${data} is an Invalid Carpet Area; it should be a number only` };
@@ -561,12 +561,12 @@ function carpetAreaUnit(data = "") {
 
 
 // Builtup Area
-function builtupArea(data = "") {
+function builtupArea(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Builtup Area" };
     }
 
-    const numericBuiltupArea = Number(xss(data.toString().trim()));
+    const numericBuiltupArea = Number(xss(data));
 
     if (isNaN(numericBuiltupArea)) {
         return { "msg": "ERROR", "error": `${data} is an Invalid Builtup Area; it should be a number only` };
@@ -597,12 +597,12 @@ function builtupAreaUnit(data = "") {
 
 
 // Super Builtup Area
-function superBuiltupArea(data = "") {
+function superBuiltupArea(data) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Super Builtup Area" };
     }
 
-    const numericSuperBuiltupArea = Number(xss(data.toString().trim()));
+    const numericSuperBuiltupArea = Number(xss(data));
 
     if (isNaN(numericSuperBuiltupArea)) {
         return { "msg": "ERROR", "error": `${data} is an Invalid Super Builtup Area; it should be a number only` };
