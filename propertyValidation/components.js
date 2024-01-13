@@ -20,6 +20,7 @@ function lookingFor(data = "") {
 }
 
 
+
 // Property Group
 function propertyGroup(data = "") {
     if (!data) {
@@ -35,6 +36,7 @@ function propertyGroup(data = "") {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 // Property Type
@@ -106,6 +108,7 @@ function industryType(data = "") {
 }
 
 
+
 // Office Type
 function officeType(data = "") {
     if (!data) {
@@ -123,10 +126,7 @@ function officeType(data = "") {
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
-
-
 // ------------------ Basic Details ENDING -----------------------------
-
 
 
 
@@ -151,6 +151,8 @@ function address(data = "") {
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
+
+
 // Plot Number (Optional)
 function plotNumber(data = "") {
     if (!data) {
@@ -168,6 +170,8 @@ function plotNumber(data = "") {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
+
 
 // House Number (Optional)
 function houseNumber(data = "") {
@@ -188,6 +192,7 @@ function houseNumber(data = "") {
 }
 
 
+
 // Apartment Name
 function apartmentName(data = "") {
     if (!data) {
@@ -205,6 +210,7 @@ function apartmentName(data = "") {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 // Pincode
@@ -344,8 +350,6 @@ function locatedInside(data = "") {
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
-
-
 // ------------------ Address Details ENDING -------------------------
 
 
@@ -419,6 +423,7 @@ function balcony(data = "") {
 }
 
 
+
 // Rooms
 function rooms(data = "") {
     if (!data) {
@@ -439,9 +444,8 @@ function rooms(data = "") {
     return { "msg": "SUCCESS", "data": numericRooms };
 }
 
-
-
 // ------------------ Room Details ENDING -----------------------------
+
 
 // Total Washrooms
 function washrooms(data = "") {
@@ -465,7 +469,6 @@ function washrooms(data = "") {
 
 
 
-
 // Quality Rating
 function qualityRating(data = "") {
     if (!data) {
@@ -481,7 +484,6 @@ function qualityRating(data = "") {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
-
 
 
 
@@ -522,6 +524,7 @@ function plotAreaUnit(data = "") {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 // Carpet Area
@@ -630,7 +633,6 @@ function superBuiltupAreaUnit(data = "") {
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
-
 // ------------------ Area Details and Unit Details ENDING -----------------------------
 
 
@@ -682,6 +684,7 @@ function pantryType(data = "", pantrySize = "", pantrySizeUnit = "") {
 }
 
 
+
 // Facility Available
 function facilityAvailable(data) {
     if (!Object.keys(data).length) {
@@ -718,6 +721,7 @@ function facilityAvailable(data) {
 
     return { "msg": "SUCCESS", "data": obj };
 }
+
 
 
 // Fire Safety
@@ -822,6 +826,7 @@ function plotLength(data = "") {
 }
 
 
+
 // Plot Breadth
 function plotBreadth(data = "") {
     if (!data) {
@@ -916,7 +921,6 @@ function priceUnit(price, area) {
 
 
 
-
 // Other Room
 function otherRoom(data) {
     const otherRooms = ["Pooja Room", "Study Room", "Servant Room", "Store Room"];
@@ -999,6 +1003,7 @@ function parking(data) {
 }
 
 
+
 // Total Floors
 function totalFloors(data) {
     if (!data) {
@@ -1017,6 +1022,7 @@ function totalFloors(data) {
 
     return { "msg": "SUCCESS", "data": numericTotalFloors };
 }
+
 
 
 // Floor On
@@ -1059,6 +1065,7 @@ function floorOn(data, totalFloors) {
 }
 
 
+
 function multiFloorOn(data, totalFloor) {
     if (!data) {
         return { "msg": "SUCCESS", "data": [] };
@@ -1092,6 +1099,7 @@ function multiFloorOn(data, totalFloor) {
 }
 
 
+
 // Number of Staircases (Optional)
 function staircases(data) {
     if (!data) {
@@ -1110,8 +1118,6 @@ function staircases(data) {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
-
-
 
 
 
@@ -1149,6 +1155,7 @@ function availabilityStatus({ type, value }) {
 }
 
 
+
 // Inclusive Price Array
 function inclusivePrices(data) {
     let list = new Set(["All inclusive price", "Tax and Govt. charges excluded", "Price Negotiable"]);
@@ -1167,6 +1174,7 @@ function inclusivePrices(data) {
 
     return { "msg": "SUCCESS", "data": [...inclusivePrices] };
 }
+
 
 
 // Additional Pricing Details
@@ -1278,6 +1286,7 @@ function countryCurrency(data) {
         return { "msg": "ERROR", "error": "Country Code is Missing" };
     }
 };
+
 
 
 // Description
@@ -1409,6 +1418,7 @@ function waterSources(data) {
 };
 
 
+
 // Overlooking
 function overLookings({ data, list }) {
     if (!data || !Array.isArray(data)) {
@@ -1428,6 +1438,7 @@ function overLookings({ data, list }) {
 
     return { "msg": "SUCCESS", "data": [...uniqueOverLookings] };
 };
+
 
 
 // Other Features
@@ -1470,6 +1481,7 @@ function powerBackup(data) {
 };
 
 
+
 // Property Facing
 function propertyFacing(data) {
     let list = ["North", "South", "East", "West", "North-East", "North-West", "South-East", "South-West"];
@@ -1486,6 +1498,7 @@ function propertyFacing(data) {
 };
 
 
+
 // Property Flooring
 function flooring(data) {
     let list = ["Marble", "Concrete", "Poloshed concrete", "Granite", "Ceramic", "Mosaic", "Cement", "Stone", "Vinyl", "Wood", "Vitified", "Spartex", "IPSFinish", "Other"];
@@ -1500,6 +1513,7 @@ function flooring(data) {
         return { "msg": "ERROR", "error": "Flooring Type is Missing" }
     }
 };
+
 
 
 // Width of Facing Road
@@ -1526,6 +1540,7 @@ function roadFacingWidth(data) {
 };
 
 
+
 // Width of Facing Road Type
 function roadFacingWidthType(data) {
     if (!data) {
@@ -1541,6 +1556,7 @@ function roadFacingWidthType(data) {
 
     return { "msg": "SUCCESS", "data": data };
 }
+
 
 
 // Property Location Advantages
@@ -1564,6 +1580,7 @@ function locationAdv(data) {
 };
 
 
+
 // Total Floors Allowed to Construct
 function totalFloorsAllowed(data) {
     if (!data) {
@@ -1584,6 +1601,7 @@ function totalFloorsAllowed(data) {
 }
 
 
+
 // Boundary Wall Details
 function boundaryWall(data) {
     if (!data) {
@@ -1600,6 +1618,7 @@ function boundaryWall(data) {
 
     return { "msg": "SUCCESS", "data": data };
 }
+
 
 
 // Construction Status Of Walls
@@ -1620,6 +1639,7 @@ function constructionStatusOfWalls(data) {
 }
 
 
+
 // Are Doors Constructed
 function areDoorsConstructed(data) {
     if (!data) {
@@ -1636,6 +1656,7 @@ function areDoorsConstructed(data) {
 
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
+
 
 
 // Number of Open Sides
@@ -1695,6 +1716,7 @@ function washroomDetails(data) {
 }
 
 
+
 // Any Construction Done Details
 function constructionOnProperty(data, detail) {
     if (!data) {
@@ -1733,6 +1755,7 @@ function constructionOnProperty(data, detail) {
 }
 
 
+
 // Plot Expected By Year Possession
 function expectedByYear(data) {
     if (!data) {
@@ -1751,6 +1774,7 @@ function expectedByYear(data) {
         return { "msg": "ERROR", "error": "Wrong  Possession By Year Time" };
     }
 }
+
 
 
 // List of Property Approval Authorities
@@ -1854,8 +1878,7 @@ function preLeasedRentedDetails(data) {
 
 
 
-
-
+// Exporting Modules
 module.exports = {
     address,
     plotNumber,

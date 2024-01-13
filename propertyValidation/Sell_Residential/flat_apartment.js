@@ -29,6 +29,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Property Type
     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
     if (propertyType.msg == "SUCCESS") {
@@ -46,8 +47,11 @@ function flat_apartment(data) {
         return { "msg": "ERROR", "error": "Missing Address Detail Object" };
     }
 
+
+
     // Adding Address Data
     let address = {};
+
 
 
     // House Number ( Optional )
@@ -58,6 +62,8 @@ function flat_apartment(data) {
         return houseNumber;
     }
 
+
+
     // // Apartment Name ( Optional )
     let apartmentName = component.apartmentName(data.address.apartmentName);
     if (apartmentName.msg == "SUCCESS") {
@@ -65,6 +71,7 @@ function flat_apartment(data) {
     } else {
         return apartmentName;
     }
+
 
 
     // Pincode
@@ -76,6 +83,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Locality
     let locality = component.locality(data.address.locality);
     if (locality.msg == "SUCCESS") {
@@ -83,6 +91,7 @@ function flat_apartment(data) {
     } else {
         return locality;
     }
+
 
 
     // City
@@ -94,6 +103,7 @@ function flat_apartment(data) {
     }
 
 
+
     // State
     let state = component.state(data.address.state);
     if (state.msg == "SUCCESS") {
@@ -101,6 +111,7 @@ function flat_apartment(data) {
     } else {
         return state;
     }
+
 
 
     // Country
@@ -126,8 +137,11 @@ function flat_apartment(data) {
         return { "msg": "ERROR", "error": "Room Details Data is not Present" }
     }
 
+
+
     // Adding Room Details
     let roomDetails = {};
+
 
 
     // Bedroom
@@ -139,6 +153,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Bathroom
     let bathroom = component.bathroom(data.roomDetails.bathroom);
     if (bathroom.msg == "SUCCESS") {
@@ -146,6 +161,7 @@ function flat_apartment(data) {
     } else {
         return bathroom;
     }
+
 
 
     // Balcony
@@ -173,6 +189,7 @@ function flat_apartment(data) {
     }
     
 
+
     // Plot Area Unit
     let plotAreaUnit = component.plotAreaUnit(data.plotAreaUnit);
     if (plotAreaUnit.msg == "SUCCESS") {
@@ -181,6 +198,7 @@ function flat_apartment(data) {
         return plotAreaUnit;
     }
     
+
 
     // Carpet Area ( Optional )
     if (data.carpetArea && data.carpetAreaUnit) {
@@ -191,6 +209,8 @@ function flat_apartment(data) {
             return carpetArea;
         }
     }
+
+
 
     // Carpet Area Unit ( Optional )
     if (data.carpetArea && data.carpetAreaUnit) {
@@ -203,6 +223,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Builtup Area ( Optional )
     if (data.builtupArea && data.builtupAreaUnit) {
         let builtupArea = component.builtupArea(data.builtupArea);
@@ -212,6 +233,8 @@ function flat_apartment(data) {
             return builtupArea;
         }
     }
+
+
 
     // Builtup Area Unit ( Optional )
     if (data.builtupArea && data.builtupAreaUnit) {
@@ -224,6 +247,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Super Builtup Area ( Optional )
     if (data.superBuiltupArea && data.superBuiltupAreaUnit) {
         let superBuiltupArea = component.superBuiltupArea(data.superBuiltupArea);
@@ -233,6 +257,8 @@ function flat_apartment(data) {
             return superBuiltupArea;
         }
     }
+
+
 
     // Super Builtup Area Unit ( Optional )
     if (data.superBuiltupArea && data.superBuiltupAreaUnit) {
@@ -256,6 +282,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Furnished
     let furnished = component.furnished({ "type": data.furnished, "list": data.furnishedList, "obj": data.furnishedObj });
     if (furnished.msg == "SUCCESS") {
@@ -266,6 +293,8 @@ function flat_apartment(data) {
         return furnished;
     }
 
+
+
     // Parking
     let parking = component.parking(data.parking);
     if (parking.msg == "SUCCESS") {
@@ -273,6 +302,7 @@ function flat_apartment(data) {
     } else {
         return parking;
     }
+
 
 
     // Total Floors
@@ -333,6 +363,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Price Per Unit
     let priceUnit = component.priceUnit(data.price, data.plotArea);
     if (priceUnit.msg == "SUCCESS") {
@@ -353,7 +384,6 @@ function flat_apartment(data) {
 
 
 
-
     // Inclusive Prices ( Optional )
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
@@ -361,7 +391,6 @@ function flat_apartment(data) {
     } else {
         return inclusivePrices;
     }
-
 
 
 
@@ -384,6 +413,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Amenities ( Optional )
     if (data.amenities) {
         const list = ["Maintenance Staff", "Water Storage", "Security / Fire Alarm", "Visitor Parking", "Park", "Intercom Facility", "Feng Shui / Vaastu Compliant", "Lift"];
@@ -394,6 +424,7 @@ function flat_apartment(data) {
             return amenities;
         }
     }
+
 
 
     // Property Features ( Optional )
@@ -408,6 +439,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Society / Building Features ( Optional )
     if (data.society_buildingFeatures) {
         const list = ["Water softening plant", "Shopping Centre", "Fitness Centre / GYM", "Swimming Pool", "Club house / Community Center", "Security Personnel"];
@@ -418,6 +450,7 @@ function flat_apartment(data) {
             return society_buildingFeatures;
         }
     }
+
 
 
     // Additional Features ( Optional )
@@ -432,6 +465,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Water Sources ( Optional )
     if (data.waterSources) {
         let waterSources = component.waterSources(data.waterSources)
@@ -441,6 +475,7 @@ function flat_apartment(data) {
             return waterSources;
         }
     }
+
 
 
     // Overlookings ( Optional )
@@ -455,6 +490,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Other Features ( Optional )
     if (data.otherFeatures) {
         let list = ["In a gated society", "Corner Property", "Pet Friendly", "Wheelchair friendly"];
@@ -466,7 +502,8 @@ function flat_apartment(data) {
         }
     }
 
-    
+
+
     // Power Backup
     let powerBackup = component.powerBackup(data.powerBackup)
     if (powerBackup.msg == "SUCCESS") {
@@ -474,6 +511,7 @@ function flat_apartment(data) {
     } else {
         return powerBackup;
     }
+
 
 
     // Property Facing
@@ -485,6 +523,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Property Flooring Type
     let flooring = component.flooring(data.flooring)
     if (flooring.msg == "SUCCESS") {
@@ -492,6 +531,7 @@ function flat_apartment(data) {
     } else {
         return flooring;
     }
+
 
 
     // Road Facing Width
@@ -503,6 +543,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Road Facing Width Type
     let roadFacingWidthType = component.roadFacingWidthType(data.roadFacingWidthType)
     if (roadFacingWidthType.msg == "SUCCESS") {
@@ -512,6 +553,7 @@ function flat_apartment(data) {
     }
 
 
+
     // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)
     if (locationAdv.msg == "SUCCESS") {
@@ -519,6 +561,7 @@ function flat_apartment(data) {
     } else {
         return locationAdv;
     }
+    
 
     return { "msg": "SUCCESS", "data": obj };
 }
