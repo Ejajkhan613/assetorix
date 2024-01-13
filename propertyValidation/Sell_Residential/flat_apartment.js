@@ -314,7 +314,6 @@ function flat_apartment(data) {
 
 
 
-
     // Ownership Type
     let ownership = component.ownership(data.ownership);
     if (ownership.msg == "SUCCESS") {
@@ -467,6 +466,7 @@ function flat_apartment(data) {
         }
     }
 
+    
     // Power Backup
     let powerBackup = component.powerBackup(data.powerBackup)
     if (powerBackup.msg == "SUCCESS") {
