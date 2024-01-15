@@ -567,6 +567,7 @@ function flat_apartment(data) {
 }
 
 
+// Exporting Module
 module.exports = { flat_apartment };
 
 
