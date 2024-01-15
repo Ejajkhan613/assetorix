@@ -5,7 +5,7 @@ function flat_apartment(data) {
 
     // --------------------------------- MAIN OBJECT ---------------------------------
 
-    // Main Object that will be saved in DB
+    // Main Object
     let obj = {};
 
 
