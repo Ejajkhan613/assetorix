@@ -19,6 +19,7 @@ function independentHouse_villa(data) {
     }
 
 
+
     // Property Group
     let propertyGroup = component.propertyGroup(data.propertyGroup);
     if (propertyGroup.msg == "SUCCESS") {
@@ -28,6 +29,7 @@ function independentHouse_villa(data) {
     }
 
 
+
     // Property Type
     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
     if (propertyType.msg == "SUCCESS") {
@@ -35,7 +37,6 @@ function independentHouse_villa(data) {
     } else {
         return propertyType;
     }
-
 
 
 
@@ -254,6 +255,7 @@ function independentHouse_villa(data) {
     }
 
 
+
     // Furnished
     let furnished = component.furnished({ "type": data.furnished, "list": data.furnishedList, "obj": data.furnishedObj });
     if (furnished.msg == "SUCCESS") {
@@ -265,6 +267,7 @@ function independentHouse_villa(data) {
     }
 
 
+
     // Parking
     let parking = component.parking(data.parking);
     if (parking.msg == "SUCCESS") {
@@ -272,6 +275,7 @@ function independentHouse_villa(data) {
     } else {
         return parking;
     }
+
 
 
     // Total Floors
@@ -312,6 +316,7 @@ function independentHouse_villa(data) {
     }
 
 
+    
     // Price
     let price = component.price(data.price);
     if (price.msg == "SUCCESS") {
