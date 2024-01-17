@@ -181,7 +181,7 @@ function houseNumber(data = "") {
 
     const sanitizedData = xss(data.toString().trim());
 
-    const minLength = 3;
+    const minLength = 2;
     const maxLength = 100;
 
     if (sanitizedData.length < minLength || sanitizedData.length > maxLength) {
