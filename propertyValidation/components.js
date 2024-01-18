@@ -1786,7 +1786,7 @@ function expectedByYear(data) {
 
 // List of Property Approval Authorities
 function propertyApprovalAuthorityList(data) {
-    if (!data && !data.length) {
+    if (!isArray(data) || !data.length) {
         return { "msg": "ERROR", "error": "Missing Property Approval Authority Detail" }
     }
 
@@ -1795,7 +1795,7 @@ function propertyApprovalAuthorityList(data) {
     let returnList = [];
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             returnList.push(value);
         } else {
