@@ -844,7 +844,7 @@ function plotBreadth(data = "") {
         return { "msg": "ERROR", "error": "Plot Breadth can't be below 0" };
     }
 
-    return { "msg": "SUCCESS", "data": numericPlotBreadth.toFixed(3) };
+    return { "msg": "SUCCESS", "data": numericPlotBreadth.toFixed(2) };
 }
 
 
@@ -1317,7 +1317,7 @@ function amenities({ data, list }) {
     let uniqueAmenities = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueAmenities.add(value);
         } else {
@@ -1786,8 +1786,8 @@ function expectedByYear(data) {
 
 // List of Property Approval Authorities
 function propertyApprovalAuthorityList(data) {
-    if (!isArray(data) || !data.length) {
-        return { "msg": "ERROR", "error": "Missing Property Approval Authority Detail" }
+    if (!Array.isArray(data) || !data.length) {
+        return { "msg": "SUCCESS", "data": [] };
     }
 
     let list = ["DDA", "MCD", "NDMC", "Local Authority"];

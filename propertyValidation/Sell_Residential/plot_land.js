@@ -221,7 +221,6 @@ function plot_land(data) {
 
     // ------------------ Area Details and Unit Details ENDING -----------------------------
 
-
     // Adding Plot Length
     if (data.plotLength && data.plotBreadth) {
         let plotLength = component.plotLength(data.plotLength)
@@ -310,13 +309,11 @@ function plot_land(data) {
 
 
     // Adding List of Property Approval Authorities
-    if (data.propertyApprovalAuthorityList) {
-        let propertyApprovalAuthorityList = component.propertyApprovalAuthorityList(data.propertyApprovalAuthorityList);
-        if (propertyApprovalAuthorityList.msg == "SUCCESS") {
-            obj.propertyApprovalAuthorityList = propertyApprovalAuthorityList.data;
-        } else {
-            return propertyApprovalAuthorityList;
-        }
+    let propertyApprovalAuthorityList = component.propertyApprovalAuthorityList(data.propertyApprovalAuthorityList);
+    if (propertyApprovalAuthorityList.msg == "SUCCESS") {
+        obj.propertyApprovalAuthorityList = propertyApprovalAuthorityList.data;
+    } else {
+        return propertyApprovalAuthorityList;
     }
 
 
