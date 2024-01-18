@@ -1593,8 +1593,15 @@ function totalFloorsAllowed(data) {
         return { "msg": "ERROR", "error": `${data} is Invalid Total Allowed Floors, It should be a number only` };
     }
 
-    if (numericTotalAllowedFloors > 90) {
-        return { "msg": "ERROR", "error": "Total Floors should not be above 90" };
+    const minValue = 0;
+    const maxValue = 90;
+
+    if (numericTotalAllowedFloors < minValue) {
+        return { "msg": "ERROR", "error": `Total Allowed Floors can't be below ${minValue}` };
+    }
+
+    if (numericTotalAllowedFloors > maxValue) {
+        return { "msg": "ERROR", "error": `Total Allowed Floors should not be above ${maxValue}` };
     }
 
     return { "msg": "SUCCESS", "data": numericTotalAllowedFloors };
