@@ -1339,7 +1339,7 @@ function propertyFeatures({ data, list }) {
     let uniquePropertyFeatures = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniquePropertyFeatures.add(value);
         } else {
@@ -1361,7 +1361,7 @@ function society_buildingFeatures({ data, list }) {
     let uniqueSocietyBuildingFeatures = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueSocietyBuildingFeatures.add(value);
         } else {
@@ -1383,7 +1383,7 @@ function additionalFeatures({ data, list }) {
     let uniqueAdditionalFeatures = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueAdditionalFeatures.add(value);
         } else {
@@ -1406,7 +1406,7 @@ function waterSources(data) {
     let uniqueWaterSources = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueWaterSources.add(value);
         } else {
@@ -1428,7 +1428,7 @@ function overLookings({ data, list }) {
     let uniqueOverLookings = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueOverLookings.add(value);
         } else {
@@ -1450,7 +1450,7 @@ function otherFeatures({ data, list }) {
     let uniqueOtherFeatures = new Set();
 
     for (let a = 0; a < data.length; a++) {
-        let value = xss(data[a]).trim();
+        let value = xss(data[a].trim());
         if (list.includes(value)) {
             uniqueOtherFeatures.add(value);
         } else {
