@@ -3,8 +3,6 @@ const component = require("../components");
 
 function farmhouse(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 

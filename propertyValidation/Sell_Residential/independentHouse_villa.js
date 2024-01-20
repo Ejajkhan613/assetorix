@@ -3,8 +3,6 @@ const component = require("../components");
 
 function independentHouse_villa(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 

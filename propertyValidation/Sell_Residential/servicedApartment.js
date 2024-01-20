@@ -3,8 +3,6 @@ const component = require("../components");
 
 function servicedApartment(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 

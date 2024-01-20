@@ -3,8 +3,6 @@ const component = require("../components");
 
 function flat_apartment(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 

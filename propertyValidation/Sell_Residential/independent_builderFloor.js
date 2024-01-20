@@ -3,8 +3,6 @@ const component = require("../components");
 
 function independent_builderFloor(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 

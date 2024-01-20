@@ -3,8 +3,6 @@ const component = require("../components");
 
 function rk_studio(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object
     let obj = {};
 
