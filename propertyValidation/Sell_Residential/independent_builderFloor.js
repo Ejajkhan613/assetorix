@@ -1,6 +1,7 @@
 const component = require("../components");
 
 
+// Function
 function independent_builderFloor(data) {
 
     // Main Object

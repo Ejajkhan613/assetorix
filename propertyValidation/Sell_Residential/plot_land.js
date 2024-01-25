@@ -1,6 +1,7 @@
 const component = require("../components");
 
 
+// Function
 function plot_land(data) {
 
     // Main Object

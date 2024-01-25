@@ -4,8 +4,6 @@ const component = require("../../components");
 // Function
 function manufacturing(data) {
 
-    // --------------------------------- MAIN OBJECT ---------------------------------
-
     // Main Object that will be saved in DB
     let obj = {};
 

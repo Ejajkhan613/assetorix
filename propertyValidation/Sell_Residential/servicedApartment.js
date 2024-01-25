@@ -1,6 +1,7 @@
 const component = require("../components");
 
 
+// Function
 function servicedApartment(data) {
 
     // Main Object

@@ -1,9 +1,8 @@
 const component = require("../../components");
 
 
+// Function
 function hotel_Resorts(data) {
-
-    // --------------------------------- MAIN OBJECT ---------------------------------
 
     // Main Object that will be saved in DB
     let obj = {};

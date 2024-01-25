@@ -1,6 +1,7 @@
 const component = require("../components");
 
 
+// Function
 function rk_studio(data) {
 
     // Main Object

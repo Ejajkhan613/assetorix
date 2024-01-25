@@ -1,6 +1,7 @@
 const component = require("../components");
 
 
+// Function
 function flat_apartment(data) {
 
     // Main Object
