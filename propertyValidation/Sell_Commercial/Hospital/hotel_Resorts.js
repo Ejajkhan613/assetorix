@@ -1,4 +1,4 @@
-const component = require("../components");
+const component = require("../../components");
 
 
 function hotel_Resorts(data) {
