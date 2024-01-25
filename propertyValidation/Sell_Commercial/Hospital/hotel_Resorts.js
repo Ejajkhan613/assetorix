@@ -479,6 +479,16 @@ module.exports = { hotel_Resorts };
 
 
 
+
+
+
+
+
+
+
+// ::::::::::::::::::::::: OLD METHOD :::::::::::::::::::::::::::
+
+
 // const xss = require("xss");
 
 
