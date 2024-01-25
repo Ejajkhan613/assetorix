@@ -684,8 +684,109 @@ function pantryType(data = "", pantrySize = "", pantrySizeUnit = "") {
 }
 
 
+// Conference Room
+function conferenceRoom(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Conference Room Detail" };
+    }
 
-// Facility Available
+    const validTypes = ["Available", "Not-Available"];
+
+    const sanitizedData = xss(data.trim());
+
+    if (!validTypes.includes(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Conference Room Detail - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+// Reception Area
+function receptionArea(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Reception Area Detail" };
+    }
+
+    const validTypes = ["Available", "Not-Available"];
+
+    const sanitizedData = xss(data.trim());
+
+    if (!validTypes.includes(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Reception Area Detail - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+// Facility Available with Central Air Conditioning, Oxygen Duct, Furnishing, UPS
+function facilityAvailableMore(data) {
+    if (!Object.keys(data).length) {
+        return { "msg": "ERROR", "error": "Missing Facilities Available Detail" };
+    }
+
+    const validTypes = ["Available", "Not-Available"];
+
+    const obj = {};
+
+    if (!data.furnishing) {
+        return { "msg": "ERROR", "error": "Missing Furnishing Detail" };
+    }
+
+    const sanitizedFurnishing = xss(data.furnishing.trim());
+
+    if (!validTypes.includes(sanitizedFurnishing)) {
+        return { "msg": "ERROR", "error": `Wrong Furnishing Detail - ${sanitizedFurnishing}` };
+    }
+
+    obj.furnishing = sanitizedFurnishing;
+
+
+    if (!data.centralAirConditioning) {
+        return { "msg": "ERROR", "error": "Missing Central Air Conditioning Detail" };
+    }
+
+    const sanitizedCentralAirConditioning = xss(data.centralAirConditioning.trim());
+
+    if (!validTypes.includes(sanitizedCentralAirConditioning)) {
+        return { "msg": "ERROR", "error": `Wrong Central Air Conditioning Detail - ${sanitizedCentralAirConditioning}` };
+    }
+
+    obj.centralAirConditioning = sanitizedCentralAirConditioning;
+
+
+    if (!data.oxygenDuct) {
+        return { "msg": "ERROR", "error": "Missing Oxygen Duct Detail" };
+    }
+
+    const sanitizedOxygenDuct = xss(data.oxygenDuct.trim());
+
+    if (!validTypes.includes(sanitizedOxygenDuct)) {
+        return { "msg": "ERROR", "error": `Wrong Oxygen Duct Detail - ${sanitizedOxygenDuct}` };
+    }
+
+    obj.oxygenDuct = sanitizedOxygenDuct;
+
+
+    if (!data.ups) {
+        return { "msg": "ERROR", "error": "Missing UPS Detail" };
+    }
+
+    const sanitizedUPS = xss(data.ups.trim());
+
+    if (!validTypes.includes(sanitizedUPS)) {
+        return { "msg": "ERROR", "error": `Wrong UPS Detail - ${sanitizedUPS}` };
+    }
+
+    obj.ups = sanitizedUPS;
+
+    return { "msg": "SUCCESS", "data": obj };
+}
+
+
+
+// Facility Available with Central Air Conditioning, Oxygen Duct
 function facilityAvailable(data) {
     if (!Object.keys(data).length) {
         return { "msg": "ERROR", "error": "Missing Facilities Available Detail" };
@@ -736,8 +837,11 @@ function fireSafety(data = []) {
 
     const validTypes = ["Fire Extinguisher", "Fire Sensors", "Sprinklers", "Fire Hose"];
     const list = [];
+
     for (let a = 0; a < data.length; a++) {
+
         const value = xss(data[a].trim());
+
         if (!validTypes.includes(value)) {
             return { "msg": `Wrong Fire Safety Detail - ${value}` };
         }
@@ -923,18 +1027,16 @@ function priceUnit(price, area) {
 
 // Other Room
 function otherRoom(data) {
-    const otherRooms = ["Pooja Room", "Study Room", "Servant Room", "Store Room"];
-
-    // Ensuring data is an array
     if (!Array.isArray(data)) {
         return { "msg": "ERROR", "error": "Please provide a valid list of other rooms" };
     }
 
+    const otherRooms = ["Pooja Room", "Study Room", "Servant Room", "Store Room"];
     const validRooms = [];
     const invalidRooms = [];
 
     data.forEach(room => {
-        const sanitizedRoom = xss(room).trim();
+        const sanitizedRoom = xss(room.trim());
 
         if (otherRooms.includes(sanitizedRoom)) {
             validRooms.push(sanitizedRoom);
@@ -943,7 +1045,6 @@ function otherRoom(data) {
         }
     });
 
-    // Send an error if any invalid rooms are found
     if (invalidRooms.length > 0) {
         return { "msg": "ERROR", "error": `Invalid rooms: ${invalidRooms.join(', ')}. Please select valid rooms.` };
     }
@@ -961,7 +1062,7 @@ function furnished({ type, list, obj }) {
         return { msg: "ERROR", error: "Furnished Type is Missing" };
     }
 
-    type = xss(type).trim();
+    type = xss(type.trim());
 
     if (!allowedFurnishingTypes.includes(type)) {
         return { msg: "ERROR", error: `${type} is a Wrong Furnishing Type` };
@@ -1004,6 +1105,57 @@ function parking(data) {
 
 
 
+// Parking with Private parking in Basement, Private parking outside, Public parking
+function parkingWithPrivatePublic(data = "", parkingDetailsList = [], parkingCount = 0) {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Parking Details" };
+    }
+
+    const validTypes = ["Available", "Not-Available"];
+    const sanitizedData = xss(data.trim());
+
+    if (!validTypes.includes(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Parking Value - ${sanitizedData}` };
+    }
+
+    if (sanitizedData == validTypes[0]) {
+
+        const validList = new Set(["Private Parking in Basement", "Private Parking Outside", "Public Parking"]);
+        const sanitizedParkingDetailsList = [];
+
+        for (let a = 0; a < parkingDetailsList.length; a++) {
+
+            const value = xss(parkingDetailsList[a].trim());
+
+            if (!validList.has(value)) {
+                return { "msg": "ERROR", "error": `Wrong Parking Detail List Value - ${value}` };
+            }
+
+            sanitizedParkingDetailsList.push(value);
+        };
+
+        if (parkingCount) {
+            const sanitizedParkingCount = Number(xss(parkingCount));
+            const minValue = 0;
+            const maxValue = 1000;
+
+            if (sanitizedParkingCount < minValue) {
+                return { "msg": "ERROR", "error": `Parking Count can't be below then ${minValue}` };
+            }
+
+            if (sanitizedParkingCount > maxValue) {
+                return { "msg": "ERROR", "error": `Parking Count can't be more then ${maxValue}` };
+            }
+        }
+
+        return { "msg": "SUCCESS", "data": sanitizedData, "parkingDetailsList": sanitizedParkingDetailsList, "parkingCount": sanitizedParkingCount };
+    } else {
+        return { "msg": "SUCCESS", "data": sanitizedData };
+    }
+}
+
+
+
 // Total Floors
 function totalFloors(data) {
     if (!data) {
@@ -1016,8 +1168,15 @@ function totalFloors(data) {
         return { "msg": "ERROR", "error": `${data} is Invalid Total Floors, It should be a number only` };
     }
 
-    if (numericTotalFloors > 90) {
-        return { "msg": "ERROR", "error": "Total Floors should not be above 90" };
+    const minValue = 0;
+    const maxValue = 90;
+
+    if (numericTotalFloors < minValue) {
+        return { "msg": "ERROR", "error": `Total Floors should not be below then - ${minValue}` };
+    }
+
+    if (numericTotalFloors > maxValue) {
+        return { "msg": "ERROR", "error": `Total Floors should not be above then - ${maxValue}` };
     }
 
     return { "msg": "SUCCESS", "data": numericTotalFloors };
@@ -1026,24 +1185,6 @@ function totalFloors(data) {
 
 
 // Floor On
-// function floorOn(data) {
-//     if (!data) {
-//         return { "msg": "ERROR", "error": "Missing Current Floor Number" };
-//     }
-
-//     let list = ["Ground", "Basement", "Lower Ground"];
-//     const numericData = Number(data);
-
-//     if (!isNaN(numericData) && numericData >= 1 && numericData <= 90) {
-//         // Checking if the data is a number between 1 and 90
-//         return { "msg": "SUCCESS", "data": numericData };
-//     } else if (typeof data === "string" && list.includes(data)) {
-//         // Checking if the data is a valid string
-//         return { "msg": "SUCCESS", "data": data };
-//     } else {
-//         return { "msg": "ERROR", "error": `${data} is a Wrong Floor Number Value` };
-//     }
-// }
 function floorOn(data, totalFloors) {
     if (!data) {
         return { "msg": "ERROR", "error": "Missing Current Floor Number" };
@@ -1066,6 +1207,7 @@ function floorOn(data, totalFloors) {
 
 
 
+// Select Multiple Floors
 function multiFloorOn(data, totalFloor) {
     if (!data) {
         return { "msg": "SUCCESS", "data": [] };
@@ -1092,10 +1234,66 @@ function multiFloorOn(data, totalFloor) {
         sanitizedData.push(value);
     }
 
-    // Convert sanitizedData to a Set and then back to an array to make values unique
     const uniqueSanitizedData = Array.from(new Set(sanitizedData));
 
     return { "msg": "SUCCESS", "data": uniqueSanitizedData };
+}
+
+
+// Is your office fire NOC Certified
+function NOC(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": `Missing NOC Ceritificate Detail` };
+    }
+
+    const validTypes = new Set(["Yes", "No"]);
+
+    const sanitizedData = xss(data.trim());
+
+    if (!validTypes.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong NOC Value - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+// Occupancy Certificate
+function occupancy(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": `Missing Occupancy Ceritificate Detail` };
+    }
+
+    const validTypes = new Set(["Yes", "No"]);
+
+    const sanitizedData = xss(data.trim());
+
+    if (!validTypes.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Occupancy Value - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+// Your office was previously used for (Optional)
+function previouslyUsedList(data = []) {
+    if (!isArray(data) || !data.length) {
+        return { "msg": "SUCCESS", "data": [] };
+    }
+
+    const sanitizedData = [];
+    const validTypes = new Set(["Backend Office", "CA Office", "Frontend Office", "Small Office Purpose", "Traders Office"]);
+
+    for (let a = 0; a < data.length; a++) {
+        const value = xss(data[a].trim());
+        if (!validTypes.has(value)) {
+            return { "msg": "ERROR", "error": `Wrong Office Previously Used For Value - ${value}` };
+        }
+        sanitizedData.push(value);
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
 
@@ -1163,7 +1361,9 @@ function inclusivePrices(data) {
 
     if (data && data.length) {
         for (let a = 0; a < data.length; a++) {
-            let value = data[a].trim();
+
+            let value = xss(data[a].trim());
+
             if (list.has(value)) {
                 inclusivePrices.add(value);
             } else {
@@ -1255,6 +1455,93 @@ function additionalPricingDetails(data) {
     }
 
     return { "msg": "SUCCESS", "data": additionalPricingDetails };
+}
+
+
+
+
+// Expected Annual Returns
+function expectedAnnualReturns(data) {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Expected Annual Returns" };
+    }
+
+    const numericExpectedAnnualReturns = Number(xss(data));
+
+    if (isNaN(numericExpectedAnnualReturns)) {
+        return { "msg": "ERROR", "error": `${data} is Invalid Expected Annual Returns, It should be a number only` };
+    }
+
+    const minValue = 0;
+
+    if (numericExpectedAnnualReturns < minValue) {
+        return { "msg": "ERROR", "error": `Expected Annual Returns can't be below ${minValue}` };
+    }
+
+    return { "msg": "SUCCESS", "data": numericExpectedAnnualReturns };
+}
+
+
+
+// Describe your office setup
+function officeSetup(data = {}) {
+    if (!Object.keys(data).length) {
+        return { "msg": "ERROR", error: "Missing Office Setup Details" };
+    }
+
+    const sanitizedObj = {};
+
+    const sanitizedMinSeats = Number(xss(data.minSeats));
+
+    if (isNaN(sanitizedMinSeats)) {
+        return { "msg": "ERROR", "error": "Minimum Seats must be a number only, In Office Setup Details" };
+    }
+
+    if (sanitizedMinSeats < 0) {
+        return { "msg": "ERROR", "error": "Minimum Seats can't be below 0, In Office Setup Details" };
+    }
+
+    sanitizedObj.minSeats = sanitizedMinSeats;
+
+    if (data.maxSeats) {
+        const sanitizedMaxSeats = Number(xss(data.maxSeats));
+
+        if (isNaN(sanitizedMaxSeats)) {
+            return { "msg": "ERROR", "error": "Maximum Seats must be a number only, In Office Setup Details" };
+        }
+
+        if (sanitizedMaxSeats < sanitizedMinSeats) {
+            return { "msg": "ERROR", "error": "Maximum Seats can't be below then Minimum Seats, In Office Setup Details" };
+        }
+        sanitizedObj.maxSeats = sanitizedMaxSeats;
+    }
+
+    const sanitizedCabins = Number(xss(data.cabins));
+
+    if (isNaN(sanitizedCabins)) {
+        return { "msg": "ERROR", "error": "Cabins count must be a number only, In Office Setup Details" };
+    }
+
+    if (sanitizedCabins < 0) {
+        return { "msg": "ERROR", "error": "Cabins can't be below 0, In Office Setup Details" };
+    }
+
+    sanitizedObj.cabins = sanitizedCabins;
+
+
+    const sanitizedMeetingRooms = Number(xss(data.meetingRooms));
+
+    if (isNaN(sanitizedMeetingRooms)) {
+        return { "msg": "ERROR", "error": `Meeting Rooms must be a number only - ${sanitizedMeetingRooms}` };
+    }
+
+    if (sanitizedMeetingRooms < 0) {
+        return { "msg": "ERROR", "error": `Meeting Rooms can't be below 0` };
+    }
+
+    sanitizedObj.meetingRooms = sanitizedMeetingRooms;
+
+    return { "msg": "SUCCESS", "data": sanitizedObj };
 }
 
 
@@ -1692,7 +1979,7 @@ function washroomDetails(data) {
     }
 
     const obj = {};
-    obj.washrooms = xss(data.washrooms).trim();
+    obj.washrooms = xss(data.washrooms.trim());
 
     const validTypes = ["Available", "Not-Available"];
 
@@ -1730,7 +2017,7 @@ function constructionOnProperty(data, detail) {
         return { "msg": "ERROR", "error": "Missing Construction Status" };
     }
 
-    data = xss(data).trim();
+    data = xss(data.trim());
 
     let allowedType = ["Yes", "No"];
 
@@ -1961,5 +2248,11 @@ module.exports = {
     locatedInside,
     facilityAvailable,
     fireSafety,
-    liftWithPassengerServiceModern
+    liftWithPassengerServiceModern,
+    parkingWithPrivatePublic,
+    NOC,
+    occupancy,
+    previouslyUsedList,
+    expectedAnnualReturns,
+    officeSetup
 };
