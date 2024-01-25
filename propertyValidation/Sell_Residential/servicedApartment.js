@@ -577,6 +577,11 @@ module.exports = { servicedApartment };
 
 
 
+
+
+
+
+
 // ::::::::::::::::::::::: OLD METHOD :::::::::::::::::::::::::::
 
 
