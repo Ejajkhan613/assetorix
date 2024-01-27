@@ -449,11 +449,11 @@ module.exports = { industrialLands_Plots };
 
 
 
-//     // Office Type
+//     // Plot Land Type
 //     if (!data.plotLandType) {
 //         return { "msg": "ERROR", "error": "Missing Plot Land Type" };
 //     }
-//     // Adding Office Type
+//     // Adding Plot Land Type
 //     obj.plotLandType = xss(data.plotLandType);
 
 
