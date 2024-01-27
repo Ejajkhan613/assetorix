@@ -2130,7 +2130,7 @@ function approvedIndustryTypeList(data) {
         if (list.includes(value)) {
             returnList.add(value);
         } else {
-            return { "msg": "ERROR", "error": `Wrong Property Approval Authority Detail- ${value}` };
+            return { "msg": "ERROR", "error": `Wrong Approved Industry Type Detail- ${value}` };
         }
     }
 
