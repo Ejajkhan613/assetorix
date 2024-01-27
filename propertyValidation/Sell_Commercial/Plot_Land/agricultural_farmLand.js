@@ -38,12 +38,12 @@ function agricultural_farmLand(data) {
 
 
 
-    // Hospitality Type
-    let hospitalityType = component.hospitalityType(data.hospitalityType);
-    if (hospitalityType.msg == "SUCCESS") {
-        obj.hospitalityType = hospitalityType.data;
+    // Plot Land Type
+    let plotLandType = component.plotLandType(data.plotLandType);
+    if (plotLandType.msg == "SUCCESS") {
+        obj.plotLandType = plotLandType.data;
     } else {
-        return hospitalityType;
+        return plotLandType;
     }
 
 
@@ -440,11 +440,11 @@ module.exports = { agricultural_farmLand };
 
 
 
-//     // Office Type
+//     // Plot Land Type
 //     if (!data.plotLandType) {
 //         return { "msg": "ERROR", "error": "Missing Plot Land Type" };
 //     }
-//     // Adding Office Type
+//     // Adding Plot Land Type
 //     obj.plotLandType = xss(data.plotLandType);
 
 

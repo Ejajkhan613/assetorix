@@ -126,6 +126,26 @@ function officeType(data = "") {
     return { "msg": "SUCCESS", "data": sanitizedData };
 }
 
+
+
+// Plot Land Type
+function plotLandType(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Plot/Land Type" };
+    }
+
+    const validPlotLandType = new Set(["Commercial Land / Institutional Land", "Agricultural Land / Farm Land", "Industrial Lands / Plots"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validPlotLandType.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Plot/Land Type - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
 // ------------------ Basic Details ENDING -----------------------------
 
 
@@ -2079,12 +2099,36 @@ function propertyApprovalAuthorityList(data) {
 
     let list = ["DDA", "MCD", "NDMC", "Local Authority"];
 
-    let returnList = [];
+    let returnList = new Set([]);
 
     for (let a = 0; a < data.length; a++) {
         let value = xss(data[a].trim());
         if (list.includes(value)) {
-            returnList.push(value);
+            returnList.add(value);
+        } else {
+            return { "msg": "ERROR", "error": `Wrong Property Approval Authority Detail- ${value}` };
+        }
+    }
+
+    return { "msg": "SUCCESS", "data": returnList }
+}
+
+
+
+// Approved for Industry Type
+function approvedIndustryTypeList(data) {
+    if (!Array.isArray(data) || !data.length) {
+        return { "msg": "SUCCESS", "data": [] };
+    }
+
+    let list = ["Automobiles", "Biotechnology", "Capital Goods", "Chemicals", "Construction", "Defence and Aerospace Manufacturing", "Electronics Hardware", "Engineering", "Food processing", "Gems and Jewellery", "Handicrafts", "IT and ITes", "Leather", "Manufacturing", "Medical devices", "Metals", "Mixed", "Petroleum", "Pharmaceuticals", "Renewable Energy", "Software", "Textiles"];
+
+    let returnList = new Set([]);
+
+    for (let a = 0; a < data.length; a++) {
+        let value = xss(data[a].trim());
+        if (list.includes(value)) {
+            returnList.add(value);
         } else {
             return { "msg": "ERROR", "error": `Wrong Property Approval Authority Detail- ${value}` };
         }
@@ -2254,5 +2298,7 @@ module.exports = {
     occupancy,
     previouslyUsedList,
     expectedAnnualReturns,
-    officeSetup
+    officeSetup,
+    plotLandType,
+    approvedIndustryTypeList
 };
