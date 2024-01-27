@@ -336,7 +336,7 @@ function commercial_InstitutionalLand(data) {
 
     // Amenities ( Optional )
     if (data.amenities) {
-        const list = ["Maintenance Staff", "Rain Water Harvesting", "Waste Disposal", "Water Storage", "Feng Shui / Vaastu Compliant", "Security / Fire Alarm", "Visitor Parking"];
+        const list = ["Service / Goods Lift", "Rain Water Harvesting", "Waste Disposal", "Water Storage", "Feng Shui / Vaastu Compliant", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;
@@ -349,7 +349,7 @@ function commercial_InstitutionalLand(data) {
 
     // Property Features ( Optional )
     if (data.propertyFeatures) {
-        const list = ["Near Bank", "Power Back-up", "Reserved Parking", "Intercom Facility"];
+        const list = ["Security / Fire Alarm", "Near Bank", "Power Back-up", "Reserved Parking", "Intercom Facility"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
         if (propertyFeatures.msg == "SUCCESS") {
             obj.propertyFeatures = propertyFeatures.data;

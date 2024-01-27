@@ -336,7 +336,7 @@ function industrialLands_Plots(data) {
 
     // Amenities ( Optional )
     if (data.amenities) {
-        const list = ["Maintenance Staff", "Rain Water Harvesting", "Waste Disposal", "Water Storage", "Feng Shui / Vaastu Compliant", "Security / Fire Alarm", "Visitor Parking"];
+        const list = ["Waste Disposal", "Water Storage", "Conference room", "Intercom Facility", "Visitor Parking", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;
@@ -349,7 +349,7 @@ function industrialLands_Plots(data) {
 
     // Property Features ( Optional )
     if (data.propertyFeatures) {
-        const list = ["Near Bank", "Power Back-up", "Reserved Parking", "Intercom Facility"];
+        const list = ["Near Bank", "Power Back-up", "Reserved Parking", "Security / Fire Alarm", "Feng Shui / Vaastu Compliant"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
         if (propertyFeatures.msg == "SUCCESS") {
             obj.propertyFeatures = propertyFeatures.data;
