@@ -146,6 +146,43 @@ function plotLandType(data = "") {
 }
 
 
+// Retail Space Type
+function retailSpaceType(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Retail Space Type" };
+    }
+
+    const validRetailSpaceType = new Set(["Commercial Shops", "Commercial Showrooms"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validRetailSpaceType.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Retail Space Type - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+
+// Located Inside
+function retailLocatedInside(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Located Inside" };
+    }
+
+    const validRetailSpaceType = new Set(["Mall", "Commercial Project", "Residential Project", "Retail Complex / Building", "Market / High Street", "Other"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validRetailSpaceType.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Located Inside - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
 // ------------------ Basic Details ENDING -----------------------------
 
 
@@ -2300,5 +2337,7 @@ module.exports = {
     expectedAnnualReturns,
     officeSetup,
     plotLandType,
-    approvedIndustryTypeList
+    approvedIndustryTypeList,
+    retailLocatedInside,
+    retailSpaceType
 };

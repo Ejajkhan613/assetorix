@@ -1,3 +1,150 @@
+// const component = require("../../components");
+
+
+// // Function
+// function commercialShops(data) {
+
+//     // Main Object that will be saved in DB
+//     let obj = {};
+
+
+
+//     // Looking For
+//     let lookingFor = component.lookingFor(data.lookingFor);
+//     if (lookingFor.msg == "SUCCESS") {
+//         obj.lookingFor = lookingFor.data;
+//     } else {
+//         return lookingFor;
+//     }
+
+
+
+//     // Property Group
+//     let propertyGroup = component.propertyGroup(data.propertyGroup);
+//     if (propertyGroup.msg == "SUCCESS") {
+//         obj.propertyGroup = propertyGroup.data;
+//     } else {
+//         return propertyGroup;
+//     }
+
+
+
+//     // Property Type
+//     let propertyType = component.propertyType(data.propertyType, data.propertyGroup);
+//     if (propertyType.msg == "SUCCESS") {
+//         obj.propertyType = propertyType.data;
+//     } else {
+//         return propertyType;
+//     }
+
+
+
+//     // Retail Space Type
+//     let retailSpaceType = component.retailSpaceType(data.retailSpaceType);
+//     if (retailSpaceType.msg == "SUCCESS") {
+//         obj.retailSpaceType = retailSpaceType.data;
+//     } else {
+//         return retailSpaceType;
+//     }
+
+
+
+//     // Located Inside
+//     let locatedInside = component.retailLocatedInside(data.locatedInside);
+//     if (locatedInside.msg == "SUCCESS") {
+//         obj.locatedInside = locatedInside.data;
+//     } else {
+//         return locatedInside;
+//     }
+
+
+//     // --------------------------------- ADDRESS STARTING ---------------------------------
+
+//     // Checking Address
+//     if (!data.address) {
+//         return { "msg": "ERROR", "error": "Missing Address Detail Object" };
+//     }
+
+
+
+//     // Adding Address Data
+//     let address = {};
+
+
+
+//     // Address ( Optional )
+//     let type = component.houseNumber(data.address.type);
+//     if (type.msg == "SUCCESS") {
+//         address.address = type.data;
+//     } else {
+//         return type;
+//     }
+
+
+
+//     // Pincode
+//     let pincode = component.pincode(data.address.pincode);
+//     if (pincode.msg == "SUCCESS") {
+//         address.pincode = pincode.data;
+//     } else {
+//         return pincode;
+//     }
+
+
+
+//     // Locality
+//     let locality = component.locality(data.address.locality);
+//     if (locality.msg == "SUCCESS") {
+//         address.locality = locality.data;
+//     } else {
+//         return locality;
+//     }
+
+
+
+//     // City
+//     let city = component.city(data.address.city);
+//     if (city.msg == "SUCCESS") {
+//         address.city = city.data;
+//     } else {
+//         return city;
+//     }
+
+
+
+//     // State
+//     let state = component.state(data.address.state);
+//     if (state.msg == "SUCCESS") {
+//         address.state = state.data;
+//     } else {
+//         return state;
+//     }
+
+
+
+//     // Country
+//     let country = component.country(data.address.country);
+//     if (country.msg == "SUCCESS") {
+//         address.country = country.data;
+//     } else {
+//         return country;
+//     }
+
+//     obj.address = address;
+
+//     // --------------------------------- ADDRESS ENDING ---------------------------------
+
+// }
+
+
+
+// // Exporting Moduel
+// module.exports = { commercialShops };
+
+
+
+
+
 const xss = require("xss");
 
 
