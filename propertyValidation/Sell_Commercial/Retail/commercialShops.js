@@ -134,6 +134,211 @@
 
 //     // --------------------------------- ADDRESS ENDING ---------------------------------
 
+
+
+//     // ------------------ Area Details and Unit Details STARTING -----------------------------
+
+
+//     // Carpet Area
+//     let carpetArea = component.carpetArea(data.carpetArea);
+//     if (carpetArea.msg == "SUCCESS") {
+//         obj.carpetArea = carpetArea.data;
+//     } else {
+//         return carpetArea;
+//     }
+
+
+
+//     // Carpet Area Unit
+//     let carpetAreaUnit = component.carpetAreaUnit(data.carpetAreaUnit);
+//     if (carpetAreaUnit.msg == "SUCCESS") {
+//         obj.carpetAreaUnit = carpetAreaUnit.data;
+//     } else {
+//         return carpetAreaUnit;
+//     }
+
+
+
+//     // Builtup Area ( Optional )
+//     if (data.builtupArea && data.builtupAreaUnit) {
+//         let builtupArea = component.builtupArea(data.builtupArea);
+//         if (builtupArea.msg == "SUCCESS") {
+//             obj.builtupArea = builtupArea.data;
+//         } else {
+//             return builtupArea;
+//         }
+//     }
+
+
+
+//     // Builtup Area Unit ( Optional )
+//     if (data.builtupArea && data.builtupAreaUnit) {
+//         let builtupAreaUnit = component.builtupAreaUnit(data.builtupAreaUnit);
+//         if (builtupAreaUnit.msg == "SUCCESS") {
+//             obj.builtupAreaUnit = builtupAreaUnit.data;
+//         } else {
+//             return builtupAreaUnit;
+//         }
+//     }
+
+//     // ------------------ Area Details and Unit Details ENDING -----------------------------
+
+
+//     // Entrance Width
+//     if (data.entranceWidth && data.entranceWidthUnit) {
+//         let entranceWidth = component.entranceWidth(data.shopFacedSize.entranceWidth)
+//         if (entranceWidth.msg == "SUCCESS") {
+//             obj.entranceWidth = entranceWidth.data;
+//         } else {
+//             return entranceWidth;
+//         }
+//     }
+
+
+
+//     // Entrance Width
+//     if (data.entranceWidth && data.entranceWidthUnit) {
+//         let entranceWidthUnit = component.entranceWidthUnit(data.shopFacedSize.entranceWidthUnit)
+//         if (entranceWidthUnit.msg == "SUCCESS") {
+//             obj.entranceWidthUnit = entranceWidthUnit.data;
+//         } else {
+//             return entranceWidthUnit;
+//         }
+//     }
+
+
+
+//     // Ceiling Height
+//     if (data.ceilingHeight && data.ceilingHeightUnit) {
+//         let ceilingHeight = component.ceilingHeight(data.shopFacedSize.ceilingHeight)
+//         if (ceilingHeight.msg == "SUCCESS") {
+//             obj.ceilingHeight = ceilingHeight.data;
+//         } else {
+//             return ceilingHeight;
+//         }
+//     }
+
+
+
+//     // Ceiling Height Unit
+//     if (data.ceilingHeight && data.ceilingHeightUnit) {
+//         let ceilingHeightUnit = component.ceilingHeightUnit(data.shopFacedSize.ceilingHeightUnit)
+//         if (ceilingHeightUnit.msg == "SUCCESS") {
+//             obj.ceilingHeightUnit = ceilingHeightUnit.data;
+//         } else {
+//             return ceilingHeightUnit;
+//         }
+//     }
+
+
+
+//     // Washroom details with private and shared washrooms
+//     let washroomDetails = component.washroomDetails(data.washrooms);
+//     if (washroomDetails.msg == "SUCCESS") {
+//         obj.washrooms = washroomDetails.data;
+//     } else {
+//         return washroomDetails;
+//     }
+
+
+
+//     // Total Floors
+//     let totalFloors = component.totalFloors(data.totalFloors);
+//     if (totalFloors.msg == "SUCCESS") {
+//         obj.totalFloors = totalFloors.data;
+//     } else {
+//         return totalFloors;
+//     }
+
+
+
+//     // Floor Number
+//     let floorOn = component.floorOn(data.floorOn, data.totalFloors);
+//     if (floorOn.msg == "SUCCESS") {
+//         obj.floorOn = floorOn.data;
+//     } else {
+//         return floorOn;
+//     }
+
+
+
+//     // Located Near (Optional)
+//     let locatedNear = component.locatedNear(data.locatedNear)
+//     if (locatedNear.msg == "SUCCESS") {
+//         obj.locatedNear = locatedNear.data;
+//     } else {
+//         return locatedNear;
+//     }
+
+
+
+//     // Parking Type
+//     let parkingWithPrivatePublicMultilevel = component.parkingWithPrivatePublicMultilevel(data.parking, data.parkingType || [])
+//     if (parkingWithPrivatePublicMultilevel.msg == "SUCCESS") {
+//         obj.parkingWithPrivatePublicMultilevel = parkingWithPrivatePublicMultilevel.data;
+//         if (parkingWithPrivatePublicMultilevel.parkingType) {
+//             obj.parkingType = parkingWithPrivatePublicMultilevel.parkingType;
+//         }
+//     } else {
+//         return parkingWithPrivatePublicMultilevel;
+//     }
+
+
+
+//     // Availability Status
+//     let availabilityData = { "type": data.availabilityStatus, "value": data.propertyStatus || data.expectedByYear };
+
+//     let validateAvailabilityStatusResult = component.availabilityStatus(availabilityData);
+
+//     if (validateAvailabilityStatusResult.msg == "SUCCESS") {
+//         obj.availabilityStatus = validateAvailabilityStatusResult.availabilityStatus;
+
+//         if (validateAvailabilityStatusResult.propertyStatus) {
+//             obj.propertyStatus = validateAvailabilityStatusResult.propertyStatus;
+//         } else if (validateAvailabilityStatusResult.expectedByYear) {
+//             obj.expectedByYear = validateAvailabilityStatusResult.expectedByYear;
+//         }
+//     } else {
+//         return validateAvailabilityStatusResult;
+//     }
+
+
+
+//     // Suitable for business types
+//     let suitableFor = component.suitableFor(data.suitableFor);
+//     if (suitableFor.msg == "SUCCESS") {
+//         obj.suitableFor = suitableFor.data;
+//     } else {
+//         return suitableFor;
+//     }
+
+
+
+//     // Assured Returns
+//     if (data.assuredReturns && data.leaseGuarantee) {
+//         let assuredReturns = component.assuredReturns(data.investorLookFor.assuredReturns)
+//         if (assuredReturns.msg == "SUCCESS") {
+//             obj.assuredReturns = assuredReturns.data;
+//         } else {
+//             return assuredReturns;
+//         }
+//     }
+
+
+
+//     // Lease Guarantee
+//     if (data.assuredReturns && data.leaseGuarantee) {
+//         let leaseGuarantee = component.leaseGuarantee(data.investorLookFor.leaseGuarantee)
+//         if (leaseGuarantee.msg == "SUCCESS") {
+//             obj.leaseGuarantee = leaseGuarantee.data;
+//         } else {
+//             return leaseGuarantee;
+//         }
+//     }
+
+
+
+
 // }
 
 

@@ -693,6 +693,226 @@ function superBuiltupAreaUnit(data = "") {
 // ------------------ Area Details and Unit Details ENDING -----------------------------
 
 
+
+// Entrance Width
+function entranceWidth(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Entrance Width" };
+    }
+
+    const sanitizedData = xss(data.trim());
+
+    const numericEntranceWidth = parseFloat(sanitizedData);
+
+    if (isNaN(numericEntranceWidth)) {
+        return { "msg": "ERROR", "error": "Entrance Width should be a Number only" };
+    }
+
+    if (numericEntranceWidth < 0) {
+        return { "msg": "ERROR", "error": "Entrance Width can't be below 0" };
+    }
+
+    return { "msg": "SUCCESS", "data": numericEntranceWidth.toFixed(2) };
+}
+
+
+
+// Entrance Width
+function entranceWidthUnit(data) {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Entrance Width Unit" };
+    }
+
+    const sanitizedData = xss(data.trim());
+    const validTypes = new Set(["sq.ft", "sq.m"]);
+
+    if (!validTypes.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Entrance Width Unit - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+
+// Ceiling Height
+function ceilingHeight(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Ceiling Height" };
+    }
+
+    const sanitizedData = xss(data.trim());
+
+    const numericCeilingHeight = parseFloat(sanitizedData);
+
+    if (isNaN(numericCeilingHeight)) {
+        return { "msg": "ERROR", "error": "Ceiling Height should be a Number only" };
+    }
+
+    if (numericCeilingHeight < 0) {
+        return { "msg": "ERROR", "error": "Ceiling Height can't be below 0" };
+    }
+
+    return { "msg": "SUCCESS", "data": numericCeilingHeight.toFixed(2) };
+}
+
+
+
+// Ceiling Height Unit
+function ceilingHeightUnit(data) {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Ceiling Height Unit" };
+    }
+
+    const sanitizedData = xss(data.trim());
+    const validTypes = new Set(["sq.ft", "sq.m"]);
+
+    if (!validTypes.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Ceiling Height Unit - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+
+// Assured Returns
+function assuredReturns(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Assured Returns" }
+    }
+
+    const sanitizedData = xss(data.trim());
+
+    const numericAssuredReturns = parseFloat(sanitizedData);
+
+    if (isNaN(numericAssuredReturns)) {
+        return { "msg": "ERROR", "error": "Assured Returns should be a Number only" };
+    }
+
+    if (numericAssuredReturns < 0) {
+        return { "msg": "ERROR", "error": "Assured Returns can't be below 0" };
+    }
+
+    return { "msg": "SUCCESS", "data": numericAssuredReturns };
+}
+
+
+
+// Lease Guarantee
+function leaseGuarantee(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Lease Guarantee" }
+    }
+
+    const sanitizedData = xss(data.trim());
+
+    const numericLeaseGuarantee = parseFloat(sanitizedData);
+
+    if (isNaN(numericLeaseGuarantee)) {
+        return { "msg": "ERROR", "error": "Lease Guarantee should be a Number only" };
+    }
+
+    if (numericLeaseGuarantee < 0) {
+        return { "msg": "ERROR", "error": "Lease Guarantee can't be below 0" };
+    }
+
+    if (numericLeaseGuarantee > 99) {
+        return { "msg": "ERROR", "error": "Lease Guarantee can't be more then 99 Years" };
+    }
+
+    return { "msg": "SUCCESS", "data": numericLeaseGuarantee };
+}
+
+
+
+// Located Near (Optional)
+function locatedNear(data) {
+    if (!Array.isArray(data) || !data.length) {
+        return { "msg": "SuCCESS", "data": [] };
+    }
+
+    const sanitizedData = new Set([]);
+    const validTypes = new Set(["Entrance", "Elevator", "Stairs"]);
+
+    for (let a = 0; a < data.length; a++) {
+        const value = xss(data[a].trim());
+
+        if (!validTypes.has(value)) {
+            return { "msg": "ERROR", "error": `Wrong Located Near Value - ${value}` };
+        }
+        sanitizedData.add(value);
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
+
+// Parking Type with private, public, multilevel
+function parkingWithPrivatePublicMultilevel(data, parkingType) {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Parking Type" }
+    }
+
+    const sanitizedData = xss(data.trim());
+
+    const validTypes = ["Available", "Not-Available"];
+
+    if (!validTypes.includes(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Parking Type - ${sanitizedData}` }
+    }
+
+    if (sanitizedData == validTypes[1]) {
+        return { "msg": "SUCCESS", "data": sanitizedData };
+    } else {
+        if (!Array.isArray(parkingType) || !parkingType.length) {
+            return { "msg": "SUCCESS", "data": sanitizedData, "parkingType": [] }
+        }
+
+        const sanitizedParkingType = new Set([]);
+        const validValues = ["Private Parking", "Public Parking", "Multilevel Parking"];
+
+        for (let a = 0; a < parkingType.length; a++) {
+            const value = xss(parkingType[a].trim());
+
+            if (!validValues.includes(value)) {
+                return { "msg": "ERROR", "error": `Wrong Parking Type - ${value}` }
+            }
+
+            sanitizedParkingType.add(value);
+        }
+
+        return { "msg": "SUCCESS", "data": sanitizedData, "parkingType": sanitizedParkingType }
+    }
+}
+
+
+
+// Suitable for business types
+function suitableFor(data) {
+    if (!Array.isArray(data) || !data.length) {
+        return { "msg": "SUCCESS", "data": [] };
+    }
+
+    let list = ["ATM", "Bakery", "Boutique", "Clinic", "Clothes", "Cloud Kitchen", "Coffee", "Dental Clinic", "Fast Food", "Footwear", "Gym", "Jewellery", "Juice", "Meat", "Medical", "Mobile", "Pub/Bar", "Restaurants", "Salon/Spa", "Stationery", "Sweet", "Tea Stall", "Other Business type"];
+
+    let returnList = new Set([]);
+
+    for (let a = 0; a < data.length; a++) {
+        let value = xss(data[a].trim());
+        if (list.includes(value)) {
+            returnList.add(value);
+        } else {
+            return { "msg": "ERROR", "error": `Wrong Suitable Business Type- ${value}` };
+        }
+    }
+
+    return { "msg": "SUCCESS", "data": returnList }
+}
+
+
+
 // Pantry Type
 function pantryType(data = "", pantrySize = "", pantrySizeUnit = "") {
     if (!data) {
@@ -2301,6 +2521,7 @@ module.exports = {
     additionalFeatures,
     waterSources,
     overLookings,
+    suitableFor,
     otherFeatures,
     powerBackup,
     propertyFacing,
@@ -2322,6 +2543,7 @@ module.exports = {
     constructionStatusOfWalls,
     areDoorsConstructed,
     washroomDetails,
+    parkingWithPrivatePublicMultilevel,
     pantryType,
     multiFloorOn,
     staircases,
@@ -2339,5 +2561,15 @@ module.exports = {
     plotLandType,
     approvedIndustryTypeList,
     retailLocatedInside,
-    retailSpaceType
+    retailSpaceType,
+    entranceWidth,
+    entranceWidthUnit,
+    ceilingHeight,
+    ceilingHeightUnit,
+    conferenceRoom,
+    receptionArea,
+    facilityAvailableMore,
+    assuredReturns,
+    leaseGuarantee,
+    locatedNear
 };
