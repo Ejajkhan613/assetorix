@@ -271,7 +271,7 @@ function coldStorage(data) {
 
 
     // Price Per Unit
-    let priceUnit = component.priceUnit(data.price, data.carpetArea);
+    let priceUnit = component.priceUnit(data.price, data.plotArea);
     if (priceUnit.msg == "SUCCESS") {
         obj.priceUnit = priceUnit.data;
     } else {
@@ -332,7 +332,7 @@ function coldStorage(data) {
 
     // Amenities ( Optional )
     if (data.amenities) {
-        const list = ["Service / Goods Lift", "Maintenance Staff", "Rain Water Harvesting", "Waste Disposal", "Water Storage", "Security / Fire Alarm", "Visitor Parking", "ATM", "Near Bank", "Security Personnel", "Lift"];
+        const list = ["Maintenance Staff", "Rain Water Harvesting", "Waste Disposal", "Water Storage", "Security / Fire Alarm", "Visitor Parking", "ATM", "Access to High Speed Internet", "Security Personnel", "Feng Shui / Vaastu Compliant"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;
@@ -345,7 +345,7 @@ function coldStorage(data) {
 
     // Property Features ( Optional )
     if (data.propertyFeatures) {
-        const list = ["Centrally Air Conditioned", "Power Back-up", "Reserved Parking", "Intercom Facility", "Feng Shui / Vaastu Compliant"];
+        const list = ["Centrally Air Conditioned", "Power Back-up", "Reserved Parking", "Intercom Facility", "Near Bank"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
         if (propertyFeatures.msg == "SUCCESS") {
             obj.propertyFeatures = propertyFeatures.data;
@@ -358,7 +358,7 @@ function coldStorage(data) {
 
     // Society / Building Features ( Optional )
     if (data.society_buildingFeatures) {
-        const list = ["Shopping Centre", "Fitness Centre / GYM", "WheelChair Accessibilitiy", "DG Availability", "CCTV Surveillance", "Grade A Building", "Grocery Shop", "Swimming Pool", "Club house / Community Center"];
+        const list = ["Shopping Centre", "Fitness Centre / GYM", "WheelChair Accessibilitiy", "DG Availability", "CCTV Surveillance", "Grade A Building", "Grocery Shop", "Swimming Pool", "Club house / Community Center", "Lift"];
         let society_buildingFeatures = component.society_buildingFeatures({ "data": data.society_buildingFeatures, list })
         if (society_buildingFeatures.msg == "SUCCESS") {
             obj.society_buildingFeatures = society_buildingFeatures.data;
@@ -384,7 +384,7 @@ function coldStorage(data) {
 
     // Other Features ( Optional )
     if (data.otherFeatures) {
-        let list = ["Corner Property", "Main Road Facing"];
+        let list = ["Wheelchair friendly"];
         let otherFeatures = component.otherFeatures({ "data": data.otherFeatures, list })
         if (otherFeatures.msg == "SUCCESS") {
             obj.otherFeatures = otherFeatures.data;
@@ -434,7 +434,7 @@ function coldStorage(data) {
     }
 
 
-    
+
     // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)
     if (locationAdv.msg == "SUCCESS") {
@@ -454,6 +454,23 @@ module.exports = { coldStorage };
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ::::::::::::::::::::::: OLD METHOD :::::::::::::::::::::::::::
 
 // const xss = require("xss");
 
