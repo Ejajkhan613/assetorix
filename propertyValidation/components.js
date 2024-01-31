@@ -183,6 +183,25 @@ function retailLocatedInside(data = "") {
 }
 
 
+
+// Storage Type
+function storageType(data = "") {
+    if (!data) {
+        return { "msg": "ERROR", "error": "Missing Storage Type" };
+    }
+
+    const validStorageTypes = new Set(["Ware House", "Cold Storage"]);
+
+    const sanitizedData = xss(data.toString().trim());
+
+    if (!validStorageTypes.has(sanitizedData)) {
+        return { "msg": "ERROR", "error": `Wrong Storage Type - ${sanitizedData}` };
+    }
+
+    return { "msg": "SUCCESS", "data": sanitizedData };
+}
+
+
 // ------------------ Basic Details ENDING -----------------------------
 
 
@@ -2540,6 +2559,7 @@ module.exports = {
     preLeasedRentedDetails,
     industryType,
     officeType,
+    storageType,
     constructionStatusOfWalls,
     areDoorsConstructed,
     washroomDetails,

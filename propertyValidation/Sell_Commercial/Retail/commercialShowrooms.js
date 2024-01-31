@@ -1,7 +1,7 @@
 const component = require("../../components");
 
 
-
+// Function
 function commercialShowrooms(data) {
 
     // Main Object that will be saved in DB
@@ -526,7 +526,7 @@ function commercialShowrooms(data) {
         return roadFacingWidthType;
     }
 
-    
+
 
     // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)

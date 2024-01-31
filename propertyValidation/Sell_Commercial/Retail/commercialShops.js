@@ -525,7 +525,7 @@ function commercialShops(data) {
     }
 
 
-    
+
     // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)
     if (locationAdv.msg == "SUCCESS") {
