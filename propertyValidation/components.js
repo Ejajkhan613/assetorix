@@ -895,7 +895,7 @@ function suitableFor(data) {
         return { "msg": "SUCCESS", "data": [] };
     }
 
-    let list = ["ATM", "Bakery", "Boutique", "Clinic", "Clothes", "Cloud Kitchen", "Coffee", "Dental Clinic", "Fast Food", "Footwear", "Gym", "Jewellery", "Juice", "Meat", "Medical", "Mobile", "Pub/Bar", "Restaurants", "Salon/Spa", "Stationery", "Sweet", "Tea Stall", "Other Business type"];
+    let list = ["ATM", "Bakery", "Boutique", "Clinic", "Clothes", "Cloud Kitchen", "Coffee", "Dental Clinic", "Fast Food", "Footwear", "Gym", "Jewellery", "Juice", "Meat", "Medical", "Mobile", "Pub/Bar", "Restaurants", "Salon/Spa", "Stationery", "Sweet", "Tea Stall", "Other business type"];
 
     let returnList = new Set([]);
 
@@ -2426,11 +2426,11 @@ function preLeasedRentedDetails(data) {
             xss(data.preLeased_RentedDetails.currentRentPerMonth)
         );
 
-        if (isNaN(preLeasedRentedDetails.currentRentPerMonth)) {
+        if (isNaN(preLeased_RentedDetails.currentRentPerMonth)) {
             return { "msg": "ERROR", "error": "Current Rent Per Month should be a number only" }
         }
 
-        if (preLeasedRentedDetails.currentRentPerMonth < 0) {
+        if (preLeased_RentedDetails.currentRentPerMonth < 0) {
             return { "msg": "ERROR", "error": "Current Rent Per Month cannot be negative" }
         }
 
@@ -2438,11 +2438,11 @@ function preLeasedRentedDetails(data) {
             xss(data.preLeased_RentedDetails.leaseTenureInYear)
         );
 
-        if (isNaN(preLeasedRentedDetails.leaseTenureInYear)) {
-            return { "msg": "ERROR", "error": "Current Rent Per Month should be a number only" }
+        if (isNaN(preLeased_RentedDetails.leaseTenureInYear)) {
+            return { "msg": "ERROR", "error": "Lease Tenure In Year should be a number only" }
         }
 
-        if (preLeasedRentedDetails.leaseTenureInYear < 0) {
+        if (preLeased_RentedDetails.leaseTenureInYear < 0) {
             return { "msg": "ERROR", "error": "Lease Tenure In Year cannot be negative" }
         }
 
@@ -2450,11 +2450,11 @@ function preLeasedRentedDetails(data) {
             xss(data.preLeased_RentedDetails.annualRentIncrease)
         );
 
-        if (isNaN(preLeasedRentedDetails.annualRentIncrease)) {
-            return { "msg": "ERROR", "error": "Current Rent Per Month should be a number only" }
+        if (isNaN(preLeased_RentedDetails.annualRentIncrease)) {
+            return { "msg": "ERROR", "error": "Annual Rent Increase should be a number only" }
         }
 
-        if (preLeasedRentedDetails.annualRentIncrease < 0) {
+        if (preLeased_RentedDetails.annualRentIncrease < 0) {
             return { "msg": "ERROR", "error": "Annual Rent Increase cannot be negative" }
         }
 

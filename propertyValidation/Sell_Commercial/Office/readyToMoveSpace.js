@@ -183,9 +183,12 @@ function readyToMoveSpace(data) {
 
 
     // Washroom details with private and shared washrooms
-    let washroomDetails = component.washroomDetails(data.washrooms);
+    let washroomDetails = component.washroomDetails({"washrooms":data.washrooms, "washroomDetails": data.washroomDetails});
     if (washroomDetails.msg == "SUCCESS") {
         obj.washrooms = washroomDetails.data;
+        if (washroomDetails.washroomDetails) {
+            obj.washroomDetails = washroomDetails.washroomDetails;
+        }
     } else {
         return washroomDetails;
     }
