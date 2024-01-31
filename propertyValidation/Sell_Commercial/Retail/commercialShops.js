@@ -356,6 +356,7 @@ function commercialShops(data) {
     }
 
 
+
     // Inclusive Prices ( Optional )
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
@@ -494,6 +495,7 @@ function commercialShops(data) {
     }
 
 
+
     // Property Facing
     let propertyFacing = component.propertyFacing(data.propertyFacing)
     if (propertyFacing.msg == "SUCCESS") {
@@ -501,6 +503,7 @@ function commercialShops(data) {
     } else {
         return propertyFacing;
     }
+
 
 
     // Road Facing Width
@@ -522,6 +525,7 @@ function commercialShops(data) {
     }
 
 
+    
     // Property Location Advantages ( Optional )
     let locationAdv = component.locationAdv(data.locationAdv)
     if (locationAdv.msg == "SUCCESS") {
