@@ -1879,7 +1879,7 @@ function description(data) {
         data = xss(data).trim();
 
         if (data.length <= 1000) {
-            return { "msg": "SUCCESS", "data": data };
+            return { "msg": "SUCCESS", data };
         } else {
             return { "msg": "ERROR", "error": "Description exceeds the 1000 character limit" };
         }
