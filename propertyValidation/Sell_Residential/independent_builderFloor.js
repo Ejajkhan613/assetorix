@@ -426,7 +426,7 @@ function independent_builderFloor(data) {
 
     // Property Features ( Optional )
     if (data.propertyFeatures) {
-        const list = ["High Ceiling Height", "False Ceiling Lighting", "Internet / wi-fi connectivity", "Intercom Facility", "Security / Fire Alarm", "Centrally Air Renovated", "Recently Renovated", "Private Garden / Terrace", "Natural Light", "Airy Roooms", "Spacious Interiors"];
+        const list = ["High Ceiling Height", "False Ceiling Lighting", "Internet / wi-fi connectivity", "Intercom Facility", "Security / Fire Alarm", "Centrally Air Conditioned", "Recently Renovated", "Private Garden / Terrace", "Natural Light", "Airy Roooms", "Spacious Interiors"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
         if (propertyFeatures.msg == "SUCCESS") {
             obj.propertyFeatures = propertyFeatures.data;

@@ -292,7 +292,7 @@ function coworkingOfficeSpace(data) {
 
     // Property Features ( Optional )
     if (data.propertyFeatures) {
-        const list = ["High Ceiling Height", "False Ceiling Lighting", "Piped-gas", "Internet / wi-fi connectivity", "Centrally Air Renovated", "Water Purifier", "Recently Renovated", "Private Garden / Terrace", "Natural Light", "Airy Roooms", "Spacious Interiors"];
+        const list = ["High Ceiling Height", "False Ceiling Lighting", "Piped-gas", "Internet / wi-fi connectivity", "Centrally Air Conditioned", "Water Purifier", "Recently Renovated", "Private Garden / Terrace", "Natural Light", "Airy Roooms", "Spacious Interiors"];
         let propertyFeatures = component.propertyFeatures({ "data": data.propertyFeatures, list })
         if (propertyFeatures.msg == "SUCCESS") {
             obj.propertyFeatures = propertyFeatures.data;
