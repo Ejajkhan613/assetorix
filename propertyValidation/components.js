@@ -1865,7 +1865,7 @@ function countryCurrency(data) {
         if (!list.includes(data)) {
             return { "msg": "ERROR", "error": `Country Code is Wrong - ${data}` };
         }
-        return { "msg": "SUCCESS", "data": data };
+        return { "msg": "SUCCESS", data };
     } else {
         return { "msg": "ERROR", "error": "Country Code is Missing" };
     }
