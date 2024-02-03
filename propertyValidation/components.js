@@ -1166,7 +1166,7 @@ function liftWithPassengerServiceModern(data = "", liftDetail = {}) {
             return { "msg": "ERROR", "error": `Missing Passenger Lift Detail` }
         }
 
-        const sanitizedPassenger = parseInt(xss(liftDetail.passenger.trim()));
+        const sanitizedPassenger = parseInt(xss(liftDetail.passenger));
 
 
         if (isNaN(sanitizedPassenger)) {
@@ -1184,7 +1184,7 @@ function liftWithPassengerServiceModern(data = "", liftDetail = {}) {
             return { "msg": "ERROR", "error": `Missing Service Lift Detail` }
         }
 
-        const sanitizedService = parseInt(xss(liftDetail.service.trim()));
+        const sanitizedService = parseInt(xss(liftDetail.service));
 
 
         if (isNaN(sanitizedService)) {
@@ -1193,6 +1193,13 @@ function liftWithPassengerServiceModern(data = "", liftDetail = {}) {
 
         if (sanitizedService < 0) {
             return { "msg": "ERROR", "error": `Service Lift Detail can't be below 0` }
+        }
+
+        if (liftDetail.modern) {
+            const validTypes = ["true", "false", true, false];
+            if (validTypes.includes(liftDetail.modern)) {
+                liftDetails.modern = liftDetail.modern;
+            }
         }
 
         liftDetails.service = sanitizedService;
@@ -1416,7 +1423,6 @@ function parkingWithPrivatePublic(data = "", parkingDetailsList = [], parkingCou
     }
 
     if (sanitizedData == validTypes[0]) {
-
         const validList = new Set(["Private Parking in Basement", "Private Parking Outside", "Public Parking"]);
         const sanitizedParkingDetailsList = [];
 
@@ -1434,7 +1440,7 @@ function parkingWithPrivatePublic(data = "", parkingDetailsList = [], parkingCou
         if (parkingCount) {
             const sanitizedParkingCount = Number(xss(parkingCount));
             const minValue = 0;
-            const maxValue = 1000;
+            const maxValue = 10000;
 
             if (sanitizedParkingCount < minValue) {
                 return { "msg": "ERROR", "error": `Parking Count can't be below then ${minValue}` };
@@ -1443,9 +1449,10 @@ function parkingWithPrivatePublic(data = "", parkingDetailsList = [], parkingCou
             if (sanitizedParkingCount > maxValue) {
                 return { "msg": "ERROR", "error": `Parking Count can't be more then ${maxValue}` };
             }
+            return { "msg": "SUCCESS", "data": sanitizedData, "parkingDetailsList": sanitizedParkingDetailsList, "parkingCount": sanitizedParkingCount };
         }
 
-        return { "msg": "SUCCESS", "data": sanitizedData, "parkingDetailsList": sanitizedParkingDetailsList, "parkingCount": sanitizedParkingCount };
+        return { "msg": "SUCCESS", "data": sanitizedData, "parkingDetailsList": sanitizedParkingDetailsList };
     } else {
         return { "msg": "SUCCESS", "data": sanitizedData };
     }
@@ -1518,12 +1525,12 @@ function multiFloorOn(data, totalFloor) {
 
     if (totalFloorsCount.msg === "SUCCESS") {
         for (let a = 1; a <= totalFloorsCount.data; a++) {
-            validList.push(a);
+            validList.push("" + a);
         }
     }
 
     for (let a = 0; a < data.length; a++) {
-        const value = xss(data[a]).trim();
+        const value = xss(data[a]);
         if (!validList.includes(value)) {
             return { "msg": "ERROR", "error": `Wrong Floor Number Selected - ${value}` };
         }
@@ -1575,7 +1582,8 @@ function occupancy(data = "") {
 
 // Your office was previously used for (Optional)
 function previouslyUsedList(data = []) {
-    if (!isArray(data) || !data.length) {
+    console.log(data);
+    if (!Array.isArray(data) || !data.length) {
         return { "msg": "SUCCESS", "data": [] };
     }
 

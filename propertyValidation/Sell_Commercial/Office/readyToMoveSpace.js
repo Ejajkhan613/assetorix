@@ -256,14 +256,13 @@ function readyToMoveSpace(data) {
 
 
     // Floor On
-    let multiFloorOn = component.multiFloorOn(data.floorOn, data.totalFloor);
+    let multiFloorOn = component.multiFloorOn(data.floorOn, data.totalFloors);
     if (multiFloorOn.msg == "SUCCESS") {
         obj.floorOn = multiFloorOn.data;
     } else {
         return multiFloorOn;
     }
-
-
+    
     // Number of Staircases (Optional)
     let staircases = component.staircases(data.staircases);
     if (staircases.msg == "SUCCESS") {
@@ -271,45 +270,46 @@ function readyToMoveSpace(data) {
     } else {
         return staircases;
     }
-
+    
+    
 
     // Lift with passenger, Service and Modern Lifts Detail
     let liftWithPassengerServiceModern = component.liftWithPassengerServiceModern(data.lift, data.liftDetails || {});
     if (liftWithPassengerServiceModern.msg == "SUCCESS") {
-        obj.lift = liftWithPassengerServiceModern.lift;
+        obj.lift = liftWithPassengerServiceModern.data;
 
         if (liftWithPassengerServiceModern.liftDetails) {
             obj.liftDetails = liftWithPassengerServiceModern.liftDetails;
         }
-        // Missing Modern Lifts Here (Add it at the time of testing)
     }
-
-
+    
+    
+    
     // Parking with Private parking in Basement, Private parking outside, Public parking
     let parkingWithPrivatePublic = component.parkingWithPrivatePublic(data.parking, data.parkingDetailsList || [], data.parkingCount || 0);
     if (parkingWithPrivatePublic.msg == "SUCCESS") {
         obj.parking = parkingWithPrivatePublic.data;
-
+        
         if (parkingWithPrivatePublic.parkingDetailsList) {
             obj.parkingDetailsList = parkingWithPrivatePublic.parkingDetailsList;
         }
-
+        
         if (parkingWithPrivatePublic.parkingCount) {
             obj.parkingCount = parkingWithPrivatePublic.parkingCount;
         }
     } else {
         return parkingWithPrivatePublic;
     }
-
-
+    
+    
     // Availability Status
     let availabilityData = { "type": data.availabilityStatus, "value": data.propertyStatus || data.expectedByYear };
-
+    
     let validateAvailabilityStatusResult = component.availabilityStatus(availabilityData);
-
+    
     if (validateAvailabilityStatusResult.msg == "SUCCESS") {
         obj.availabilityStatus = validateAvailabilityStatusResult.availabilityStatus;
-
+        
         if (validateAvailabilityStatusResult.propertyStatus) {
             obj.propertyStatus = validateAvailabilityStatusResult.propertyStatus;
         } else if (validateAvailabilityStatusResult.expectedByYear) {
@@ -318,8 +318,8 @@ function readyToMoveSpace(data) {
     } else {
         return validateAvailabilityStatusResult;
     }
-
-
+    
+    
 
     // Ownership Type
     let ownership = component.ownership(data.ownership);
@@ -328,8 +328,8 @@ function readyToMoveSpace(data) {
     } else {
         return ownership;
     }
-
-
+    
+    
     // Price
     let price = component.price(data.price);
     if (price.msg == "SUCCESS") {
@@ -337,19 +337,19 @@ function readyToMoveSpace(data) {
     } else {
         return price;
     }
-
-
-
+    
+    
+    
     // Price Per Unit
-    let priceUnit = component.priceUnit(data.price, data.plotArea);
+    let priceUnit = component.priceUnit(data.price, data.carpetArea);
     if (priceUnit.msg == "SUCCESS") {
         obj.priceUnit = priceUnit.data;
     } else {
         return priceUnit;
     }
-
-
-
+    
+    
+    
     // Inclusive Prices
     let inclusivePrices = component.inclusivePrices(data.inclusivePrices);
     if (inclusivePrices.msg == "SUCCESS") {
@@ -357,8 +357,8 @@ function readyToMoveSpace(data) {
     } else {
         return inclusivePrices;
     }
-
-
+    
+    
     // Additional Pricing Details
     let additionalPricingDetails = component.additionalPricingDetails(data.additionalPricingDetails);
     if (additionalPricingDetails.msg == "SUCCESS") {
@@ -366,17 +366,17 @@ function readyToMoveSpace(data) {
     } else {
         return additionalPricingDetails;
     }
-
-
+    
+    
     // Pre Leased / Pre Rented
-    let preLeasedRentedDetails = component.preLeasedRentedDetails(data.preLeasedRentedDetails);
+    let preLeasedRentedDetails = component.preLeasedRentedDetails({"preLeased_Rented":data.preLeased_Rented, "preLeased_RentedDetails": data.preLeased_RentedDetails});
     if (preLeasedRentedDetails.msg == "SUCCESS") {
         obj.preLeasedRentedDetails = preLeasedRentedDetails.data;
     } else {
         return preLeasedRentedDetails;
     }
-
-
+    
+    
     // Is your office fire NOC Certified
     let NOC = component.NOC(data.noc);
     if (NOC.msg == "SUCCESS") {
@@ -384,8 +384,8 @@ function readyToMoveSpace(data) {
     } else {
         return NOC;
     }
-
-
+    
+    
     // Occupancy Certificate
     let occupancy = component.occupancy(data.occupancy);
     if (occupancy.msg == "SUCCESS") {
@@ -393,8 +393,8 @@ function readyToMoveSpace(data) {
     } else {
         return occupancy;
     }
-
-
+    
+    
     // Your office was previously used for (Optional)
     let previouslyUsedList = component.previouslyUsedList(data.previouslyUsedList);
     if (previouslyUsedList.msg == "SUCCESS") {
@@ -402,6 +402,7 @@ function readyToMoveSpace(data) {
     } else {
         return previouslyUsedList;
     }
+    
 
 
     // Country Currency
@@ -425,7 +426,7 @@ function readyToMoveSpace(data) {
 
     // Amenities
     if (data.amenities) {
-        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "AMT", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
+        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "ATM", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;
