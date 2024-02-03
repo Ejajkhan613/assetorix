@@ -273,7 +273,7 @@ function bareShellOfficeSpace(data) {
 
 
     // Floor On
-    let multiFloorOn = component.multiFloorOn(data.floorOn);
+    let multiFloorOn = component.multiFloorOn(data.floorOn, data.totalFloor);
     if (multiFloorOn.msg == "SUCCESS") {
         obj.floorOn = multiFloorOn.data;
     } else {
