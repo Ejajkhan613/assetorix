@@ -295,12 +295,11 @@ function bareShellOfficeSpace(data) {
     // Lift with passenger, Service and Modern Lifts Detail
     let liftWithPassengerServiceModern = component.liftWithPassengerServiceModern(data.lift, data.liftDetails || {});
     if (liftWithPassengerServiceModern.msg == "SUCCESS") {
-        obj.lift = liftWithPassengerServiceModern.lift;
+        obj.lift = liftWithPassengerServiceModern.data;
 
         if (liftWithPassengerServiceModern.liftDetails) {
             obj.liftDetails = liftWithPassengerServiceModern.liftDetails;
         }
-        // Missing Modern Lifts Here (Add it at the time of testing)
     }
 
 
@@ -309,11 +308,11 @@ function bareShellOfficeSpace(data) {
     let parkingWithPrivatePublic = component.parkingWithPrivatePublic(data.parking, data.parkingDetailsList || [], data.parkingCount || 0);
     if (parkingWithPrivatePublic.msg == "SUCCESS") {
         obj.parking = parkingWithPrivatePublic.data;
-
+        
         if (parkingWithPrivatePublic.parkingDetailsList) {
             obj.parkingDetailsList = parkingWithPrivatePublic.parkingDetailsList;
         }
-
+        
         if (parkingWithPrivatePublic.parkingCount) {
             obj.parkingCount = parkingWithPrivatePublic.parkingCount;
         }
@@ -363,7 +362,7 @@ function bareShellOfficeSpace(data) {
 
 
     // Price Per Unit
-    let priceUnit = component.priceUnit(data.price, data.plotArea);
+    let priceUnit = component.priceUnit(data.price, data.carpetArea);
     if (priceUnit.msg == "SUCCESS") {
         obj.priceUnit = priceUnit.data;
     } else {
@@ -393,7 +392,7 @@ function bareShellOfficeSpace(data) {
 
 
     // Pre Leased / Pre Rented
-    let preLeasedRentedDetails = component.preLeasedRentedDetails(data.preLeasedRentedDetails);
+    let preLeasedRentedDetails = component.preLeasedRentedDetails({"preLeased_Rented":data.preLeased_Rented, "preLeased_RentedDetails": data.preLeased_RentedDetails});
     if (preLeasedRentedDetails.msg == "SUCCESS") {
         obj.preLeasedRentedDetails = preLeasedRentedDetails.data;
     } else {
@@ -454,7 +453,7 @@ function bareShellOfficeSpace(data) {
 
     // Amenities
     if (data.amenities) {
-        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "AMT", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
+        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "ATM", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;

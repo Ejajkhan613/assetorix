@@ -242,7 +242,7 @@ function coworkingOfficeSpace(data) {
     }
 
     // Pre Leased / Pre Rented
-    let preLeasedRentedDetails = component.preLeasedRentedDetails(data.preLeasedRentedDetails);
+    let preLeasedRentedDetails = component.preLeasedRentedDetails({"preLeased_Rented":data.preLeased_Rented, "preLeased_RentedDetails": data.preLeased_RentedDetails});
     if (preLeasedRentedDetails.msg == "SUCCESS") {
         obj.preLeasedRentedDetails = preLeasedRentedDetails.data;
     } else {
@@ -280,7 +280,7 @@ function coworkingOfficeSpace(data) {
 
     // Amenities
     if (data.amenities) {
-        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "AMT", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
+        const list = ["Maintenance Staff", "Water Storage", "Waste Disposal", "ATM", "Visitor Parking", "Shopping Centre", "WheelChair Accessibility", "Cafeteria / Food Court", "DG Availability", "CCTV Surveillance", "Grocery Shop", "Power Back-up", "Feng Shui / Vaastu Compliant", "Security Personnel", "Intercom Facility", "Lift"];
         let amenities = component.amenities({ "data": data.amenities, list })
         if (amenities.msg == "SUCCESS") {
             obj.amenities = amenities.data;

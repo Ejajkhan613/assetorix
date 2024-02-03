@@ -339,7 +339,7 @@ function hotel_Resorts(data) {
 
 
     // Pre Leased / Pre Rented
-    let preLeasedRentedDetails = component.preLeasedRentedDetails(data.preLeasedRentedDetails);
+    let preLeasedRentedDetails = component.preLeasedRentedDetails({"preLeased_Rented":data.preLeased_Rented, "preLeased_RentedDetails": data.preLeased_RentedDetails});
     if (preLeasedRentedDetails.msg == "SUCCESS") {
         obj.preLeasedRentedDetails = preLeasedRentedDetails.data;
     } else {
