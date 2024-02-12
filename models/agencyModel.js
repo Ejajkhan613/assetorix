@@ -5,15 +5,11 @@ const { indianTime } = require("../services/indianTime");
 
 // Schema
 const agencySchema = new mongoose.Schema({
-    image: {
-        type: String,
-        default: ""
+    userID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
     },
-    imageKey: {
-        type: String,
-        default: ""
-    },
-    name: {
+    agencyName: {
         type: String,
         required: true,
         trim: true
@@ -22,14 +18,6 @@ const agencySchema = new mongoose.Schema({
         type: String,
         default: "",
         trim: true
-    },
-    email: {
-        type: String,
-        unique: true,
-        sparse: true,
-        trim: true,
-        lowercase: true,
-        required: true
     },
     language: {
         type: Array,
@@ -78,6 +66,6 @@ const agencySchema = new mongoose.Schema({
 
 
 // Model
-let AgencyModel = mongoose.model('agency', agencySchema);
+const AgencyModel = mongoose.model('agency', agencySchema);
 
 module.exports = { AgencyModel };
